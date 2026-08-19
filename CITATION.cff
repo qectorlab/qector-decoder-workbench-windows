@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "QECTOR Decoder Workbench"
-version: "1.0.0"
+version: "1.0.1"
 date-released: "2026-08-19"
 url: "https://www.qector.store"
 repository-code: "https://github.com/qectorlab/qector-decoder-workbench-windows"
