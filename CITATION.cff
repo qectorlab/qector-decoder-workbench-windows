@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 type: software
 title: "QECTOR Decoder Workbench"
-version: "0.5.2"
-date-released: "2026-07-26"
+version: "1.0.0"
+date-released: "2026-08-19"
 url: "https://www.qector.store"
 repository-code: "https://github.com/qectorlab/qector-decoder-workbench-windows"
 authors:
@@ -12,7 +12,7 @@ authors:
     orcid: "https://orcid.org/0009-0000-3465-3753"
     affiliation: "iD01t Productions"
 license: "LicenseRef-Proprietary"
-abstract: "Windows desktop application for quantum error correction research and evaluation, built on the qector-decoder-v3 0.7.0 Rust/Python backend. Provides 16 decoder algorithms, 10 code families (including qLDPC and color codes), a full GUI, command-line interface, and a 56-tool Model Context Protocol (MCP) server. Portable, fully offline after first launch."
+abstract: "Windows desktop application for quantum error correction research and evaluation, built on the qector-decoder-v3 1.0.0 Rust/Python backend. Provides 16 decoder algorithms, 10 code families (including qLDPC and color codes), a full GUI, command-line interface, and a 82-tool Model Context Protocol (MCP) server. Portable, fully offline after first launch."
 keywords:
   - "quantum error correction"
   - "QEC"
