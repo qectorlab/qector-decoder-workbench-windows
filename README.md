@@ -3,80 +3,89 @@
 [![Release](https://img.shields.io/github/v/release/qectorlab/qector-decoder-workbench-windows?label=Latest%20Release&style=flat-square)](https://github.com/qectorlab/qector-decoder-workbench-windows/releases/latest)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20x64-blue?style=flat-square)](#install)
 
-Windows build running the `qector-decoder-v3 1.0.1` backend. This is a single-executable distribution requiring no installer, no admin rights, and no internet connection to run.
+Public Windows build of QECTOR Decoder Workbench. The release package contains the portable Windows executable, the complete manuals set, release manifests, license text, citation metadata, and SHA-256 checksums.
 
-## 🚀 Install & Quick Start
+Verified on August 19, 2026 from the packaged executable:
 
-Download the latest release package: `QectorWorkbench-v1.0.1-Portable-Windows-x64.zip`.
+| Item | Value |
+|:--|:--|
+| Workbench app | `1.0.1` |
+| Decoder backend | `qector-decoder-v3 1.0.0` bundled wheel |
+| MCP server | `85` tools over stdio JSON-RPC 2.0 |
+| MCP protocol | `2024-11-05` |
+| Decoders | `17` |
+| Code families | `10` |
+| Bundled Python runtime | Python `3.12.0` |
 
-1. Extract the `.zip` archive to a folder of your choice.
-2. Double-click **`QectorWorkbench.exe`** to launch the graphical interface.
+## Install
 
-**Headless MCP Server**
-To run the 82-tool `stdio` MCP server (no display needed), launch via command prompt:
+Download `QectorWorkbench-v1.0.1-Windows-x64-Public.zip` from the latest release, extract it, and run:
+
 ```cmd
-QectorWorkbench.exe --mcp
-
+QectorWorkbench-Portable.exe
 ```
 
-*Note: Runtime data (logs, exported documents) is written to `%LOCALAPPDATA%\QectorWorkbench`. You can override this behavior by setting the `QECTOR_DATA_DIR` environment variable.*
+To run the headless MCP server:
 
----
-
-## ✨ What's in this Release
-
-* **15 Decoders & 10 Code Families:** Full support for surface codes, qLDPC (bicycle / bivariate bicycle), heavy-hex, color codes, and hypergraph products, fully wired to the bundled `qector-decoder-v3 1.0.1` backend.
-* **82-Tool MCP Server:** `stdio` JSON-RPC 2.0 server for programmatic and AI agent interaction with per-tool 60-second timeouts, busy guards, and 1 MB result limits.
-* **Offline Backend Bundling:** Ships with the platform-specific `qector_decoder_v3-1.0.1` wheel pre-packaged inside the executable. Automatically activated into a per-user managed site on first boot; purges outdated managed decoders from older releases automatically.
-* **Full CLI Infrastructure:** Adds 12 CLI subcommands (`compare`, `batch`, `stream`, `train`, `export`, `import`, `matrix`, `serve`, `doctor`, `completions`) with shell auto-completion support (Bash, Zsh, PowerShell).
-* **Self-Diagnostics & Auto-Debug:** Environment, decoder, and hardware self-tests with resilient multi-decoder fallback, verifying $H \cdot c \equiv s \pmod{2}$ at every step with full attempt tracing.
-* **Security Hardening:** License keys encrypted at rest using machine-derived Fernet keys; export path traversal protection via path sanitization.
-* **Hardware Dashboard:** Auto-detects CUDA/OpenCL/CPU capability; honest OpenCL status reporting with a working `QECTOR_DISABLE_OPENCL=1` probe-skip escape hatch.
-* **Data Export Integrity:** All documentation exports (`.md`, `.html`, `.json`, `.tex`, `.pdf`, `.svg`), benchmark reports, and deposit sidecars (`.zenodo.json`, `CITATION.cff`) include SHA-256 sidecar manifests.
-* **Distance Slider:** Extended distance range supporting $d=3$ to $d=63$ (matching the Enterprise tier limit).
-
----
-
-## 📦 Assets in this Release
-
-* **`QectorWorkbench.exe`**: The application executable; bundles its own Python runtime, scientific stack, and the `qector-decoder-v3==1.0.1` wheel (activated fully offline on first launch).
-* **`manuals/`**: Full documentation suite including the API Reference (`.md`, `.html`, `.pdf`), MCP Integration Guide, Quick Start Guide, Windows User Manual, Extended Reference Manual, and the machine-readable `QECTOR_LLM_Manual.json`.
-* **`RELEASE_REPORT.md`** & **`RELEASE_MANIFEST.txt`**: Detailed package release report and build manifest.
-* **`EULA.txt`** & **`CHANGELOG.md`**: End User License Agreement and complete release history.
-
----
-
-## 🔒 Verify Your Download
-
-We highly recommend verifying your download using the provided SHA-256 checksums:
-
-```text
-8e1c7fea5dfb7f0bcb6ccfd2ec42f5866958a7a1f8405cb70a5be4c1df39fb *QectorWorkbench.exe
-0cb025ed429806ac444df5d2c29efd594c69ebd92b9072375903041e98573e66 *EULA.txt
-3d014d3ad2635f53cf44fab334602110c525ec49d195c9706a74af9be038b705 *CHANGELOG.md
-df7c277081dae7cda5e20f01fef542788c3432b0a7c9e8ff4eb33d1a5dd96fdb *QECTOR_Decoder_v3_v1.0.1_User_Manual.md
-
+```cmd
+QectorWorkbench-Portable.exe --mcp
 ```
 
-**How to verify on Windows PowerShell:**
-You can verify individual files:
+Runtime data is written to the user data directory by default. Set `QECTOR_DATA_DIR` to place logs, generated reports, and other runtime files in a controlled location.
+
+## Release Contents
+
+The public zip contains:
+
+| Path | Purpose |
+|:--|:--|
+| `QectorWorkbench-Portable.exe` | Portable Windows application executable |
+| `manuals/` | API reference, MCP integration guide, user manuals, LLM manual JSON, and figures |
+| `AIR_GAPPED_HARDENING_STATUS.md` | Current air-gapped hardening status and remaining work |
+| `README.md` | Package overview and launch instructions |
+| `EULA.txt` | End User License Agreement |
+| `CITATION.cff` | Citation metadata |
+| `RELEASE_MANIFEST.txt` | File inventory for the package |
+| `SHA256SUMS.txt` | SHA-256 checksums for packaged files |
+
+No source `.py` files, development folders, build caches, `_internal` directory dumps, test data, or private runtime data are included in the public repository or release package.
+
+## Feature Summary
+
+- 17 decoder algorithms, including `space_time`, `blossom`, `sparse_blossom`, `bp_osd`, `belief_matching`, `gnn_belief_matching`, `hybrid_cascade`, `two_stage`, `ambiguity_cluster`, and `colour_code`.
+- 10 code families: repetition, ring, rotated surface, unrotated surface, toric, heavy-hex, bicycle, bivariate bicycle, hypergraph product, and color code.
+- 85-tool MCP server for local AI/agent workflows using stdio only.
+- Offline backend bundling: the `qector-decoder-v3 1.0.0` wheel is included with the application and activated locally on first launch.
+- Documentation exports and reproducibility helpers include checksum-oriented release metadata.
+
+## Air-Gapped Hardening Development Status
+
+The v1.0.1 public package is designed for offline lab use after download and extraction. Current hardening work is tracked in `AIR_GAPPED_HARDENING_STATUS.md`.
+
+Implemented in this package:
+
+- Bundled decoder wheel activation works without internet access.
+- MCP transport is stdio only; the packaged MCP mode does not bind an HTTP port.
+- Version checks resolve against the bundled local baseline instead of a network update service.
+- Runtime data can be redirected with `QECTOR_DATA_DIR`.
+- Public packaging excludes source scripts, development folders, caches, internal build trees, and test data.
+
+Still in development:
+
+- Signed release attestations and reproducible-build provenance.
+- Formal enterprise hardening guide for locked-down lab images.
+- Independent third-party security review.
+
+## Verify
+
+Use the release `SHA256SUMS.txt` file to verify the zip and each packaged file. On Windows PowerShell:
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\QectorWorkbench.exe
-
+Get-FileHash -Algorithm SHA256 .\QectorWorkbench-v1.0.1-Windows-x64-Public.zip
+Get-FileHash -Algorithm SHA256 .\QectorWorkbench-Portable.exe
 ```
 
-Or verify the complete `.zip` package against its known hash:
+## Links
 
-```powershell
-(Get-FileHash .\QectorWorkbench-v1.0.1-Portable-Windows-x64.zip -Algorithm SHA256).Hash.ToLower()
-
-```
-
----
-
-*Full documentation is included inside the `manuals/` directory within the `.zip` release. Visit the main repository at [qectorlab/qector-decoder-workbench-windows](https://www.google.com/search?q=https://github.com/qectorlab/qector-decoder-workbench-windows/) for more information.*
-
-```
-
-```
+- Release repository: [qectorlab/qector-decoder-workbench-windows](https://github.com/qectorlab/qector-decoder-workbench-windows)
+- Product site: [qector.store](https://www.qector.store)

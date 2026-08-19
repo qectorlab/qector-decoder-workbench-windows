@@ -12,7 +12,7 @@ authors:
     orcid: "https://orcid.org/0009-0000-3465-3753"
     affiliation: "iD01t Productions"
 license: "LicenseRef-Proprietary"
-abstract: "Windows desktop application for quantum error correction research and evaluation, built on the qector-decoder-v3 1.0.0 Rust/Python backend. Provides 16 decoder algorithms, 10 code families (including qLDPC and color codes), a full GUI, command-line interface, and a 82-tool Model Context Protocol (MCP) server. Portable, fully offline after first launch."
+abstract: "Windows desktop application for quantum error correction research and evaluation. QECTOR Decoder Workbench v1.0.1 bundles the qector-decoder-v3 1.0.0 Rust/PyO3 backend, 17 decoder algorithms, 10 code families, a graphical interface, command-line entry points, and an 85-tool Model Context Protocol server for local stdio workflows."
 keywords:
   - "quantum error correction"
   - "QEC"
@@ -21,4 +21,5 @@ keywords:
   - "qLDPC"
   - "MWPM"
   - "BP-OSD"
+  - "MCP"
   - "Workbench"

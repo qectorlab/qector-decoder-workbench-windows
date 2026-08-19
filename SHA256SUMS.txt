@@ -1,0 +1,2 @@
+f4665338017a444738cd0255df8eb1aaad514f33364b1e454452351edf6a01b5  QectorWorkbench-v1.0.1-Windows-x64-Public.zip
+9bf64061a6d4bb59a7d94ee1d0bb23b24d96a0c8fdc02934918786ca89fb3166  QectorWorkbench-Portable.exe
