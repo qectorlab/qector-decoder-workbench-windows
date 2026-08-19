@@ -1,7 +1,0 @@
-services:
-  kali-gui:
-    build: .
-    container_name: kali-gui
-    ports:
-      - "5900:5900"
-      - "6080:6080"
