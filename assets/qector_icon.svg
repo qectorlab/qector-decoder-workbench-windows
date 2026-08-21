@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background gradient: deep indigo to dark navy -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1b3e"/>
+      <stop offset="100%" stop-color="#0a1628"/>
+    </linearGradient>
+
+    <!-- Primary lattice gradient: indigo to teal -->
+    <linearGradient id="latticeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b4fc8"/>
+      <stop offset="100%" stop-color="#1e7ec8"/>
+    </linearGradient>
+
+    <!-- Syndrome/correction highlight gradient: cyan to teal -->
+    <linearGradient id="syndromeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#00bfa5"/>
+    </linearGradient>
+
+    <!-- Glow filter for syndrome path -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Subtle inner glow for background -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#1a2a5e" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#0a1220" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- Clip to rounded square -->
+    <clipPath id="roundedClip">
+      <rect x="0" y="0" width="512" height="512" rx="96" ry="96"/>
+    </clipPath>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="url(#bgGrad)"/>
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="url(#centerGlow)"/>
+
+  <!-- Subtle border glow -->
+  <rect x="2" y="2" width="508" height="508" rx="95" ry="95"
+        fill="none" stroke="#2a3f8f" stroke-width="3" opacity="0.6"/>
+
+  <g clip-path="url(#roundedClip)">
+
+    <!-- ============================================================
+         SURFACE CODE LATTICE
+         7x7 grid of qubit sites, center at 256,256
+         spacing = 58px  →  covers 58*6=348px → start at 256-174=82
+         ============================================================ -->
+
+    <!-- Grid lines (horizontal) -->
+    <g stroke="url(#latticeGrad)" stroke-width="2" opacity="0.35">
+      <line x1="82"  y1="92"  x2="430" y2="92"/>
+      <line x1="82"  y1="150" x2="430" y2="150"/>
+      <line x1="82"  y1="208" x2="430" y2="208"/>
+      <line x1="82"  y1="266" x2="430" y2="266"/>  <!-- center row -->
+      <line x1="82"  y1="324" x2="430" y2="324"/>
+      <line x1="82"  y1="382" x2="430" y2="382"/>
+      <line x1="82"  y1="440" x2="430" y2="440"/>
+    </g>
+
+    <!-- Grid lines (vertical) -->
+    <g stroke="url(#latticeGrad)" stroke-width="2" opacity="0.35">
+      <line x1="82"  y1="82"  x2="82"  y2="440"/>
+      <line x1="140" y1="82"  x2="140" y2="440"/>
+      <line x1="198" y1="82"  x2="198" y2="440"/>
+      <line x1="256" y1="82"  x2="256" y2="440"/>  <!-- center col -->
+      <line x1="314" y1="82"  x2="314" y2="440"/>
+      <line x1="372" y1="82"  x2="372" y2="440"/>
+      <line x1="430" y1="82"  x2="430" y2="440"/>
+    </g>
+
+    <!-- ============================================================
+         QUBIT DOTS — normal (dim blue)
+         All 49 dots in 7x7 grid; syndrome/correction ones drawn last
+         Using circles r=8 for data qubits
+         ============================================================ -->
+    <g fill="#2d4db0" opacity="0.55">
+      <!-- Row y=92 -->
+      <circle cx="82"  cy="92"  r="7"/>
+      <circle cx="140" cy="92"  r="7"/>
+      <circle cx="198" cy="92"  r="7"/>
+      <circle cx="256" cy="92"  r="7"/>
+      <circle cx="314" cy="92"  r="7"/>
+      <circle cx="372" cy="92"  r="7"/>
+      <circle cx="430" cy="92"  r="7"/>
+      <!-- Row y=150 -->
+      <circle cx="82"  cy="150" r="7"/>
+      <circle cx="140" cy="150" r="7"/>
+      <circle cx="198" cy="150" r="7"/>
+      <circle cx="256" cy="150" r="7"/>
+      <circle cx="314" cy="150" r="7"/>
+      <circle cx="372" cy="150" r="7"/>
+      <circle cx="430" cy="150" r="7"/>
+      <!-- Row y=208 -->
+      <circle cx="82"  cy="208" r="7"/>
+      <circle cx="140" cy="208" r="7"/>
+      <circle cx="198" cy="208" r="7"/>
+      <!-- 256,208 is syndrome — skip here -->
+      <!-- 314,208 is on correction path — skip here -->
+      <circle cx="372" cy="208" r="7"/>
+      <circle cx="430" cy="208" r="7"/>
+      <!-- Row y=266 (center) -->
+      <circle cx="82"  cy="266" r="7"/>
+      <circle cx="140" cy="266" r="7"/>
+      <!-- 198,266 is on correction path — skip -->
+      <!-- 256,266 is center / correction — skip -->
+      <!-- 314,266 is on correction path — skip -->
+      <circle cx="372" cy="266" r="7"/>
+      <circle cx="430" cy="266" r="7"/>
+      <!-- Row y=324 -->
+      <circle cx="82"  cy="324" r="7"/>
+      <circle cx="140" cy="324" r="7"/>
+      <circle cx="198" cy="324" r="7"/>
+      <!-- 256,324 is correction path — skip -->
+      <circle cx="314" cy="324" r="7"/>
+      <circle cx="372" cy="324" r="7"/>
+      <circle cx="430" cy="324" r="7"/>
+      <!-- Row y=382 -->
+      <circle cx="82"  cy="382" r="7"/>
+      <circle cx="140" cy="382" r="7"/>
+      <circle cx="198" cy="382" r="7"/>
+      <!-- 256,382 is correction path — skip -->
+      <circle cx="314" cy="382" r="7"/>
+      <circle cx="372" cy="382" r="7"/>
+      <circle cx="430" cy="382" r="7"/>
+      <!-- Row y=440 -->
+      <circle cx="82"  cy="440" r="7"/>
+      <circle cx="140" cy="440" r="7"/>
+      <circle cx="198" cy="440" r="7"/>
+      <circle cx="256" cy="440" r="7"/>
+      <circle cx="314" cy="440" r="7"/>
+      <circle cx="372" cy="440" r="7"/>
+      <circle cx="430" cy="440" r="7"/>
+    </g>
+
+    <!-- ============================================================
+         SYNDROME/CORRECTION HIGHLIGHTED PATH
+         Forms a "Q" shape:
+         - A circular arc of highlighted qubits (ring)
+         - A tail extending down-right from the ring bottom
+         Ring center: 256,240  radius ~110  (touching cols 140-372, rows 130-360 approx)
+         Lattice points nearest the circle at radius ~116:
+           top:    (256,124)  — use (256,150)
+           right:  (372,240)  — use (372,208) and (372,266)
+           bottom: (256,356)  — use (256,382) ... but we leave a gap for "Q" opening
+           left:   (140,240)  — use (140,208) and (140,266)
+
+         Highlighted correction path (cyan glow):
+         Upper arc qubits forming the Q ring:
+           (198,150),(256,150),(314,150)
+           (140,208),(372,208)
+           (140,266),(256,266),(314,266),(372,266)  — bottom of ring, open at left of (198,266)
+           (256,324)  — partial bottom
+         Tail:  (314,324) → (372,382)
+         ============================================================ -->
+
+    <!-- Syndrome connecting lines (glowing) - horizontal segments on ring -->
+    <g stroke="url(#syndromeGrad)" stroke-width="5" stroke-linecap="round"
+       opacity="0.85" filter="url(#glow)">
+      <!-- Top arc connections -->
+      <line x1="198" y1="150" x2="256" y2="150"/>
+      <line x1="256" y1="150" x2="314" y2="150"/>
+      <!-- Left side vertical -->
+      <line x1="140" y1="208" x2="140" y2="266"/>
+      <!-- Right side vertical -->
+      <line x1="372" y1="208" x2="372" y2="266"/>
+      <!-- Top diagonal connectors -->
+      <line x1="198" y1="150" x2="140" y2="208"/>
+      <line x1="314" y1="150" x2="372" y2="208"/>
+      <!-- Right side to bottom partial (Q circle continues) -->
+      <line x1="372" y1="266" x2="314" y2="324"/>
+      <!-- Q bottom partial (no complete bottom, leaves opening for Q style) -->
+      <line x1="256" y1="208" x2="256" y2="266"/>  <!-- center spoke -->
+      <!-- Left side down -->
+      <line x1="140" y1="266" x2="198" y2="324"/>
+      <!-- Bottom partial arc -->
+      <line x1="198" y1="324" x2="256" y2="324"/>
+      <!-- Q tail going down-right from bottom right -->
+      <line x1="314" y1="324" x2="372" y2="382"/>
+      <line x1="372" y1="382" x2="430" y2="382"/>
+    </g>
+
+    <!-- Highlighted syndrome qubit nodes (bright cyan/teal dots) -->
+    <g filter="url(#glow)">
+      <!-- Top arc -->
+      <circle cx="198" cy="150" r="10" fill="#00e5ff"/>
+      <circle cx="256" cy="150" r="12" fill="#00e5ff"/>
+      <circle cx="314" cy="150" r="10" fill="#00e5ff"/>
+      <!-- Left side -->
+      <circle cx="140" cy="208" r="10" fill="#00cfff"/>
+      <circle cx="140" cy="266" r="10" fill="#00cfff"/>
+      <!-- Right side -->
+      <circle cx="372" cy="208" r="10" fill="#00cfff"/>
+      <circle cx="372" cy="266" r="10" fill="#00cfff"/>
+      <!-- Center cross -->
+      <circle cx="256" cy="208" r="10" fill="#00bfff"/>
+      <circle cx="256" cy="266" r="14" fill="#00e5ff"/>  <!-- center highlight -->
+      <!-- Bottom arc (partial — Q opening) -->
+      <circle cx="198" cy="324" r="10" fill="#00cfff"/>
+      <circle cx="256" cy="324" r="10" fill="#00cfff"/>
+      <circle cx="314" cy="324" r="10" fill="#00cfff"/>
+      <!-- Q tail -->
+      <circle cx="372" cy="382" r="10" fill="#00bfa5"/>
+      <circle cx="430" cy="382" r="9"  fill="#00bfa5" opacity="0.75"/>
+    </g>
+
+    <!-- ============================================================
+         ERROR SITE — a single "error" qubit shown in warm red/orange
+         at (314,208) indicating a detected bit-flip
+         ============================================================ -->
+    <circle cx="314" cy="208" r="11" fill="#ff5252" filter="url(#glow)" opacity="0.95"/>
+    <circle cx="314" cy="208" r="6"  fill="#ffab40"/>
+
+    <!-- ============================================================
+         OUTER DECORATIVE RING (subtle frame accent)
+         ============================================================ -->
+    <circle cx="256" cy="256" r="215"
+            fill="none" stroke="#1e3a7a" stroke-width="2" opacity="0.3"/>
+
+    <!-- ============================================================
+         SUBTLE "Q" letterform shadow (centered, large, very subtle)
+         Just a hint — the lattice pattern IS the logo
+         ============================================================ -->
+
+  </g>
+
+  <!-- Vignette overlay -->
+  <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
+    <stop offset="60%" stop-color="transparent"/>
+    <stop offset="100%" stop-color="#000915" stop-opacity="0.55"/>
+  </radialGradient>
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96"
+        fill="url(#vignette)"/>
+
+</svg>
