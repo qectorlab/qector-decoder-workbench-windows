@@ -1,12 +1,12 @@
 QECTOR Decoder Workbench - Public Documentation Set
 ====================================================
 
-Application version : 1.0.0
+Application version : 1.0.2
 Decoder backend : qector-decoder-v3 1.0.0 (bundled wheel, offline activation on first launch)
-MCP tools : 83
+MCP tools : 85
 Decoders : 17
 Code families : 10
-Generated : 2026-08-04 08:45 UTC
+Generated : 2026-08-21 12:30 UTC
 
 Archival Zenodo DOIs:
  User Manual & Licensing : https://doi.org/10.5281/zenodo.21363016

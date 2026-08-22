@@ -133,6 +133,9 @@ def scan(path: Path, facts: dict, newest_section_only: bool) -> list[str]:
 
         for m in stale_versions.finditer(line):
             v = m.group(1)
+            # Python runtime versions (e.g. 3.12.0, 3.12.3) are not workbench/backend versions
+            if "python" in line.lower():
+                continue
             if v not in (facts["workbench"], facts["backend"]) and v.count(".") == 2:
                 if v.split(".")[0] in ("0", "3") and v not in ("1.2.0", "2.0.0", "4.0.0"):
                     findings.append(f"L{n}: version {v} is neither workbench "
