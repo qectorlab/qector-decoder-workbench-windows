@@ -45,6 +45,10 @@ class UiPump:
         self._widget = widget
         self._interval = max(1, int(interval_ms))
         self._queue: "queue.SimpleQueue[Callable[[], None]]" = queue.SimpleQueue()
+        # _closed is read/written from both worker threads (post) and the UI
+        # thread (close/_schedule); the lock makes the check-then-act in post
+        # atomic against close().
+        self._lock = threading.Lock()
         self._closed = False
         self._after_id: Optional[str] = None
         try:
@@ -108,14 +112,18 @@ class UiPump:
         Returns False (never raises) when the pump is already closed because
         the widget was destroyed.
         """
-        if self._closed:
-            return False
-        self._queue.put(lambda: fn(*args, **kwargs))
-        return True
+        with self._lock:
+            if self._closed:
+                return False
+            self._queue.put(lambda: fn(*args, **kwargs))
+            return True
 
     def close(self) -> None:
-        self._closed = True
-        after_id, self._after_id = self._after_id, None
+        with self._lock:
+            if self._closed:
+                return
+            self._closed = True
+            after_id, self._after_id = self._after_id, None
         if after_id is not None:
             try:
                 self._widget.after_cancel(after_id)

@@ -43,7 +43,7 @@ APP_VERSION = version.WORKBENCH_VERSION
 BACKEND_VER = version.BACKEND_VERSION
 DEB_PACKAGE = "qector-workbench"
 MAINTAINER = "Guillaume Lessard <admin@qector.store>"
-DESCRIPTION = "QECTOR Decoder Workbench -- quantum error-correction analysis suite"
+DESCRIPTION = "QECTOR Decoder Workbench: quantum error-correction analysis suite"
 HOMEPAGE = "https://www.qector.store"
 
 ROOT = os.path.dirname(os.path.abspath(__file__))

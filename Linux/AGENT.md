@@ -36,11 +36,11 @@ those modules, the code is the source of truth — re-derive, do not improvise.
 | Property | Value (from code) |
 |---|---|
 | Server name (`serverInfo.name`) | `qector-workbench` |
-| Server version | `WORKBENCH_VERSION` = **1.0.1** |
+| Server version | `WORKBENCH_VERSION` = **1.0.3** |
 | Backend | `qector_decoder_v3` **1.0.0** (min supported 1.0.0) |
 | MCP protocol version | **2024-11-05** |
 | Transport | newline-delimited **JSON-RPC 2.0** over **stdio** |
-| Tool count | **83** (call `list_tools` for the live set) |
+| Tool count | **85** (call `list_tools` for the live set) |
 | Methods | `initialize`, `notifications/initialized`, `ping`, `tools/list`, `tools/call` |
 
 ### Launch
@@ -70,14 +70,14 @@ python main.py --mcp
 
 ---
 
-## 2. The tools (authoritative list; 83 in backend 1.0.0)
+## 2. The tools (authoritative list; 85 in backend 1.0.0)
 
 Grouped by purpose. Parameter defaults are the server's; **always set `seed`
 explicitly** for anything stochastic. Tools marked ⚠ mutate server state.
 
 ### Discovery / introspection (read-only, safe)
 - `list_tools` — all MCP tools.
-- `list_decoders` — the 16 wired decoders (see §3).
+- `list_decoders` — the 17 wired decoders (see §3).
 - `list_code_families` — the 10 code families (see §3).
 - `get_decoder_info` `{decoder_name}` — description of one decoder.
 - `get_code_properties` `{family_name, distance}` — n_qubits/n_checks/etc.
@@ -223,7 +223,7 @@ These are non-negotiable. Violating them is a defect, not a style choice.
    `get_hardware_info`. "cuda unavailable" is a valid, honest answer.
 8. **Reproducibility or silence.** If you cannot name the exact `seed` and inputs
    that produced a result, do not report the result as fact.
-9. **Cite the versions.** When it matters, state workbench 1.0.0 / backend 1.0.0.
+9. **Cite the versions.** When it matters, state workbench 1.0.3 / backend 1.0.0.
    They are separate release lines and must not be assumed equal.
    Do not claim behavior from other versions you have not run.
 10. **When unsure, run a tool or say "unknown."** "I don't have a measurement for

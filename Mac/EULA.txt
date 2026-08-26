@@ -2,7 +2,7 @@
 
                      END USER LICENSE AGREEMENT (EULA)
 
-                       QECTOR Decoder Workbench v1.0.2
+                       QECTOR Decoder Workbench v1.0.3
 
 ================================================================================
 
@@ -338,7 +338,7 @@ fees) arising out of or related to:
 
 ================================================================================
 
-  QECTOR Decoder Workbench v1.0.2
+  QECTOR Decoder Workbench v1.0.3
   (c) 2026 Guillaume Lessard / iD01t Productions
   All rights reserved except as expressly granted herein.
 

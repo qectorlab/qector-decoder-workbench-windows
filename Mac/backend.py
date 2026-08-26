@@ -172,8 +172,7 @@ _PARAM_MIN = {
 }
 
 
-class QectorError(RuntimeError):
-    """Raised for invalid operations in the QECTOR backend."""
+from errors import QectorError  # canonical hierarchy; re-exported for compat
 
 
 def build_code(family_key: str, param: int):
@@ -222,8 +221,6 @@ def validate_parameter(family_key: str, param: int) -> tuple[bool, str]:
     min_param = _PARAM_MIN.get(family_key, 3)
     if param < min_param:
         return False, f"param {param} too small for {family_key} (min {min_param})"
-    if family_key in ("ring",) and param < 3:
-        return False, f"param {param} too small for ring (min 3)"
     try:
         CODE_FAMILIES[family_key](param)
         return True, ""

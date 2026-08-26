@@ -21,7 +21,7 @@ if sys.platform == "win32":
         kernel32 = ctypes.windll.kernel32
         kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
     except Exception:
-        os.system("")
+        pass  # best-effort ANSI enablement; colors degrade gracefully
 
 # ANSI Color Tokens
 class C:
@@ -272,7 +272,7 @@ def cmd_probe(args: argparse.Namespace) -> int:
     import autodebug
 
     try:
-        report = autodebug.probe_decoders_on_family(
+        report = autodebug.probe_decoders(
             family=args.family, distance=args.distance, error_rate=args.error_rate, seed=args.seed
         )
         if args.json:
@@ -913,12 +913,27 @@ def cmd_serve(args: argparse.Namespace) -> int:
     try:
         host = getattr(args, "host", "127.0.0.1")
         port = getattr(args, "port", 8000)
+        allow_remote = bool(getattr(args, "allow_remote", False))
 
         from compliance import airgap_mode
         if airgap_mode():
             if host not in ("127.0.0.1", "::1", "localhost"):
                 print(f"Error: Air-gap mode enforces loopback-only binding. Host {host!r} is refused.", file=sys.stderr)
                 return 1
+
+        # The REST API has no authentication layer. Refuse non-loopback binds
+        # unless the operator explicitly opts in with --allow-remote.
+        if host not in ("127.0.0.1", "::1", "localhost") and not allow_remote:
+            print(
+                f"Error: refusing to bind the unauthenticated REST API to {host!r}.\n"
+                "The server has no auth layer; remote binding exposes full decoder control.\n"
+                "If you understand the risk and have network-level controls, pass --allow-remote.",
+                file=sys.stderr,
+            )
+            return 1
+        if allow_remote and host not in ("127.0.0.1", "::1", "localhost"):
+            print(f"WARNING: serving UNAUTHENTICATED API on {host}:{port} — anyone who can reach this port has full access.",
+                  file=sys.stderr)
 
         import qector_decoder_v3.rest_api as api
         if hasattr(api, "run"):
@@ -1017,18 +1032,44 @@ def cmd_decode_mmap(args: argparse.Namespace) -> int:
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
+def _add_common_flags(p: argparse.ArgumentParser) -> None:
+    """Add the global flags to *p* (used for the top-level parser AND every
+    subparser, so ``qector --json doctor`` and ``qector doctor --json`` both
+    work). Defaults are SUPPRESS so an explicit pre-subcommand flag is not
+    clobbered by the subparser's default; main() fills them in afterwards.
+    Flags the subparser already defines itself are skipped."""
+    have: set[str] = set()
+    for act in p._actions:
+        have.update(act.option_strings)
+    def _add(*opts: str, **kw) -> None:
+        if not any(o in have for o in opts):
+            p.add_argument(*opts, **kw)
+    _add("--json", action="store_true", default=argparse.SUPPRESS,
+         help="Output raw results in JSON format")
+    _add("--no-color", action="store_true", default=argparse.SUPPRESS,
+         help="Disable ANSI colors")
+    _add("--no-banner", action="store_true", default=argparse.SUPPRESS,
+         help="Suppress ASCII header banner")
+    _add("--output", "-o", default=argparse.SUPPRESS,
+         help="Redirect output to a file")
+    _add("--verbose", "-v", action="store_true", default=argparse.SUPPRESS,
+         help="Enable verbose logging")
+    _add("--quiet", "-q", action="store_true", default=argparse.SUPPRESS,
+         help="Enable quiet mode (only errors)")
+
+
+# Fallbacks applied in main() for flags that were never provided anywhere.
+_COMMON_FLAG_DEFAULTS = {"json": False, "no_color": False, "no_banner": False,
+                         "output": None, "verbose": False, "quiet": False}
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="qector",
         description="QECTOR Decoder Workbench, unified command line interface",
     )
-    # Global flags
-    parser.add_argument("--json", action="store_true", help="Output raw results in JSON format")
-    parser.add_argument("--no-color", action="store_true", help="Disable ANSI colors")
-    parser.add_argument("--no-banner", action="store_true", help="Suppress ASCII header banner")
-    parser.add_argument("--output", "-o", help="Redirect output to a file")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
-    parser.add_argument("--quiet", "-q", action="store_true", help="Enable quiet mode (only errors)")
+    # Global flags (also accepted after the subcommand — see _add_common_flags)
+    _add_common_flags(parser)
     parser.add_argument("--config", "-c", help="Path to config file loading JSON parameters")
     parser.add_argument("--version", "-V", action="store_true", help="Show version information and exit")
 
@@ -1164,6 +1205,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_serve = subparsers.add_parser("serve", help="Launch local REST API service")
     p_serve.add_argument("--host", default="127.0.0.1", help="Host interface to bind to (default: 127.0.0.1)")
     p_serve.add_argument("--port", type=int, default=8000, help="Port to bind to (default: 8000)")
+    p_serve.add_argument("--allow-remote", action="store_true",
+                         help="Explicitly allow binding to a non-loopback host (the API has no auth layer)")
     p_serve.set_defaults(func=cmd_serve)
 
     # doctor
@@ -1204,12 +1247,20 @@ def build_parser() -> argparse.ArgumentParser:
     p_comp_shell.add_argument("--shell", default="bash", choices=["bash", "zsh", "powershell"], help="Shell type (default: bash)")
     p_comp_shell.set_defaults(func=cmd_completions)
 
+    # Accept the global flags after ANY subcommand too (qector doctor --json).
+    for _sub in subparsers.choices.values():
+        _add_common_flags(_sub)
+
     return parser
 
 
 def main(args_list: Optional[list[str]] = None) -> int:
     parser = build_parser()
     args = parser.parse_args(args_list)
+    # Fill in global flags that were never provided (SUPPRESS defaults).
+    for _attr, _default in _COMMON_FLAG_DEFAULTS.items():
+        if not hasattr(args, _attr):
+            setattr(args, _attr, _default)
     
     # Load config file if specified
     if args.config:
@@ -1271,4 +1322,8 @@ def main(args_list: Optional[list[str]] = None) -> int:
         if stdout_redir is not None:
             stdout_redir.close()
             sys.stdout = sys.__stdout__
+
+
+if __name__ == "__main__":
+    sys.exit(main())
 

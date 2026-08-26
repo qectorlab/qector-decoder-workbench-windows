@@ -7,6 +7,10 @@ on:
   pull_request:
     branches: ["main"]
 
+# Least privilege: read-only checkout; releases are downloaded anonymously.
+permissions:
+  contents: read
+
 jobs:
   test-dmg-execution:
     name: Verify v1.0.2 DMG on Apple Silicon (macos-14)

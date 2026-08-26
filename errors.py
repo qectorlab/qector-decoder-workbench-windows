@@ -1,4 +1,13 @@
-class QectorError(Exception):
+"""errors.py — Canonical exception hierarchy for QECTOR Decoder Workbench.
+
+All modules must import their error types from here instead of redefining
+their own. ``QectorError`` derives from ``RuntimeError`` for backward
+compatibility with code that caught the original ``backend.QectorError``
+(a RuntimeError subclass).
+"""
+
+
+class QectorError(RuntimeError):
     """Base exception class for all QECTOR Decoder Workbench errors."""
     pass
 

@@ -1,4 +1,4 @@
-# QECTOR Decoder Workbench v1.0.2 - Linux
+# QECTOR Decoder Workbench v1.0.3 - Linux
 
 The Linux release is a portable, air-gapped application. It includes the decoder wheel locally and never downloads packages or contacts an external service at runtime. Available as a standalone portable binary and a Debian package.
 
@@ -6,7 +6,7 @@ The Linux release is a portable, air-gapped application. It includes the decoder
 
 ```bash
 # From the release zip:
-unzip QectorWorkbench-Linux-v1.0.2.zip
+unzip QectorWorkbench-Linux-v1.0.3.zip
 chmod +x QectorWorkbench-Portable
 ./QectorWorkbench-Portable
 ```
@@ -16,7 +16,7 @@ The portable binary contains the GUI, CLI, MCP server, documentation generators,
 ## Debian Package
 
 ```bash
-sudo dpkg -i qector-workbench_1.0.2_amd64.deb
+sudo dpkg -i qector-workbench_1.0.3_amd64.deb
 qector-workbench          # GUI
 qector-workbench --cli diagnostics
 qector-workbench --mcp    # 85-tool MCP server
@@ -43,14 +43,14 @@ Expected Entra state is `disabled` with `airgapped: true`. Expected compliance s
 Runtime state is stored under `~/.local/share/QectorWorkbench` (or `$XDG_DATA_HOME/QectorWorkbench` if set). Override it with `QECTOR_DATA_DIR` when a lab policy requires an explicitly managed location.
 No cloud synchronization, telemetry, update check, or browser action is performed by the application.
 
-## Checksums (v1.0.2)
+## Checksums (v1.0.3)
 
 ```
-SHA-256 (ZIP):      0da9cdee7fb5b54bed81fd2ddbb8639e6642987b7ea0d1c00935db36e270a41e  QectorWorkbench-Linux-v1.0.2.zip
-SHA-256 (Portable): 21484f5a81f54cacc35582d69c9325b8ab025ca7f9bc4b06bf9cfcab584f3403  QectorWorkbench-Portable
+SHA-256 (ZIP):      TBD  QectorWorkbench-Linux-v1.0.3.zip
+SHA-256 (Portable): TBD  QectorWorkbench-Portable
 ```
 
-Verify locally: `sha256sum QectorWorkbench-Portable` and `sha256sum QectorWorkbench-Linux-v1.0.2.zip`.
+Verify locally: `sha256sum QectorWorkbench-Portable` and `sha256sum QectorWorkbench-Linux-v1.0.3.zip`.
 
 ## Hardware Measurements
 

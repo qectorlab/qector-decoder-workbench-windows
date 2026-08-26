@@ -38,6 +38,7 @@ import ast
 import json
 import os
 import sys
+import threading
 import time
 from pathlib import Path
 from typing import Any, Optional
@@ -97,13 +98,16 @@ def airgap_mode() -> bool:
 
 _EGRESS_ACTIVE = False
 _EGRESS_BLOCKED = 0
-_EGRESS_LOCK: Any = None
+_EGRESS_LOCK = threading.Lock()
 _EGRESS_LOG_PATH: Optional[Path] = None
 _EGRESS_ORIGINALS: dict[str, Any] = {}
 _EGRESS_MODULES: dict[str, Any] = {}
 
 
-class EgressBlockedError(RuntimeError):
+from errors import QectorEgressBlockedError
+
+
+class EgressBlockedError(QectorEgressBlockedError):
     """Raised when code attempts a non-loopback network operation in air-gap mode."""
 
 
@@ -122,24 +126,25 @@ def egress_guard_status() -> dict[str, Any]:
 
 def _log_egress(host: Any, kind: str) -> None:
     global _EGRESS_BLOCKED
-    _EGRESS_BLOCKED += 1
-    try:
-        if _EGRESS_LOG_PATH is not None:
-            import json
-            import time
-            import threading
-            import traceback
-            entry = {
-                "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
-                "kind": kind,
-                "host": str(host),
-                "thread_id": threading.get_ident(),
-                "stack": traceback.format_stack()[:-1]
-            }
-            with _EGRESS_LOG_PATH.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps(entry) + "\\n")
-    except Exception:
-        pass
+    with _EGRESS_LOCK:
+        _EGRESS_BLOCKED += 1
+        try:
+            if _EGRESS_LOG_PATH is not None:
+                import json
+                import time
+                import traceback
+                entry = {
+                    "timestamp": time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+                    "kind": kind,
+                    "host": str(host),
+                    "thread_id": threading.get_ident(),
+                    "stack": traceback.format_stack()[:-1]
+                }
+                # One JSON object per line (real newline) — JSONL contract.
+                with _EGRESS_LOG_PATH.open("a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(entry) + "\n")
+        except Exception:
+            pass
 
 
 def _is_loopback_host(host: Any) -> bool:

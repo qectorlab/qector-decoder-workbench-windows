@@ -130,14 +130,20 @@ class _ToolRegistry:
             params = {}
         if not isinstance(params, dict):
             raise MCPError(f"tool parameters must be an object, got {type(params).__name__}")
-        # Per-tool timeout to prevent hung requests from blocking the server
+        # Per-tool timeout to prevent hung requests from blocking the server.
+        # A persistent executor is reused across calls (one ThreadPoolExecutor
+        # per call leaks threads). On timeout we do NOT wait for the hung
+        # handler: the future is left running in the background (a running
+        # Python thread cannot be force-killed) and the caller gets an error.
         import concurrent.futures
+        executor = _get_tool_executor()
+        future = executor.submit(handler, **params)
         try:
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                future = executor.submit(handler, **params)
-                result = future.result(timeout=timeout)
+            result = future.result(timeout=timeout)
         except concurrent.futures.TimeoutError:
-            raise MCPError(f"tool {name!r} timed out after {timeout}s")
+            future.cancel()  # best-effort: only works if not yet started
+            _log(f"tool {name!r} timed out after {timeout}s; handler left running in background")
+            raise MCPError(f"tool {name!r} timed out after {timeout}s") from None
         except MCPError:
             raise
         except TypeError as e:
@@ -149,6 +155,22 @@ class _ToolRegistry:
 _server_instance: Optional["MCPServer"] = None
 _server_lock = threading.Lock()
 _registry: Optional[_ToolRegistry] = None
+
+# Persistent executor for tool handlers (see _ToolRegistry.execute).
+_tool_executor: Optional[Any] = None
+_tool_executor_lock = threading.Lock()
+
+
+def _get_tool_executor():
+    """Return the shared tool-handler executor, creating it on first use."""
+    global _tool_executor
+    with _tool_executor_lock:
+        if _tool_executor is None:
+            import concurrent.futures
+            _tool_executor = concurrent.futures.ThreadPoolExecutor(
+                max_workers=4, thread_name_prefix="qector-mcp-tool"
+            )
+        return _tool_executor
 
 
 def _require_registry() -> "_ToolRegistry":
@@ -173,6 +195,9 @@ _config: dict[str, Any] = {}
 _clients: dict[str, dict[str, Any]] = {}
 # Stored benchmark results keyed by result_id (insertion-ordered).
 _results: dict[str, dict[str, Any]] = {}
+# Guards _config, _clients and _results: tool handlers run on arbitrary
+# executor threads, so all mutations of these dicts must hold this lock.
+_state_lock = threading.RLock()
 
 
 # ---------------------------------------------------------------------------
@@ -592,8 +617,9 @@ def _handle_benchmark_decoder(decoder_name: str = "union_find", code_family: str
 def _handle_clear_results(confirm: bool = False) -> dict:
     if not confirm:
         raise MCPError("confirmation required: set confirm=True to clear all results")
-    n = len(_results)
-    _results.clear()
+    with _state_lock:
+        n = len(_results)
+        _results.clear()
     return {"cleared": True, "removed": n, "status": "ok"}
 
 
@@ -604,7 +630,8 @@ def _handle_compare_benchmarks(benchmarks: list) -> dict:
     missing: list[str] = []
     for rid in benchmarks:
         rid = str(rid)
-        entry = _results.get(rid)
+        with _state_lock:
+            entry = _results.get(rid)
         if entry is None:
             missing.append(rid)
             continue
@@ -787,7 +814,8 @@ def _handle_export_benchmark(benchmark_id: str, format: str = "json") -> dict:
     if format not in valid_formats:
         raise MCPError(f"unsupported export format: {format!r} (supported: {', '.join(valid_formats)})")
     benchmark_id = str(benchmark_id)
-    entry = _results.get(benchmark_id)
+    with _state_lock:
+        entry = _results.get(benchmark_id)
     if entry is None:
         raise MCPError(f"unknown benchmark id {benchmark_id!r}")
     
@@ -865,7 +893,8 @@ def _handle_get_code_properties(family_name: str = "ring", distance: int = 5) ->
 
 
 def _handle_get_config() -> dict:
-    return dict(_get_default_config(), **_config)
+    with _state_lock:
+        return dict(_get_default_config(), **_config)
 
 
 def _handle_get_decoder_info(decoder_name: str = "bp_osd") -> dict:
@@ -903,13 +932,15 @@ def _handle_get_results(limit: int = 10) -> dict:
     limit = _require_int("limit", limit)
     if limit < 1:
         raise MCPError("parameter 'limit' must be >= 1")
-    stored = list(_results.values())
+    with _state_lock:
+        stored = list(_results.values())
     return {"results": stored[-limit:], "total": len(stored), "limit": limit}
 
 
 def _handle_get_statistics() -> dict:
-    return {"total_results": len(_results), "total_clients": len(_clients),
-            "config_keys": len(_config)}
+    with _state_lock:
+        return {"total_results": len(_results), "total_clients": len(_clients),
+                "config_keys": len(_config)}
 
 
 def _handle_get_system_info() -> dict:
@@ -981,8 +1012,10 @@ def _handle_hybrid_cascade_stats(family: str = "rotated_surface", distance: int 
 
 
 def _handle_list_clients() -> dict:
-    return {"clients": [{"id": cid, **data} for cid, data in _clients.items()],
-            "count": len(_clients)}
+    with _state_lock:
+        clients = [{"id": cid, **data} for cid, data in _clients.items()]
+        count = len(_clients)
+    return {"clients": clients, "count": count}
 
 
 def _handle_list_code_families() -> dict:
@@ -1053,14 +1086,16 @@ def _handle_recommend_decoder(family: str = "rotated_surface", distance: int = 5
 
 
 def _handle_register_client(client_id: str, access_level: str = "USER") -> dict:
-    _clients[client_id] = {"access_level": access_level, "registered_at": time.time()}
+    with _state_lock:
+        _clients[client_id] = {"access_level": access_level, "registered_at": time.time()}
     return {"client_id": client_id, "access_level": access_level, "status": "registered"}
 
 
 def _handle_reset_config(confirm: bool = False) -> dict:
     if not confirm:
         raise MCPError("confirmation required: set confirm=True to reset config")
-    _config.clear()
+    with _state_lock:
+        _config.clear()
     return {"reset": True, "config": _get_default_config()}
 
 
@@ -1077,16 +1112,18 @@ def _handle_run_benchmark(code_family: str = "rotated_surface", distance: int = 
     )
     result_id = uuid.uuid4().hex
     entry = _json_safe(dict(result, result_id=result_id))
-    _results[result_id] = entry
+    with _state_lock:
+        _results[result_id] = entry
     return entry
 
 
 def _handle_set_config(config: dict) -> dict:
     if not isinstance(config, dict):
         raise MCPError("parameter 'config' must be an object mapping keys to values")
-    _config.update(config)
-    return {"updated": sorted(str(k) for k in config),
-            "config": dict(_get_default_config(), **_config)}
+    with _state_lock:
+        _config.update(config)
+        merged = dict(_get_default_config(), **_config)
+    return {"updated": sorted(str(k) for k in config), "config": merged}
 
 
 def _handle_stream_decode(family: str = "rotated_surface", distance: int = 5,
@@ -2269,16 +2306,26 @@ def _handle_export_figure(family: str = "rotated_surface", distance: int = 5,
 
 
 def _handle_get_server_env() -> dict:
-    """Return the effective QECTOR environment variables (tuning vars)."""
+    """Return the effective QECTOR environment variables (tuning vars).
+
+    Secret-bearing variables (license key, MCP token) are NEVER returned —
+    they are reported as "set"/"unset" only, so an MCP client cannot exfiltrate
+    credentials through this tool.
+    """
     import os
     keys = (
         "QECTOR_BLOSSOM_K_MULT", "QECTOR_BLOSSOM_INTRA_PAR",
         "QECTOR_BLOSSOM_INTRA_THREADS", "QECTOR_CUDA_DEVICE_ID",
         "QECTOR_OPENCL_DEVICE_ALLOW", "QECTOR_SILENT",
-        "QECTOR_ENFORCE", "QECTOR_LICENSE_KEY", "QECTOR_LICENSE_FILE",
-        "QECTOR_PROVISION_TIMEOUT", "QECTOR_MCP_TOKEN",
+        "QECTOR_ENFORCE", "QECTOR_LICENSE_FILE",
+        "QECTOR_PROVISION_TIMEOUT",
     )
-    return {k: os.environ.get(k) for k in keys if os.environ.get(k) is not None}
+    secret_keys = ("QECTOR_LICENSE_KEY", "QECTOR_MCP_TOKEN")
+    result = {k: os.environ.get(k) for k in keys if os.environ.get(k) is not None}
+    for k in secret_keys:
+        if os.environ.get(k):
+            result[k] = "<set:redacted>"
+    return result
 
 
 def _handle_compliance_attestation() -> dict:
@@ -2586,15 +2633,30 @@ async def _handle_tools_call(params: Any) -> dict:
     return {"content": [{"type": "text", "text": text}], "isError": False}
 
 
+# Set to True once a client has successfully completed `initialize` with a
+# valid token (or when no token is configured). tools/list and tools/call are
+# rejected before that point when QECTOR_MCP_TOKEN is set.
+_session_authenticated = False
+
+
+def _auth_required() -> bool:
+    return bool(os.environ.get("QECTOR_MCP_TOKEN"))
+
+
 async def _dispatch_method(method: Any, params: Any) -> Any:
+    global _session_authenticated
     if method == "initialize":
-        # CSRF token validation
+        # CSRF token validation (constant-time comparison)
         expected_token = os.environ.get("QECTOR_MCP_TOKEN")
         if expected_token:
+            import hmac as _hmac
             client_token = params.get("token") if isinstance(params, dict) else None
-            if client_token != expected_token:
+            if not isinstance(client_token, str) or not _hmac.compare_digest(
+                client_token.encode("utf-8"), expected_token.encode("utf-8")
+            ):
                 _log("initialize rejected: invalid token")
                 raise _InvalidParams("invalid or missing connection token")
+        _session_authenticated = True
         return {
             "protocolVersion": PROTOCOL_VERSION,
             "capabilities": {"tools": {}},
@@ -2604,6 +2666,10 @@ async def _dispatch_method(method: Any, params: Any) -> Any:
         return None
     if method == "ping":
         return {}
+    if _auth_required() and not _session_authenticated:
+        # Never serve tool traffic before a successful authenticated initialize.
+        _log(f"rejected {method!r}: session not authenticated")
+        raise _InvalidParams("session not authenticated: call initialize with a valid token first")
     if method == "tools/list":
         return _list_tools_payload()
     if method == "tools/call":

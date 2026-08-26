@@ -145,7 +145,8 @@ def test_compliance_report_shape(monkeypatch, tmp_path):
     assert report["compliant"] is True
     assert report["attestation"]["egress_guard"]["active"] is True
     assert report["attestation"]["runtime"] in ("source", "frozen")
-    assert report["version"]["workbench"] == "1.0.2"
+    from version import WORKBENCH_VERSION
+    assert report["version"]["workbench"] == WORKBENCH_VERSION
     assert report["version"]["mcp_tools"] >= 83
     assert report["entra"]["status"] == "disabled"
     assert report["license"]["blocking_network_call"] is False

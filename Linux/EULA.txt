@@ -1,8 +1,8 @@
-ï»¿================================================================================
+================================================================================
 
                      END USER LICENSE AGREEMENT (EULA)
 
-                       QECTOR Decoder Workbench v1.0.1
+                       QECTOR Decoder Workbench v1.0.3
 
 ================================================================================
 
@@ -16,8 +16,8 @@ Contact:         admin@qector.store
 
 
 This End User License Agreement ("Agreement") is a legal agreement between
-you â€” whether an individual, academic institution, research laboratory, or
-a single corporate entity â€” ("User") and Guillaume Lessard, operating as
+you — whether an individual, academic institution, research laboratory, or
+a single corporate entity — ("User") and Guillaume Lessard, operating as
 iD01t Productions ("Licensor"), for the QECTOR Decoder Workbench software
 application, including but not limited to all executable binaries, graphical
 interface components, command-line tools, MCP server modules, documentation
@@ -30,9 +30,9 @@ BOUND BY THE TERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU DO NOT AGREE
 TO THESE TERMS, DO NOT DOWNLOAD, INSTALL, OR USE THE SOFTWARE.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   1.  GRANT OF LICENSE
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 1.1  Licensor hereby grants User a non-exclusive, royalty-free, worldwide,
      fully paid-up, perpetual (subject to Section 9) license to:
@@ -50,12 +50,12 @@ TO THESE TERMS, DO NOT DOWNLOAD, INSTALL, OR USE THE SOFTWARE.
 
 1.2  This license covers the QECTOR Decoder Workbench application only.
      The runtime backend engine (qector-decoder-v3) is a separately
-     licensed component governed by its own terms â€” see Section 7.
+     licensed component governed by its own terms — see Section 7.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   2.  RESTRICTIONS
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 User shall not:
 
@@ -85,13 +85,13 @@ User shall not:
      prior written consent.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   3.  INTELLECTUAL PROPERTY
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
-3.1  The Software and all intellectual property rights therein â€” including
+3.1  The Software and all intellectual property rights therein — including
      but not limited to copyrights, trademarks, trade secrets, patents, and
-     design rights â€” are and shall remain the exclusive property of
+     design rights — are and shall remain the exclusive property of
      Licensor. This Agreement does not transfer any ownership rights.
 
 3.2  The "QECTOR" name, logo, icon, and associated branding elements are
@@ -105,9 +105,9 @@ User shall not:
      (b) Accurate attribution when published or distributed.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   4.  USER-GENERATED OUTPUT
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 4.1  The Software generates analysis results, benchmark data, decode
      reports, and documentation in various formats (Markdown, JSON, HTML,
@@ -120,9 +120,9 @@ User shall not:
      the purpose for which the output is used.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   5.  NETWORK & OFFLINE OPERATION
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 5.1  The Software is fully self-contained and operates entirely offline.
      The decoder engine wheel is bundled inside the application and is
@@ -134,9 +134,9 @@ User shall not:
      usage analytics, crash reports, or telemetry of any kind.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   6.  MCP SERVER & AI INTEGRATION
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 6.1  The Software includes a Model Context Protocol (MCP) server that
      exposes decoder functionality via stdio JSON-RPC. When launched in
@@ -150,9 +150,9 @@ User shall not:
      actions taken by third-party AI systems using the MCP interface.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   7.  THIRD-PARTY COMPONENTS & BACKEND LICENSE
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 7.1  RUNTIME BACKEND:  The Software depends on the qector-decoder-v3
      engine at runtime. This backend is a separately licensed, source-
@@ -184,9 +184,9 @@ User shall not:
      the application's installation directory where applicable.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   8.  DISCLAIMER OF WARRANTIES
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE," WITHOUT WARRANTY
 OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO:
@@ -210,9 +210,9 @@ MEDICAL DEVICES, OR ANY APPLICATION WHERE FAILURE COULD LEAD TO
 PERSONAL INJURY, DEATH, OR SIGNIFICANT PROPERTY DAMAGE.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   9.  LIMITATION OF LIABILITY
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 9.1  TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT
      SHALL LICENSOR, ITS AFFILIATES, CONTRIBUTORS, OR AGENTS BE LIABLE
@@ -242,9 +242,9 @@ PERSONAL INJURY, DEATH, OR SIGNIFICANT PROPERTY DAMAGE.
      (WHICH, FOR THE FREE LICENSE, IS ZERO).
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   10. INDEMNIFICATION
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 User agrees to indemnify, defend, and hold harmless Licensor, its
 officers, employees, and agents from and against any claims, damages,
@@ -257,9 +257,9 @@ fees) arising out of or related to:
       any output generated by the Software.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   11. TERMINATION
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 11.1 This Agreement is effective from the date User first uses the
      Software and remains in effect until terminated.
@@ -278,9 +278,9 @@ fees) arising out of or related to:
      termination of this Agreement.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   12. GOVERNING LAW & DISPUTE RESOLUTION
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 12.1 This Agreement shall be governed by and construed in accordance with
      the laws of the Province of Quebec, Canada, without regard to its
@@ -297,9 +297,9 @@ fees) arising out of or related to:
      jurisdiction in the Province of Quebec, Canada.
 
 
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
   13. GENERAL PROVISIONS
-â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”
+————————————————————————————————————————
 
 13.1 ENTIRE AGREEMENT:  This Agreement constitutes the entire agreement
      between User and Licensor regarding the Software and supersedes all
@@ -338,7 +338,7 @@ fees) arising out of or related to:
 
 ================================================================================
 
-  QECTOR Decoder Workbench v1.0.1
+  QECTOR Decoder Workbench v1.0.3
   (c) 2026 Guillaume Lessard / iD01t Productions
   All rights reserved except as expressly granted herein.
 

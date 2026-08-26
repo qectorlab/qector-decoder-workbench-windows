@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.3
+
+- **Security hardening**: MCP `get_server_env` redacts secrets; MCP token auth
+  uses constant-time comparison and gates `tools/list`/`tools/call` behind an
+  authenticated `initialize`; Entra token cache storage fails closed instead of
+  silently falling back to plaintext base64; the REST API refuses non-loopback
+  binds without `--allow-remote`; child processes no longer inherit the license
+  key via the environment; VNC container requires a build-time password and
+  binds to loopback only.
+- **Reliability**: MCP tool execution reuses a persistent executor (no thread
+  leak, real timeout semantics); egress log writes valid JSONL; shared server
+  state is lock-guarded; version cache writes are atomic; `UiPump` post/close
+  race removed.
+- **CLI**: `python cli.py` now works directly (`__main__` guard); global flags
+  such as `--json` are accepted both before and after any subcommand; `probe`
+  wiring fixed.
+- **UI**: Code Explorer action buttons moved to their own row (no truncation);
+  apps boot maximized with native window buttons instead of borderless
+  fullscreen; no double dashes anywhere in app UI, docs, or generated documents.
+- **Supply chain**: runtime dependencies pinned; Dockerfile installs only from
+  bundled wheels (`--no-index`); wheel extraction guards against zip-slip.
+
 ## 1.0.2
 
 - **Air-Gapped Lab Certification**: Full offline compliance with sanitized documentation, offline-only licensing, and zero external pricing/purchase endpoints.

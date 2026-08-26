@@ -257,7 +257,7 @@ def write_sha256_manifest(directory: Any, files: Iterable[Any],
     try:
         directory = Path(directory)
         lines = [
-            "# SHA-256 checksums -- QECTOR Decoder Workbench export",
+            "# SHA-256 checksums: QECTOR Decoder Workbench export",
             f"# Generated: {datetime.now(timezone.utc).isoformat(timespec='seconds')}",
             f"# Verify:    sha256sum -c {manifest_name}",
         ]
@@ -273,6 +273,15 @@ def write_sha256_manifest(directory: Any, files: Iterable[Any],
 
 
 def get_machine_derived_key() -> bytes:
+    """Derive a machine-bound Fernet key from stable host attributes.
+
+    SECURITY NOTE: this is *obfuscation*, not strong encryption. The inputs
+    (MAC address, hostname, platform, processor) are known to any process
+    running on the same machine, so the key is derivable by a local attacker.
+    It protects secrets only against casual offline inspection of files, NOT
+    against on-machine attackers. Prefer OS-backed storage (DPAPI / keyring)
+    wherever available.
+    """
     import hashlib
     import base64
     import platform

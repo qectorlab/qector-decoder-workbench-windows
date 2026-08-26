@@ -137,7 +137,11 @@ def _save_disk_cache(data: dict[str, Any]) -> None:
     if p is None:
         return
     try:
-        p.write_text(json.dumps(data), encoding="utf-8")
+        # Atomic write: write to a temp file then rename, so a crash or a
+        # concurrent process can never leave a truncated/corrupt cache.
+        tmp = p.with_suffix(p.suffix + ".tmp")
+        tmp.write_text(json.dumps(data), encoding="utf-8")
+        os.replace(tmp, p)
     except Exception:
         pass
 

@@ -1,6 +1,6 @@
 # QECTOR Decoder Workbench: NIST & FIPS Compliance Mapping
 
-This document details the compliance architecture and security controls implemented in the QECTOR Decoder Workbench v1.0.2. It aligns the application's capabilities with the requirements of NIST SP 800-171, NIST SP 800-53, and FIPS 140-3 for secure, air-gapped, and enterprise-connected deployments.
+This document details the compliance architecture and security controls implemented in the QECTOR Decoder Workbench v1.0.1. It aligns the application's capabilities with the requirements of NIST SP 800-171, NIST SP 800-53, and FIPS 140-3 for secure, air-gapped, and enterprise-connected deployments.
 
 ## 1. Access Control (AC) / Information Flow Control
 *NIST SP 800-53: AC-3, AC-4 | NIST SP 800-171: 3.1.1, 3.1.2*

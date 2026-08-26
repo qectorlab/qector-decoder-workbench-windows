@@ -12,10 +12,14 @@ RUN apt-get update && apt-get install -y \
     dbus-x11 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create VNC password file (change 'password' to your desired password)
+# VNC password is REQUIRED at build time — no insecure default.
+# Build with: docker build -f Dockerfile.gui --build-arg VNC_PASSWORD=<strong-password> .
+ARG VNC_PASSWORD
+RUN test -n "$VNC_PASSWORD" || (echo "ERROR: VNC_PASSWORD build-arg is required" && exit 1)
 RUN mkdir -p /root/.vnc && \
-    echo "password" | vncpasswd -f > /root/.vnc/passwd && \
-    chmod 600 /root/.vnc/passwd
+    echo "$VNC_PASSWORD" | vncpasswd -f > /root/.vnc/passwd && \
+    chmod 600 /root/.vnc/passwd && \
+    unset VNC_PASSWORD
 
 # Create supervisor config
 RUN mkdir -p /etc/supervisor/conf.d

@@ -366,9 +366,23 @@ def import_ok() -> bool:
         return False
 
 
+def _scrubbed_env() -> dict:
+    """Environment for child processes with workbench secrets removed.
+
+    The decrypted license key and MCP token live in this process's env
+    (main.py); child processes (pip, probes) must not inherit them — they are
+    readable via /proc/<pid>/environ / WMI while the child runs.
+    """
+    env = dict(os.environ)
+    for _k in ("QECTOR_LICENSE_KEY", "QECTOR_MCP_TOKEN"):
+        env.pop(_k, None)
+    return env
+
+
 def _run(command: list[str], timeout: int) -> tuple[int, str, str]:
     try:
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=timeout)
+        completed = subprocess.run(command, capture_output=True, text=True,
+                                   timeout=timeout, env=_scrubbed_env())
         return completed.returncode, completed.stdout or "", completed.stderr or ""
     except subprocess.TimeoutExpired:
         return 124, "", f"timed out after {timeout}s"
@@ -910,7 +924,17 @@ def ensure(prefer_latest: bool = True, timeout: Optional[int] = None,
     return result
 
 
+# Pinned to the verified working set (see requirements.txt). Pins prevent
+# silent upgrades to untested/breaking versions during auto-install.
 REQUIRED_DEPENDENCIES = ["numpy", "scipy", "matplotlib", "Pillow", "customtkinter", "psutil"]
+_DEPENDENCY_PINS = {
+    "numpy": "numpy==2.2.6",          # must stay <2.3 (decoder Rust bindings)
+    "scipy": "scipy==1.18.0",
+    "matplotlib": "matplotlib==3.11.1",
+    "Pillow": "Pillow==12.3.0",
+    "customtkinter": "customtkinter==6.0.0",
+    "psutil": "psutil==7.2.2",
+}
 
 
 def ensure_dependencies(on_log: Optional[Callable[[str], None]] = None) -> dict:
@@ -935,7 +959,7 @@ def ensure_dependencies(on_log: Optional[Callable[[str], None]] = None) -> dict:
         except Exception:
             pass
 
-    command = argv + ["install", "--upgrade"] + missing
+    command = argv + ["install"] + [_DEPENDENCY_PINS.get(pkg, pkg) for pkg in missing]
     rc, out, err = _run(command, _provision_timeout())
     if rc == 0:
         return {"ok": True, "installed": missing, "message": f"installed missing dependencies {missing}"}
@@ -1000,6 +1024,13 @@ def _extract_wheel_direct(wheel_path: Path) -> tuple[bool, str, Optional[str]]:
             if disk_err:
                 return False, disk_err, version
             destination.mkdir(parents=True, exist_ok=True)
+            # Zip-slip guard: reject any member that would write outside the
+            # destination (absolute paths or '..' traversal) before extracting.
+            dest_root = destination.resolve()
+            for member in zip_ref.namelist():
+                target = (dest_root / member).resolve()
+                if target != dest_root and dest_root not in target.parents:
+                    return False, f"unsafe path in wheel archive: {member!r}", version
             zip_ref.extractall(destination)
 
             ok_import, detail = _verify_import(destination)

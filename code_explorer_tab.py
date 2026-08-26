@@ -131,14 +131,20 @@ if _HAS_GUI:
             )
             self.status_label.pack(side="left", padx=(14, 0))
 
+            # ── Action buttons live on their own row so they are never
+            # truncated when the window is too narrow to fit everything on
+            # a single line.
+            actions = ctk.CTkFrame(controls, fg_color="transparent")
+            actions.pack(fill="x", pady=(8, 0))
+
             self.gen_doc_btn = ctk.CTkButton(
-                row, text="📄 Generate Doc", command=self._on_generate_doc,
+                actions, text="📄 Generate Doc", command=self._on_generate_doc,
                 font=ctk.CTkFont(size=12, weight="bold"), width=130,
             )
-            self.gen_doc_btn.pack(side="left", padx=(14, 0))
+            self.gen_doc_btn.pack(side="left")
 
             self.quick_export_btn = ctk.CTkButton(
-                row, text="Quick Export", command=self._on_quick_export,
+                actions, text="Quick Export", command=self._on_quick_export,
                 font=ctk.CTkFont(size=12), width=110,
                 fg_color=theme.COLORS.get("bg_widget", "gray20"),
                 hover_color=theme.COLORS.get("bg_panel", "gray30"),
@@ -146,7 +152,7 @@ if _HAS_GUI:
             self.quick_export_btn.pack(side="left", padx=(8, 0))
 
             self.import_dem_btn = ctk.CTkButton(
-                row, text="Import DEM", command=self._on_import_dem,
+                actions, text="Import DEM", command=self._on_import_dem,
                 font=ctk.CTkFont(size=12), width=90,
                 fg_color=theme.COLORS.get("bg_widget", "gray20"),
                 hover_color=theme.COLORS.get("bg_panel", "gray30"),
@@ -154,7 +160,7 @@ if _HAS_GUI:
             self.import_dem_btn.pack(side="left", padx=(8, 0))
 
             self.import_stim_btn = ctk.CTkButton(
-                row, text="Import Stim", command=self._on_import_stim,
+                actions, text="Import Stim", command=self._on_import_stim,
                 font=ctk.CTkFont(size=12), width=90,
                 fg_color=theme.COLORS.get("bg_widget", "gray20"),
                 hover_color=theme.COLORS.get("bg_panel", "gray30"),

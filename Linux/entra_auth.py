@@ -139,10 +139,15 @@ def _encrypt(data: str) -> str:
         try:
             from utils import encrypt_license_key
             return encrypt_license_key(data)
-        except Exception:
-            # Absolute fallback if utils missing
-            import base64
-            return "B64:" + base64.b64encode(data.encode('utf-8')).decode('utf-8')
+        except Exception as exc:
+            # FAIL CLOSED: never store tokens in reversible plaintext (the old
+            # base64 fallback silently stored secrets effectively in cleartext
+            # while docs claimed "tokens at rest are encrypted").
+            raise RuntimeError(
+                "No secure storage backend available (DPAPI/keyring/Fernet all "
+                "failed); refusing to store Entra token cache in plaintext. "
+                "Install 'keyring' or 'cryptography' to enable secure storage."
+            ) from exc
 
 
 def _decrypt(data: str) -> Optional[str]:
@@ -155,7 +160,15 @@ def _decrypt(data: str) -> Optional[str]:
             import keyring
             return keyring.get_password("qector_entra", "token_cache")
         if data.startswith("B64:"):
+            # Legacy insecure format: still readable so existing installs don't
+            # break, but warn loudly — it is effectively cleartext.
             import base64
+            import warnings
+            warnings.warn(
+                "Entra token cache is stored in legacy base64 (cleartext) format; "
+                "re-run `qector entra configure` to re-store it encrypted.",
+                stacklevel=2,
+            )
             return base64.b64decode(data[4:]).decode('utf-8')
         from utils import decrypt_license_key
         return decrypt_license_key(data)
@@ -466,8 +479,9 @@ def login(flow: str = "browser", message_cb=None) -> dict[str, Any]:
             result = app.acquire_token_interactive(scopes=scopes, parent_window_handle=app.CONSOLE_WINDOW_HANDLE)
             
         elif flow == "browser":
-            # PKCE loopback flow
-            result = app.acquire_token_interactive(scopes=scopes, port=8400)
+            # PKCE loopback flow — omit `port` so MSAL binds an ephemeral port
+            # (a fixed port is open to local DoS / port squatting).
+            result = app.acquire_token_interactive(scopes=scopes)
             
         else: # device
             device_flow = app.initiate_device_flow(scopes=scopes)
@@ -519,8 +533,12 @@ def login_client_credentials(secret: Optional[str] = None, thumbprint: Optional[
         result = app.acquire_token_for_client(scopes=scopes)
         if "access_token" not in result:
             return {"ok": False, "status": "failed", "reason": str(result.get("error", result))}
-            
-        return {"ok": True, "status": "authenticated", "sp_mode": True, "access_token": result["access_token"]}
+
+        # Deliberately do NOT return the raw access token: this dict flows
+        # through MCP _json_safe and can be printed/logged by callers.
+        expires_in = result.get("expires_in")
+        return {"ok": True, "status": "authenticated", "sp_mode": True,
+                "token_acquired": True, "expires_in": expires_in}
     except Exception as exc:
         return {"ok": False, "status": "failed", "reason": f"{type(exc).__name__}: {exc}"}
 

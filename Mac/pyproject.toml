@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qector-workbench"
-version = "1.0.2"
+version = "1.0.3"
 description = "Professional QEC analysis suite built on qector-decoder-v3"
 readme = "README.md"
 license = {text = "Proprietary"}
@@ -21,16 +21,26 @@ classifiers = [
 ]
 dependencies = [
     "customtkinter>=5.2.0",
-    "numpy>=1.24",
+    # numpy <2.3: the qector-decoder-v3 wheel's compiled bindings reject
+    # arrays from numpy >= 2.3 (see requirements.txt).
+    "numpy>=1.24,<2.3",
     "scipy>=1.9",
     "matplotlib>=3.8",
     "Pillow>=9.0",
     "psutil>=5.9",
+    # Imported by qector-decoder-v3 at package import time (license checks);
+    # the decoder is installed --no-deps so this must be declared here.
+    "cryptography>=41.0",
+    # In-app official-docs PDF export.
+    "reportlab>=4.0",
 ]
 
 [project.optional-dependencies]
+docx = [
+    "python-docx>=1.1.0",
+]
 dev = [
-    "qector-decoder-v3>=0.6.2",
+    "qector-decoder-v3==1.0.0",
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "pytest-asyncio>=0.21",
@@ -45,7 +55,7 @@ dev = [
 
 [project.urls]
 Homepage = "https://www.qector.store"
-"Commercial licensing" = "mailto:admin@qector.store"
+"Commercial licensing" = "https://qector.store/pricing"
 
 [project.scripts]
 qector = "main:launch"
@@ -88,6 +98,7 @@ py-modules = [
     "lab_info_tab",
     "compliance",
     "entra_auth",
+    "errors",
 ]
 
 [tool.pytest.ini_options]

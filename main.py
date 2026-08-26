@@ -426,6 +426,10 @@ def launch() -> int:
             if content:
                 try:
                     decrypted = utils.decrypt_license_key(content)
+                    # NOTE: the decoder reads the key from the environment at
+                    # runtime. Child processes spawned by the provisioner are
+                    # given a scrubbed env (see decoder_provisioner._scrubbed_env)
+                    # so the key does not leak into pip/probe subprocesses.
                     os.environ["QECTOR_LICENSE_KEY"] = decrypted
                 except Exception:
                     # Legacy plaintext key: migrate and encrypt

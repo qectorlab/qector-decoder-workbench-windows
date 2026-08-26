@@ -4,8 +4,8 @@
 # release line (0.5.x) and is deliberately INDEPENDENT of BACKEND_VERSION
 # below: the decoder ships on its own cadence, and copying its number here has
 # already caused a release to be labelled with the backend's version.
-WORKBENCH_VERSION = "1.0.1"
-DOC_GENERATOR_VERSION = "1.0.1"
+WORKBENCH_VERSION = "1.0.3"
+DOC_GENERATOR_VERSION = "1.0.3"
 # Backend: qector-decoder-v3.  It IS bundled into the app as a platform-specific
 # wheel.  decoder_provisioner activates it from the bundled wheel into an
 # ABI-scoped managed site on first launch (offline).  BACKEND_VERSION is the

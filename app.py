@@ -382,11 +382,14 @@ class QectorApp:
         try:
             self._app.update_idletasks()
             if _START_MAXIMIZED:
+                # Prefer a MAXIMIZED window (state "zoomed") over true
+                # fullscreen: fullscreen hides the title bar, which removes
+                # the minimize/maximize/close window buttons entirely.
                 try:
-                    self._app.attributes("-fullscreen", True)
+                    self._app.state("zoomed")
                 except Exception:
                     try:
-                        self._app.state("zoomed")
+                        self._app.attributes("-fullscreen", True)
                     except Exception:
                         pass
             # Always center explicitly so single-monitor / fallback layouts

@@ -324,7 +324,7 @@ if _HAS_GUI:
                 f"\n"
                 f"Throughput:         {result['throughput_decodes_per_s']:.0f} decodes/s\n"
                 f"Total decode time:  {result['decode_seconds'] * 1000:.2f} ms\n"
-                f"\n--- Latency (us) ---\n"
+                f"LATENCY (us):\n"
                 f"  mean:             {result['latency_mean_us']:.1f}\n"
                 f"  p50:              {result['latency_p50_us']:.1f}\n"
                 f"  p99:              {result['latency_p99_us']:.1f}\n"
