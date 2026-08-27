@@ -19,8 +19,8 @@ build) or installs a wheel-only release from `https://pypi.org/simple` with
 atomic `active.json` pointer changes only after a successful installation and
 import verification, so a failed upgrade leaves the previous decoder usable.
 
-The managed site is **partitioned by interpreter ABI** — installs live under an
-`<cache_tag>-<arch>` subdirectory (e.g. `cpython-311-x8664`) — so a frozen
+The managed site is **partitioned by interpreter ABI**  -  installs live under an
+`<cache_tag>-<arch>` subdirectory (e.g. `cpython-311-x8664`)  -  so a frozen
 Python 3.11 app and a Python 3.12 source run keep entirely separate decoders and
 never load each other's incompatible compiled extension. Presence is judged by
 **actually importing** the decoder (the native `.pyd`/`.so` must load), not by
@@ -47,7 +47,7 @@ and `$XDG_DATA_HOME/QectorWorkbench/decoder_site/<abi_tag>` or
 interpreter used for provisioning. At every launch the provisioner also purges
 managed decoder versions older than the minimum supported release before
 activating the bundled wheel, so upgrading from an older build needs no manual
-cleanup. As of workbench v0.5.2 there are no background upgrade checks — the
+cleanup. As of workbench v0.5.2 there are no background upgrade checks  -  the
 bundled wheel is the single source of truth.
 
 ## Build artifacts

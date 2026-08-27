@@ -1,4 +1,4 @@
-"""tooltip.py — lightweight hover tooltips for QECTOR Workbench widgets.
+"""tooltip.py  -  lightweight hover tooltips for QECTOR Workbench widgets.
 
 CustomTkinter has no built-in tooltip and Tk exposes no real accessibility
 tree, so a hover tooltip is the pragmatic stand-in for a screen-reader label

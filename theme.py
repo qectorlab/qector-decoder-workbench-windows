@@ -1,4 +1,4 @@
-"""theme.py — Theme, palette and font definitions for QECTOR Workbench."""
+"""theme.py  -  Theme, palette and font definitions for QECTOR Workbench."""
 
 from __future__ import annotations
 
@@ -231,7 +231,7 @@ def configure_matplotlib() -> None:
         rc["ps.fonttype"] = 42
 
     except Exception:
-        # matplotlib not installed or rcParams key changed — silently ignore
+        # matplotlib not installed or rcParams key changed  -  silently ignore
         pass
 
 

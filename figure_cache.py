@@ -1,15 +1,15 @@
-"""figure_cache.py — LRU figure cache for QECTOR Workbench GUI tabs.
+"""figure_cache.py  -  LRU figure cache for QECTOR Workbench GUI tabs.
 
 Matplotlib figures re-render on every tab switch or parameter change; for
 expensive visualisations (Tanner graphs of large codes, benchmark charts
 over hundreds of results) that is wasteful.  This module provides a small
 LRU cache keyed on ``(view, *params)`` returning a pickled figure state that
-callers can restore via ``pickle.loads`` — figures themselves are not
+callers can restore via ``pickle.loads``  -  figures themselves are not
 picklable, but their drawing state is, so a cached figure restores exactly
 what was last drawn without re-running the layout algorithm.
 
 The cache is a convenience layer: every function here is a best-effort
-wrapper and never raises.  Headless/import-time safety is guaranteed — the
+wrapper and never raises.  Headless/import-time safety is guaranteed  -  the
 cache never imports matplotlib itself.
 """
 

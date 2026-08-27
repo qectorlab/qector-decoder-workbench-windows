@@ -1,4 +1,4 @@
-"""generate_manuals.py — build the QECTOR Decoder Workbench public documentation.
+"""generate_manuals.py  -  build the QECTOR Decoder Workbench public documentation.
 
 Every document is derived from the LIVE application (the MCP tool registry, the
 backend decoder and code-family tables, and the version module) so the content
@@ -43,10 +43,10 @@ def san(text: str) -> str:
     if text is None:
         return ""
     res = (str(text)
-           .replace(" — ", ", ")
-           .replace("—", ", ")
-           .replace(" – ", " to ")
-           .replace("–", " to ")
+           .replace("  -  ", ", ")
+           .replace(" - ", ", ")
+           .replace("  -  ", " to ")
+           .replace(" - ", " to ")
            .replace("−", "-")
            .replace(" ", " "))
     while "  " in res:
@@ -567,7 +567,7 @@ def build_user_manual(platform: str, facts: dict, out_path: Path) -> None:
     # 4 First launch
     st += b.H1("First launch")
     st += [b.P("The application starts immediately. The bundled decoder backend wheel is extracted "
-               "and activated on first launch — no internet access is needed at any point. Any "
+               "and activated on first launch  -  no internet access is needed at any point. Any "
                "outdated managed decoder left by an older release is purged automatically first. "
                "The window title and the status bar show the workbench and decoder versions."),
            b.P(f"Start the graphical application with {p['run_cmd']}. To run the headless MCP server, "
@@ -653,7 +653,7 @@ def build_user_manual(platform: str, facts: dict, out_path: Path) -> None:
                    [("QECTOR_DATA_DIR", "Relocate all per-user data (logs, exports, settings) to a "
                                         "chosen directory."),
                     ("QECTOR_PYTHON", "Legacy override: path to a compatible CPython used only for "
-                                      "source-run installs. The shipped app never needs it — the "
+                                      "source-run installs. The shipped app never needs it  -  the "
                                       "decoder comes from the bundled wheel, offline."),
                     ("QECTOR_DISABLE_OPENCL", "Set to 1 to skip OpenCL probing on systems with "
                                               "unstable GPU drivers. It cannot enable OpenCL; the "
@@ -728,7 +728,7 @@ def build_quick_start(facts: dict, out_path: Path) -> None:
 
     st += b.H1("Install and run in one minute")
     st += [b.P("Every edition ships with the decoder wheel bundled inside. On first launch the "
-               "application activates qector-decoder-v3 from the bundled wheel automatically — "
+               "application activates qector-decoder-v3 from the bundled wheel automatically  -  "
                "no internet connection, Python, or pip needed at any point.")]
 
     st += [b.H2("Windows"),
@@ -1028,7 +1028,7 @@ def build_readme(facts: dict, out_path: Path) -> None:
         "  README.txt                       This index file",
         "",
         "The application bundles the decoder wheel inside. On first launch it activates",
-        "qector-decoder-v3 from the bundled wheel automatically — no internet connection,",
+        "qector-decoder-v3 from the bundled wheel automatically  -  no internet connection,",
         "Python, or pip is needed on any platform, and any outdated managed decoder left by",
         "an older release is purged automatically before activation.",
         "",
@@ -1140,13 +1140,13 @@ def _name_key(name: str) -> str:
     """Normalise a filename so renamings of the same document collide.
 
     Em dash, en dash, underscore and space all fold to a single separator, so
-    ``QECTOR Decoder v3 — Extended Reference (package only).md`` and
+    ``QECTOR Decoder v3  -  Extended Reference (package only).md`` and
     ``QECTOR_Decoder_v3_Extended_Reference_package_only.md`` both reduce to the
     same key as the current ``QECTOR Decoder v3 - Extended Reference
     (package only).md``.
     """
     stem = Path(name).stem.lower()
-    for ch in ("—", "–", "_", "-", "(", ")", "."):
+    for ch in (" - ", " - ", "_", "-", "(", ")", "."):
         stem = stem.replace(ch, " ")
     return " ".join(stem.split()) + Path(name).suffix.lower()
 

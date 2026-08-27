@@ -1,4 +1,4 @@
-"""i18n.py — Internationalization (i18n) helper for QECTOR Workbench.
+"""i18n.py  -  Internationalization (i18n) helper for QECTOR Workbench.
 
 Supports English (en), French (fr), and Japanese (ja).
 """

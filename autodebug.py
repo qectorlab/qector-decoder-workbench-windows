@@ -3,25 +3,25 @@
 A resilient layer over :mod:`backend`.  Three capabilities, all fully wired to
 the real ``qector_decoder_v3`` API: no placeholders, no mocks:
 
-1. **Resilient single decode** (:func:`resilient_single_decode`) — samples one
+1. **Resilient single decode** (:func:`resilient_single_decode`)  -  samples one
    seeded error/syndrome, then tries the requested decoder followed by an
    ordered fallback chain, *verifying* every correction against the GF(2)
    syndrome equation ``H·c == s`` and moving on when a decoder errors or returns
    an invalid correction.  Returns the first valid result plus a full trace of
    every attempt.
 
-2. **Resilient batch decode** (:func:`resilient_batch_decode`) — tries the
+2. **Resilient batch decode** (:func:`resilient_batch_decode`)  -  tries the
    requested hardware backend then falls back ``cuda → opencl → cpu``, recording
    why each backend was skipped or failed.
 
-3. **Self-diagnostics** (:func:`run_self_diagnostics`, :func:`probe_decoders`) —
+3. **Self-diagnostics** (:func:`run_self_diagnostics`, :func:`probe_decoders`)  - 
    a comprehensive environment/decoder/hardware self-test that also surfaces the
    native diagnostics of v0.6.6's ``AutoDecoder``.
 
 Design contract: **nothing here raises for control flow.**  Every public
 function returns a structured, JSON-serialisable object (dataclasses expose
 ``.to_dict()``); failures are reported, never thrown, so the GUI, the MCP server
-and tests stay bulletproof.
+and tests stay robust.
 """
 
 from __future__ import annotations
@@ -397,7 +397,7 @@ def run_self_diagnostics(probe_family: str = "repetition", probe_distance: int =
 
     # 2. Scientific dependencies.  numpy and matplotlib are imported directly by
     #    the workbench and are required; scipy is a *declared but optional*
-    #    dependency — neither the app nor the qector_decoder_v3 backend imports
+    #    dependency  -  neither the app nor the qector_decoder_v3 backend imports
     #    it, so a frozen bundle legitimately omits it.  In frozen builds we skip
     #    the scipy check entirely so diagnostics report HEALTHY; in source/dev
     #    builds a missing scipy is still a warning (degraded), never a failure.

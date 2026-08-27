@@ -1,4 +1,4 @@
-"""errors.py — Canonical exception hierarchy for QECTOR Decoder Workbench.
+"""errors.py  -  Canonical exception hierarchy for QECTOR Decoder Workbench.
 
 All modules must import their error types from here instead of redefining
 their own. ``QectorError`` derives from ``RuntimeError`` for backward

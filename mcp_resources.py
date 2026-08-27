@@ -1,4 +1,4 @@
-"""mcp_resources.py — Resource manager for MCP Server (tracking allocations)."""
+"""mcp_resources.py  -  Resource manager for MCP Server (tracking allocations)."""
 
 from __future__ import annotations
 

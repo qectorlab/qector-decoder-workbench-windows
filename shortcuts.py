@@ -1,4 +1,4 @@
-"""shortcuts.py — single source of truth for QECTOR Workbench keyboard shortcuts.
+"""shortcuts.py  -  single source of truth for QECTOR Workbench keyboard shortcuts.
 
 ``app.py`` binds every entry in :data:`SHORTCUTS`; the Keyboard Shortcuts
 dialog (F1) and the compact hint shown in Lab & Personal Info both render

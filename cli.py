@@ -227,14 +227,14 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 
 
 # Known reference LER ranges for --verify mode.
-# Format: (family, distance, decoder, (p_low, p_ref, p_high)) — (family, distance, decoder)
+# Format: (family, distance, decoder, (p_low, p_ref, p_high))  -  (family, distance, decoder)
 # keys are sorted tuples; missing entries fall back to a generic sanity check.
 _LER_REFERENCE: dict[tuple, tuple[float, float, float]] = {
-    # repetition code, d=5, union_find at p=0.05 with seed=42 — known stable range
+    # repetition code, d=5, union_find at p=0.05 with seed=42  -  known stable range
     ("repetition", 5, "union_find"): (0.00, 0.04, 0.12),
-    # rotated_surface, d=3, union_find at p=0.05 — shallow code reference
+    # rotated_surface, d=3, union_find at p=0.05  -  shallow code reference
     ("rotated_surface", 3, "union_find"): (0.00, 0.06, 0.20),
-    # rotated_surface, d=5, union_find at p=0.05 — medium code reference
+    # rotated_surface, d=5, union_find at p=0.05  -  medium code reference
     ("rotated_surface", 5, "union_find"): (0.00, 0.03, 0.15),
 }
 
@@ -932,7 +932,7 @@ def cmd_serve(args: argparse.Namespace) -> int:
             )
             return 1
         if allow_remote and host not in ("127.0.0.1", "::1", "localhost"):
-            print(f"WARNING: serving UNAUTHENTICATED API on {host}:{port} — anyone who can reach this port has full access.",
+            print(f"WARNING: serving UNAUTHENTICATED API on {host}:{port}  -  anyone who can reach this port has full access.",
                   file=sys.stderr)
 
         import qector_decoder_v3.rest_api as api
@@ -983,7 +983,7 @@ def _require_eula_or_exit() -> bool:
     try:
         from utils import get_data_dir, load_json
         if not bool(load_json(get_data_dir() / "preferences.json", {}).get("eula_accepted")):
-            print("EULA not yet accepted — please launch the GUI and accept the Licence Agreement first. Test deferred until customer accepts.", file=sys.stderr)
+            print("EULA not yet accepted  -  please launch the GUI and accept the Licence Agreement first. Test deferred until customer accepts.", file=sys.stderr)
             return False
     except Exception:
         pass
@@ -1002,7 +1002,7 @@ def cmd_test(args: argparse.Namespace) -> int:
     verbose = bool(getattr(args, "verbose", False) or getattr(args, "quiet", False) is False)
     def _print(msg: str) -> None:
         print(msg, flush=True)
-    _print("QECTOR CLI test — verbose Windows suite (bundled 1.0.0, air-gapped)")
+    _print("QECTOR CLI test  -  verbose Windows suite (bundled 1.0.0, air-gapped)")
     _print(f"  verbose={'on' if verbose else 'off'}  backend 1.0.0  wheels/SHA256SUMS.txt  session SHA256")
     try:
         import self_autodebug_backend as sab
@@ -1037,7 +1037,7 @@ def cmd_completions(args: argparse.Namespace) -> int:
     opts="decode benchmark probe diagnostics hardware list-codes list-decoders docgen version update selftest compare batch stream train export import matrix serve doctor decode_mmap completions --json --no-color --no-banner --output --verbose --quiet --config"
 
     if [[ ${COMP_CWORD} -eq 1 ]] ; then
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        COMPREPLY=( $(compgen -W "${opts}" - ${cur}) )
         return 0
     fi
 }
@@ -1115,7 +1115,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="qector",
         description="QECTOR Decoder Workbench, unified command line interface",
     )
-    # Global flags (also accepted after the subcommand — see _add_common_flags)
+    # Global flags (also accepted after the subcommand  -  see _add_common_flags)
     _add_common_flags(parser)
     parser.add_argument("--config", "-c", help="Path to config file loading JSON parameters")
     parser.add_argument("--version", "-V", action="store_true", help="Show version information and exit")
@@ -1378,4 +1378,3 @@ def main(args_list: Optional[list[str]] = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

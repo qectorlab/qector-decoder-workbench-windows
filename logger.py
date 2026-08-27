@@ -1,4 +1,4 @@
-"""logger.py — Logging infrastructure for QECTOR Workbench."""
+"""logger.py  -  Logging infrastructure for QECTOR Workbench."""
 
 from __future__ import annotations
 

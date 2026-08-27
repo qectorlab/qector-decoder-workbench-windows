@@ -161,7 +161,7 @@ def _decrypt(data: str) -> Optional[str]:
             return keyring.get_password("qector_entra", "token_cache")
         if data.startswith("B64:"):
             # Legacy insecure format: still readable so existing installs don't
-            # break, but warn loudly — it is effectively cleartext.
+            # break, but warn loudly  -  it is effectively cleartext.
             import base64
             import warnings
             warnings.warn(
@@ -479,7 +479,7 @@ def login(flow: str = "browser", message_cb=None) -> dict[str, Any]:
             result = app.acquire_token_interactive(scopes=scopes, parent_window_handle=app.CONSOLE_WINDOW_HANDLE)
             
         elif flow == "browser":
-            # PKCE loopback flow — omit `port` so MSAL binds an ephemeral port
+            # PKCE loopback flow  -  omit `port` so MSAL binds an ephemeral port
             # (a fixed port is open to local DoS / port squatting).
             result = app.acquire_token_interactive(scopes=scopes)
             

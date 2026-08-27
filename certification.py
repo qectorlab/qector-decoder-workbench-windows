@@ -1,4 +1,4 @@
-"""certification.py — Fresh certification on all systems every boot (post-EULA).
+"""certification.py  -  Fresh certification on all systems every boot (post-EULA).
 
 Generates a new, signed certification artifact on every successful boot after
 the customer has accepted the EULA. Never reuses a prior one. Air-gapped,
@@ -55,7 +55,7 @@ def generate_fresh_certification(
 ) -> Optional[Path]:
     if not is_eula_accepted():
         if on_log:
-            try: on_log("[cert] skipped — EULA not yet accepted")
+            try: on_log("[cert] skipped  -  EULA not yet accepted")
             except: pass
         return None
     try:
@@ -123,7 +123,7 @@ def generate_fresh_certification(
         # MD
         md = outdir / f"{base}.md"
         md.write_text(
-            f"# QECTOR Certification — {stamp}\n\n"
+            f"# QECTOR Certification  -  {stamp}\n\n"
             f"- **Product:** QECTOR Decoder Workbench v{WORKBENCH_VERSION} (backend {BACKEND_VERSION})\n"
             f"- **Generated:** {ts.isoformat()}Z\n"
             f"- **Platform:** {cert['platform']}  Python {cert['python']}  host {cert['host_hash']}\n"
@@ -141,9 +141,9 @@ def generate_fresh_certification(
         hpath.write_text(
             f"<!doctype html><html><head><meta charset='utf-8'><title>QECTOR Certification {stamp}</title>"
             f"<style>body{{font-family:system-ui,monospace;max-width:900px;margin:32px auto;padding:0 16px}}pre{{background:#f6f8fa;padding:12px;overflow:auto}}code{{background:#f0f0f0;padding:2px 4px}}</style></head><body>"
-            f"<h1>QECTOR Certification</h1><p><b>{stamp}</b> — Workbench v{WORKBENCH_VERSION} backend {BACKEND_VERSION}</p>"
-            f"<p>Session <code>{sess_sha}</code> — Cert <code>{cert_sha}</code> — Host {cert['host_hash']} — EULA accepted</p>"
-            f"<p>Backend { (backend_health or {}).get('method','?')} — Boot tests {(boot_tests or {}).get('outcome','?')}</p>"
+            f"<h1>QECTOR Certification</h1><p><b>{stamp}</b>  -  Workbench v{WORKBENCH_VERSION} backend {BACKEND_VERSION}</p>"
+            f"<p>Session <code>{sess_sha}</code>  -  Cert <code>{cert_sha}</code>  -  Host {cert['host_hash']}  -  EULA accepted</p>"
+            f"<p>Backend { (backend_health or {}).get('method','?')}  -  Boot tests {(boot_tests or {}).get('outcome','?')}</p>"
             f"<pre>{json.dumps(cert, indent=2, default=str)[:6000]}</pre></body></html>",
             encoding="utf-8"
         )

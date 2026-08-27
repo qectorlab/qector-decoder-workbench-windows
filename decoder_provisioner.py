@@ -68,7 +68,7 @@ def _fetch_pypi_metadata(version: Optional[str] = None) -> Optional[dict]:
     """Fetch wheel metadata from PyPI JSON API with retry logic.
 
     Zero-egress guarantee: in offline mode or in a frozen release this never
-    contacts PyPI — the bundled wheel is the only accepted decoder source."""
+    contacts PyPI  -  the bundled wheel is the only accepted decoder source."""
     if _OFFLINE or is_frozen():
         return None
     import urllib.request
@@ -343,7 +343,7 @@ def _import_failure_detail() -> str:
 
 
 def import_ok() -> bool:
-    """True iff the decoder *actually imports* in this interpreter — i.e. its
+    """True iff the decoder *actually imports* in this interpreter  -  i.e. its
     compiled extension loads.  A metadata-only presence check is not enough: a
     wheel built for another Python ABI leaves valid dist-info but an unloadable
     ``.pyd``/``.so``.  This is the authoritative "is a usable decoder present?"
@@ -370,7 +370,7 @@ def _scrubbed_env() -> dict:
     """Environment for child processes with workbench secrets removed.
 
     The decrypted license key and MCP token live in this process's env
-    (main.py); child processes (pip, probes) must not inherit them — they are
+    (main.py); child processes (pip, probes) must not inherit them  -  they are
     readable via /proc/<pid>/environ / WMI while the child runs.
     """
     env = dict(os.environ)
@@ -625,7 +625,7 @@ def _verify_import(path: Path) -> tuple[bool, str]:
     *path*.  ``import_module`` returns whatever is already in ``sys.modules``
     regardless of *path*, so on the upgrade path it would happily "verify" a
     broken candidate against the copy already in memory and then flip the active
-    pointer onto it -- the exact way a bad release bricks the next boot.
+    pointer onto it - the exact way a bad release bricks the next boot.
     """
     sp = str(path)
     if MODULE not in sys.modules:
@@ -770,7 +770,7 @@ def _install_best(latest: Optional[str], timeout: int,
     Starts at ``latest`` (or an unpinned newest) and, whenever a wheel installs
     but fails to import here, records it and steps down to ``PACKAGE<version`` so
     pip picks the next-lower release.  This makes a broken "latest" self-heal to
-    the last good version instead of bricking the app — the exact failure mode
+    the last good version instead of bricking the app  -  the exact failure mode
     where a decoder release adds an import-time dependency the frozen bundle does
     not carry.  Bounded to a handful of attempts so a pathological index can
     never spin.
@@ -792,7 +792,7 @@ def _install_best(latest: Optional[str], timeout: int,
             return True, message, version
         if version is None:
             # pip could not install anything for this spec (no wheel / no lower
-            # release exists) — stepping further down is futile.
+            # release exists)  -  stepping further down is futile.
             return False, message, None
         # A wheel installed but does not import in this runtime: remember it and
         # try the next-lower release on the following iteration.

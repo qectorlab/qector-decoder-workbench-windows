@@ -1,11 +1,11 @@
-"""diagnostics_tab.py — Self-Diagnostics & Auto-Debug tab for QECTOR Workbench.
+"""diagnostics_tab.py  -  Self-Diagnostics & Auto-Debug tab for QECTOR Workbench.
 
 Surfaces the :mod:`autodebug` layer in the GUI:
 
-* **Run Self-Diagnostics** — full environment/decoder/hardware self-test.
-* **Probe Decoders** — which decoders produce a valid correction for the
+* **Run Self-Diagnostics**  -  full environment/decoder/hardware self-test.
+* **Probe Decoders**  -  which decoders produce a valid correction for the
   current (or a default) code.
-* **Resilient Decode** — one decode with automatic multi-decoder fallback and a
+* **Resilient Decode**  -  one decode with automatic multi-decoder fallback and a
   full attempt trace.
 
 Every probe runs on a background worker and marshals back through a UI pump, so
@@ -45,7 +45,7 @@ def format_diagnostics(report: dict) -> str:
     overall = str(report.get("overall_status", "?")).upper()
     summary = report.get("summary", {}) or {}
     lines = [
-        f"QECTOR Self-Diagnostics — OVERALL: {overall}",
+        f"QECTOR Self-Diagnostics  -  OVERALL: {overall}",
         f"Backend: qector_decoder_v3 {report.get('backend_version')}"
         f"  |  Python {report.get('python')}  |  {report.get('platform')}",
         f"Summary: {summary.get('pass', 0)} pass / {summary.get('warn', 0)} warn / "
@@ -54,7 +54,7 @@ def format_diagnostics(report: dict) -> str:
     ]
     for c in report.get("checks", []):
         tag = _STATUS_TAG.get(str(c.get("status")), "[ ?? ]")
-        lines.append(f"{tag} {c.get('name')} — {c.get('detail')}")
+        lines.append(f"{tag} {c.get('name')}  -  {c.get('detail')}")
     working = summary.get("working_decoders")
     if working:
         lines += ["", f"Working decoders: {', '.join(working)}"]
@@ -64,7 +64,7 @@ def format_diagnostics(report: dict) -> str:
 def format_probe(probe: dict) -> str:
     """Render a probe_decoders() result dict."""
     lines = [
-        f"Decoder probe — {probe.get('family')} d={probe.get('distance')}"
+        f"Decoder probe  -  {probe.get('family')} d={probe.get('distance')}"
         f"  (error_rate={probe.get('error_rate')}, seed={probe.get('seed')})",
         probe.get("message", ""),
         "",
@@ -90,7 +90,7 @@ def format_resilient(res: dict) -> str:
     used = res.get("used_decoder")
     fb = res.get("fallback_used")
     lines = [
-        f"Resilient decode — {res.get('family')} d={res.get('distance')}, "
+        f"Resilient decode  -  {res.get('family')} d={res.get('distance')}, "
         f"requested={res.get('requested_decoder')!r}",
         f"{head}"
         + (f" via {used!r}" + (" (fallback)" if fb else " (no fallback)") if used else ""),

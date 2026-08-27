@@ -1,13 +1,13 @@
-"""boot_test_runner.py — Verbose automatic tests + fresh result docs on every boot.
+"""boot_test_runner.py  -  Verbose automatic tests + fresh result docs on every boot.
 
 Runs the full pytest suite with ``-v`` (verbose) in a background daemon thread
 on every GUI boot, streams verbose output to the live Console + log file, and
 writes machine-readable results + freshly generated docs for lab review.
 
 Artifacts (per-user data dir via ``utils.get_data_dir()``):
-  logs/boot_tests_verbose.log   — full verbose pytest stdout/stderr (text, -v)
-  logs/boot_test_results.json   — machine-readable summary + per-test mapping
-  exports/boot_diagnostics/     — freshly generated HTML + Markdown report
+  logs/boot_tests_verbose.log    -  full verbose pytest stdout/stderr (text, -v)
+  logs/boot_test_results.json    -  machine-readable summary + per-test mapping
+  exports/boot_diagnostics/      -  freshly generated HTML + Markdown report
 
 Opt-out:
   Set environment ``QECTOR_SKIP_BOOT_TESTS=1`` or launch with ``--no-boot-tests``
@@ -40,7 +40,7 @@ def _is_eula_accepted() -> bool:
 
 def _should_skip() -> tuple[bool, str]:
     if not _is_eula_accepted():
-        return True, "EULA not yet accepted — tests deferred until customer accepts"
+        return True, "EULA not yet accepted  -  tests deferred until customer accepts"
     if os.environ.get("QECTOR_SKIP_BOOT_TESTS", "").strip() in ("1", "true", "yes", "on"):
         return True, "QECTOR_SKIP_BOOT_TESTS=1"
     for arg in sys.argv[1:]:
@@ -99,7 +99,7 @@ def _run_internal_verbose_fallback(on_log: Optional[Callable[[str], None]] = Non
                 except Exception:
                     pass
         except Exception as exc:
-            lines.append(f"tests/internal::{name} FAILED — {type(exc).__name__}: {exc}")
+            lines.append(f"tests/internal::{name} FAILED  -  {type(exc).__name__}: {exc}")
             failed += 1
             if on_log:
                 try:
@@ -142,7 +142,7 @@ def _run_internal_verbose_fallback(on_log: Optional[Callable[[str], None]] = Non
     check("test_diagnostics", _check_diagnostics)
 
     rc = 0 if failed == 0 else 1
-    header = "internal verbose fallback (air-gapped, pytest not bundled) — fully offline"
+    header = "internal verbose fallback (air-gapped, pytest not bundled)  -  fully offline"
     summary_line = f"{passed} passed, {failed} failed in 0.00s"
     combined = header + "\n" + "\n".join(lines) + "\n" + summary_line + "\n"
     return rc, combined
@@ -154,7 +154,7 @@ def _run_pytest_verbose(
     """Run ``pytest -v`` with full fallback chain (air-gapped, bundled).
 
     F1: ``python -m pytest -v`` when pytest is available (preferred, verbose).
-    F2: Internal bundled fallback (no pytest, no network) — always succeeds.
+    F2: Internal bundled fallback (no pytest, no network)  -  always succeeds.
     Never raises.
     """
     started = time.monotonic()
@@ -168,7 +168,7 @@ def _run_pytest_verbose(
                 pass
 
     root = Path(__file__).resolve().parent
-    # F1 — try real pytest when available
+    # F1  -  try real pytest when available
     use_pytest = _has_pytest_available()
     if use_pytest:
         cmd = [
@@ -205,11 +205,11 @@ def _run_pytest_verbose(
             cmd = cmd  # keep for summary
         except Exception as exc:
             # F2 fallback
-            log(f"[boot-tests] F1 pytest failed: {exc} — using F2 internal bundled fallback")
+            log(f"[boot-tests] F1 pytest failed: {exc}  -  using F2 internal bundled fallback")
             rc, combined = _run_internal_verbose_fallback(on_log=on_log)
             cmd = [sys.executable, "-m", "internal_fallback", "-v"]
     else:
-        log("[boot-tests] pytest not available (air-gapped frozen) — using F2 internal bundled fallback")
+        log("[boot-tests] pytest not available (air-gapped frozen)  -  using F2 internal bundled fallback")
         rc, combined = _run_internal_verbose_fallback(on_log=on_log)
         cmd = [sys.executable, "-m", "internal_fallback", "-v"]
 
@@ -289,7 +289,7 @@ def _write_artifacts(summary: dict[str, Any]) -> dict[str, Path]:
     combined: str = summary.pop("_raw_verbose", "")
 
     header = (
-        f"# QECTOR boot tests — verbose\n"
+        f"# QECTOR boot tests  -  verbose\n"
         f"# started: {summary.get('started_at')}  outcome={summary.get('outcome')}  rc={summary.get('returncode')}  elapsed={summary.get('elapsed_s')}s\n"
         f"# python: {summary.get('python')}  exe: {summary.get('executable')}\n"
         f"# command: {' '.join(summary.get('command') or [])}\n"
@@ -352,7 +352,7 @@ def _regenerate_docs(
             "",
             f"- **Started:** {started}",
             f"- **Outcome:** {outcome}  (rc={summary.get('returncode')})  elapsed {summary.get('elapsed_s')}s",
-            f"- **Python:** {summary.get('python')} — `{summary.get('executable')}`",
+            f"- **Python:** {summary.get('python')}  -  `{summary.get('executable')}`",
             f"- **Counts:** {safe_counts}",
             f"- **Verbose log:** `{summary.get('verbose_log')}`",
             "",
@@ -366,7 +366,7 @@ def _regenerate_docs(
             out = t.get("outcome", "?")
             lines.append(f"| {idx} | `{node}` | {out} |")
         if not per_test:
-            lines.append("| — | *(no per-test lines captured — see verbose log)* | — |")
+            lines.append("|  -  | *(no per-test lines captured  -  see verbose log)* |  -  |")
         lines += ["", f"_Generated at {datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')}Z_", ""]
         md_path.write_text("\n".join(lines), encoding="utf-8")
         log(f"[boot-tests] wrote {md_path}")
@@ -381,15 +381,15 @@ def _regenerate_docs(
         for t in per_test:
             rows += f"<tr><td><code>{_html.escape(t.get('nodeid',''))}</code></td><td>{_html.escape(t.get('outcome',''))}</td></tr>\n"
         if not rows:
-            rows = '<tr><td colspan="2"><em>no per-test lines — see verbose log</em></td></tr>'
+            rows = '<tr><td colspan="2"><em>no per-test lines  -  see verbose log</em></td></tr>'
         html_doc = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>QECTOR Boot Test Report</title>
 <style>body{{font-family: ui-monospace, monospace; max-width: 980px; margin: 32px auto; padding: 0 16px; color: #111}}
 table{{border-collapse: collapse; width: 100%}} th,td{{border: 1px solid #ccc; padding: 6px 8px; text-align: left}} th{{background:#f4f4f4}}
 pre{{background:#f6f8fa; padding: 12px; overflow:auto}}</style></head><body>
 <h1>QECTOR Boot Test Report</h1>
-<p>Started { _html.escape(str(started)) } — outcome <b>{ _html.escape(str(outcome)) }</b> rc={summary.get('returncode')} elapsed {summary.get('elapsed_s')}s</p>
-<p>Python { _html.escape(str(summary.get('python')))} — <code>{ _html.escape(str(summary.get('executable')))}</code></p>
+<p>Started { _html.escape(str(started)) }  -  outcome <b>{ _html.escape(str(outcome)) }</b> rc={summary.get('returncode')} elapsed {summary.get('elapsed_s')}s</p>
+<p>Python { _html.escape(str(summary.get('python')))}  -  <code>{ _html.escape(str(summary.get('executable')))}</code></p>
 <p>Counts: <code>{ _html.escape(json.dumps(counts))}</code></p>
 <p>Verbose log: <code>{ _html.escape(str(summary.get('verbose_log')))}</code></p>
 <table><thead><tr><th>Test</th><th>Outcome</th></tr></thead><tbody>{rows}</tbody></table>
@@ -447,7 +447,7 @@ def run_boot_tests_and_refresh_docs(
     if on_log is not None:
         try:
             on_log(
-                f"[boot-tests] done: {outcome} — "
+                f"[boot-tests] done: {outcome}  -  "
                 f"{counts.get('passed', 0)} passed / {counts.get('failed', 0)} failed / "
                 f"{counts.get('skipped', 0)} skipped in {summary.get('elapsed_s')}s "
                 f"(verbose log: {paths['verbose_log']})"
@@ -462,7 +462,7 @@ def run_boot_tests_and_refresh_docs(
         lg = get_logger()
         lg.info(
             f"Boot tests ({outcome}): {counts.get('passed',0)} passed / "
-            f"{counts.get('failed',0)} failed in {summary.get('elapsed_s')}s — "
+            f"{counts.get('failed',0)} failed in {summary.get('elapsed_s')}s  -  "
             f"{paths['verbose_log']}"
         )
     except Exception:
@@ -475,7 +475,7 @@ def schedule_boot_tests(app: Any) -> None:
     """Schedule the verbose boot test run on the Tk main thread (fire-and-forget).
 
     Call once from ``QectorApp`` after the window is built.  Safe to call
-    multiple times — the second call is a no-op.  Never raises.
+    multiple times  -  the second call is a no-op.  Never raises.
     """
     if getattr(app, "_boot_tests_scheduled", False):
         return

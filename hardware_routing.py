@@ -2,7 +2,7 @@
 hardware_routing.py - local replacement for qector_decoder_v3.routing.
 
 The installed qector_decoder_v3 wheel (v0.5.9) no longer ships a
-'routing' submodule -- backend.py was written against an older package
+'routing' submodule - backend.py was written against an older package
 build (v0.5.8) that had it. Rather than depend on a private package
 internal that has since been removed, this module reimplements the two
 pieces of surface area the app actually needs (HardwareProfile,
@@ -46,7 +46,7 @@ class HardwareProfile:
     opencl: bool = False
     opencl_device: Optional[str] = None
     # Host-side OpenCL, probed independently of the decoder build.  Without these
-    # a machine with a perfectly good OpenCL device and a decoder compiled
+    # a machine with a functional OpenCL device and a decoder compiled
     # without OpenCL kernels both reported a bare "Unavailable", which reads like
     # a bug in the app when it is not one.
     opencl_host_devices: int = 0

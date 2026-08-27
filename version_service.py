@@ -1,13 +1,13 @@
-"""version_service.py — version resolution for QECTOR Workbench.
+"""version_service.py  -  version resolution for QECTOR Workbench.
 
 The workbench reports two versions at boot without any network access:
 
-* the workbench application itself — the static :data:`version.WORKBENCH_VERSION`
+* the workbench application itself  -  the static :data:`version.WORKBENCH_VERSION`
   baseline baked into the release;
-* the compiled decoder backend — ``qector-decoder-v3`` as actually imported
+* the compiled decoder backend  -  ``qector-decoder-v3`` as actually imported
   (provisioned offline from the bundled wheel by ``decoder_provisioner``).
 
-Every public call is bulletproof: it never raises for control flow and never
+Every public call is robust: it never raises for control flow and never
 touches the network.
 """
 
@@ -99,7 +99,7 @@ def local_app_version() -> str:
 
 
 def effective_app_version(prefer_latest: bool = False) -> Optional[str]:
-    """The version the app presents as *its own* — the workbench baseline.
+    """The version the app presents as *its own*  -  the workbench baseline.
 
     The workbench has its own release line (``version.WORKBENCH_VERSION``),
     independent of the decoder backend version.  Always returns the baked-in
@@ -147,7 +147,7 @@ def _save_disk_cache(data: dict[str, Any]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# PyPI fetch (https-pinned, cached, bulletproof)
+# PyPI fetch (https-pinned, cached, robust)
 # ---------------------------------------------------------------------------
 
 def _fetch_pypi_latest(package: str, timeout: int = 5) -> Optional[str]:
@@ -156,7 +156,7 @@ def _fetch_pypi_latest(package: str, timeout: int = 5) -> Optional[str]:
 
 
 def _cached_latest(package: str, refresh: bool = False) -> Optional[str]:
-    """Latest version for *package* — local wheel only, no PyPI.
+    """Latest version for *package*  -  local wheel only, no PyPI.
 
     Always returns the installed backend version.  Any stale disk cache entries
     from previous sessions are overwritten on first call
@@ -180,7 +180,7 @@ def _cached_latest(package: str, refresh: bool = False) -> Optional[str]:
 # ---------------------------------------------------------------------------
 
 def get_backend_version_info(refresh: bool = False) -> dict[str, Any]:
-    """Installed backend version, resolved locally — bundled wheel only, no PyPI."""
+    """Installed backend version, resolved locally  -  bundled wheel only, no PyPI."""
     installed = installed_backend_version()
     latest = _cached_latest(BACKEND_PACKAGE, refresh=refresh)
     return {
@@ -193,7 +193,7 @@ def get_backend_version_info(refresh: bool = False) -> dict[str, Any]:
 
 
 def get_app_version_info(refresh: bool = False) -> dict[str, Any]:
-    """Local baseline for the workbench application (offline — no PyPI)."""
+    """Local baseline for the workbench application (offline  -  no PyPI)."""
     local = local_app_version()
     return {
         "package": APP_PACKAGE,
@@ -205,7 +205,7 @@ def get_app_version_info(refresh: bool = False) -> dict[str, Any]:
 
 
 def get_version_report(refresh: bool = False) -> dict[str, Any]:
-    """Combined app + backend version report (offline — bundled wheel only)."""
+    """Combined app + backend version report (offline  -  bundled wheel only)."""
     return {
         "app": get_app_version_info(refresh=refresh),
         "backend": get_backend_version_info(refresh=refresh),

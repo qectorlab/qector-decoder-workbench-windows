@@ -1,4 +1,4 @@
-"""version.py — Central version information for QECTOR Decoder Workbench."""
+"""version.py  -  Central version information for QECTOR Decoder Workbench."""
 
 # Product version of the Workbench application itself. This is the public
 # release line (0.5.x) and is deliberately INDEPENDENT of BACKEND_VERSION

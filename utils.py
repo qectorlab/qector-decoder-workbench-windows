@@ -1,4 +1,4 @@
-"""utils.py — Shared utility functions for QECTOR Workbench."""
+"""utils.py  -  Shared utility functions for QECTOR Workbench."""
 
 from __future__ import annotations
 

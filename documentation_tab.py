@@ -210,7 +210,7 @@ if _HAS_GUI:
                 self._open_folder_when_done = False
 
         def _build_official_export_section(self, scroll) -> None:
-            """Bulletproof export of the official public documentation set.
+            """Robust export of the official public documentation set.
 
             Generates the exact documents shipped with every release (user
             manuals, quick start, MCP guide, LLM manual, README, manuals.zip

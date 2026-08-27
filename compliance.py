@@ -140,7 +140,7 @@ def _log_egress(host: Any, kind: str) -> None:
                     "thread_id": threading.get_ident(),
                     "stack": traceback.format_stack()[:-1]
                 }
-                # One JSON object per line (real newline) — JSONL contract.
+                # One JSON object per line (real newline)  -  JSONL contract.
                 with _EGRESS_LOG_PATH.open("a", encoding="utf-8") as fh:
                     fh.write(json.dumps(entry) + "\n")
         except Exception:

@@ -1,4 +1,4 @@
-"""results_tracker.py — Benchmark and decode result tracking."""
+"""results_tracker.py  -  Benchmark and decode result tracking."""
 
 from __future__ import annotations
 

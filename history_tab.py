@@ -1,4 +1,4 @@
-"""history_tab.py — global experiment history for QECTOR Workbench.
+"""history_tab.py  -  global experiment history for QECTOR Workbench.
 
 Every decode, decoder comparison, benchmark, batch and streaming run records
 one compact JSON event via :func:`record_event`, regardless of which tab
@@ -135,7 +135,7 @@ if _HAS_GUI:
             self._heading.pack(anchor="w")
             ctk.CTkLabel(
                 header,
-                text="Every decode, comparison, benchmark, batch and streaming run — this session and past ones.",
+                text="Every decode, comparison, benchmark, batch and streaming run  -  this session and past ones.",
                 font=ctk.CTkFont(size=11), text_color=theme.c("text_secondary"),
             ).pack(anchor="w", pady=(0, 4))
 
@@ -208,7 +208,7 @@ if _HAS_GUI:
             if not rows:
                 ctk.CTkLabel(
                     self.list_frame,
-                    text="No history yet — run a decode, benchmark, or batch job.",
+                    text="No history yet  -  run a decode, benchmark, or batch job.",
                     text_color=theme.c("text_secondary"), font=ctk.CTkFont(size=11),
                 ).grid(row=0, column=0, sticky="w", padx=10, pady=10)
             for i, event in enumerate(rows):

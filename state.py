@@ -1,4 +1,4 @@
-"""state.py — Application state management for QECTOR Workbench."""
+"""state.py  -  Application state management for QECTOR Workbench."""
 
 from __future__ import annotations
 

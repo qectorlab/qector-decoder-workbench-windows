@@ -1,4 +1,4 @@
-"""dialogs.py — Dialog windows for QECTOR Workbench."""
+"""dialogs.py  -  Dialog windows for QECTOR Workbench."""
 
 from __future__ import annotations
 

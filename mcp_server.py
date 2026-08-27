@@ -1,4 +1,4 @@
-"""mcp_server.py — MCP server for QECTOR Decoder Workbench.
+"""mcp_server.py  -  MCP server for QECTOR Decoder Workbench.
 
 Two layers in one module:
 
@@ -257,17 +257,17 @@ def _build_code(family: str, distance: int):
 # remains the authoritative compatibility answer.
 _DECODER_TRAITS: dict[str, dict[str, Any]] = {
     "union_find": {"symbol": "UnionFindDecoder", "graphlike_only": True,
-                   "compatibility": "Graphlike codes only — rejects hyperedge (weight>2) "
+                   "compatibility": "Graphlike codes only  -  rejects hyperedge (weight>2) "
                                     "checks, so qLDPC families are unsupported."},
     "fast_union_find": {"symbol": "FastUnionFindDecoder", "graphlike_only": True,
-                        "compatibility": "Graphlike codes only — rejects hyperedge checks, "
+                        "compatibility": "Graphlike codes only  -  rejects hyperedge checks, "
                                          "so qLDPC families are unsupported."},
     "blossom": {"symbol": "BlossomDecoder", "graphlike_only": False,
                 "compatibility": "Exact MWPM; designed for graphlike codes but constructs broadly."},
     "sparse_blossom": {"symbol": "SparseBlossomDecoder", "graphlike_only": False,
                        "compatibility": "Region-growing near-MWPM; designed for graphlike codes."},
     "bp_osd": {"symbol": "BPOSDDecoder", "graphlike_only": False,
-               "compatibility": "LDPC / qLDPC capable — the reference decoder for "
+               "compatibility": "LDPC / qLDPC capable  -  the reference decoder for "
                                 "non-graphlike codes."},
     "auto": {"symbol": "AutoDecoder", "graphlike_only": False,
              "compatibility": "Self-selecting backend; matching-based, so qLDPC codes can "
@@ -281,7 +281,7 @@ _DECODER_TRAITS: dict[str, dict[str, Any]] = {
                    "compatibility": "Local-matching predecoder + matching residual decoder; "
                                     "graphlike codes."},
     "auto_router": {"symbol": "AutoRouter", "graphlike_only": False,
-                    "compatibility": "Policy router — dispatches the best concrete decoder per "
+                    "compatibility": "Policy router  -  dispatches the best concrete decoder per "
                                      "code; universally applicable."},
     "hybrid_cascade": {"symbol": "HybridCascadeDecoder", "graphlike_only": False,
                        "compatibility": "Union-Find pre-filter + Blossom/BP-OSD escalation; "
@@ -297,12 +297,12 @@ _DECODER_TRAITS: dict[str, dict[str, Any]] = {
 # Fallback descriptions for decoder kinds a stale backend.get_decoder_info might
 # not know yet (defensive while backend.py evolves in parallel).
 _DECODER_DESCRIPTIONS_FALLBACK: dict[str, str] = {
-    "hybrid_cascade": "Hybrid Cascade — Union-Find pre-filter + Blossom/BP-OSD escalation "
+    "hybrid_cascade": "Hybrid Cascade  -  Union-Find pre-filter + Blossom/BP-OSD escalation "
                       "with live prefilter/escalation statistics.",
-    "gnn_belief_matching": "GNN Belief Matching — GNN-predicted per-qubit weights guide a "
+    "gnn_belief_matching": "GNN Belief Matching  -  GNN-predicted per-qubit weights guide a "
                            "weighted matching decode with a syndrome-faithfulness guard "
                            "(research).",
-    "belief_matching": "Belief Matching — sum-product BP posteriors reweight an exact "
+    "belief_matching": "Belief Matching  -  sum-product BP posteriors reweight an exact "
                        "Blossom matching step (Higgott et al. 2023), with a plain-MWPM "
                        "faithfulness fallback.",
 }
@@ -352,7 +352,7 @@ def _decoder_catalog_entry(kind: str) -> dict[str, Any]:
     if not available:
         entry["notes"] = (
             "decoder symbol not present in the installed qector_decoder_v3 build "
-            f"({be.PACKAGE_VERSION}); the wheel predates this decoder — calls report a "
+            f"({be.PACKAGE_VERSION}); the wheel predates this decoder  -  calls report a "
             "clear unavailable status instead of crashing"
         )
     return entry
@@ -497,7 +497,7 @@ def _gpu_availability() -> dict[str, bool]:
 
     cpu is always available; cuda/opencl report exactly what
     ``qector_decoder_v3.cuda_is_available()`` / ``opencl_is_available()``
-    return (False on any probe error) — no silent fallback, no faking.
+    return (False on any probe error)  -  no silent fallback, no faking.
     """
     qd = getattr(be, "qd", None)
     out = {"cpu": True, "cuda": False, "opencl": False}
@@ -566,7 +566,7 @@ def _handle_batch_decode_gpu(family: str = "rotated_surface", distance: int = 3,
         return dict(base, status="unavailable",
                     reason=f"{backend} backend is not available on this machine "
                            "(qector_decoder_v3 availability probe returned False); no "
-                           "results were computed or faked — pick a reported-available backend")
+                           "results were computed or faked  -  pick a reported-available backend")
     code = _build_code(family, distance)
     try:
         result = be.run_batch_decode(code, backend, n_samples, error_rate, seed)
@@ -719,7 +719,7 @@ def _handle_decode_syndrome(family: str = "rotated_surface", distance: int = 5,
 
     ``syndrome_valid`` is the GF(2) re-check of the returned correction against
     the supplied syndrome.  No reference error exists for an externally supplied
-    syndrome, so ``logical_failure`` is honestly ``None`` (unknowable) — never a
+    syndrome, so ``logical_failure`` is honestly ``None`` (unknowable)  -  never a
     fabricated boolean.
     """
     _require_decoder(decoder_name)
@@ -1515,7 +1515,7 @@ def _handle_get_backend_health() -> dict:
 
 
 # ---------------------------------------------------------------------------
-# v1.0.0 extra tool handlers — 3.11–3.14
+# v1.0.0 extra tool handlers  -  3.11 - 3.14
 # ---------------------------------------------------------------------------
 
 def _handle_export_session(
@@ -1707,7 +1707,7 @@ def _build_registry() -> None:
         _handle_batch_decode)
     _registry.register(
         "batch_decode_gpu", "Batch-decode on an explicit compute backend (cpu/cuda/opencl) with "
-                            "honest availability reporting — unavailable GPU backends return "
+                            "honest availability reporting  -  unavailable GPU backends return "
                             "status='unavailable' with a reason, never fake results",
         {"family": {"type": "string", "default": "rotated_surface", "description": _FAMILY_DESC},
          "distance": {"type": "integer", "default": 3},
@@ -1927,7 +1927,7 @@ def _build_registry() -> None:
         _handle_stream_decode)
     _registry.register(
         "probe_decoders", "Probe which decoders produce a valid (syndrome-verified) correction "
-                          "for a code — a self-test across every wired decoder",
+                          "for a code  -  a self-test across every wired decoder",
         {"family": {"type": "string", "default": "rotated_surface", "description": _FAMILY_DESC},
          "distance": {"type": "integer", "default": 5},
          "error_rate": {"type": "number", "default": 0.05},
@@ -1949,13 +1949,13 @@ def _build_registry() -> None:
         _handle_self_diagnostics)
     _registry.register(
         "version_info", "App + decoder-backend version report (workbench baseline + installed "
-                        "backend, resolved locally — no network)",
+                        "backend, resolved locally  -  no network)",
         {"refresh": {"type": "boolean", "default": False,
                      "description": "Accepted for compatibility; resolution is always local"}},
         _handle_version_info)
     _registry.register(
         "check_updates", "Report whether the installed decoder backend matches the bundled "
-                         "release baseline (offline — no update service)",
+                         "release baseline (offline  -  no update service)",
         {"refresh": {"type": "boolean", "default": False,
                      "description": "Accepted for compatibility; resolution is always local"}},
         _handle_check_updates)
@@ -2308,7 +2308,7 @@ def _handle_export_figure(family: str = "rotated_surface", distance: int = 5,
 def _handle_get_server_env() -> dict:
     """Return the effective QECTOR environment variables (tuning vars).
 
-    Secret-bearing variables (license key, MCP token) are NEVER returned —
+    Secret-bearing variables (license key, MCP token) are NEVER returned  - 
     they are reported as "set"/"unset" only, so an MCP client cannot exfiltrate
     credentials through this tool.
     """
@@ -2548,7 +2548,7 @@ class _InvalidParams(Exception):
 
 
 def _log(msg: str) -> None:
-    """Log to stderr only — stdout is reserved for JSON-RPC messages."""
+    """Log to stderr only  -  stdout is reserved for JSON-RPC messages."""
     try:
         print(f"[{SERVER_NAME}] {msg}", file=sys.stderr, flush=True)
     except Exception:
@@ -2740,7 +2740,7 @@ async def serve_stdio() -> int:
     # A SINGLE long-lived reader task keeps exactly one executor thread busy.
     # (The old code submitted a fresh blocking _shutdown_requested.wait() per
     # request, permanently consuming a worker each time; once the pool was
-    # exhausted, stdin.readline could never run and the server silently hung —
+    # exhausted, stdin.readline could never run and the server silently hung  - 
     # visible as a client timeout after ~8 requests.)
     read_task = asyncio.ensure_future(asyncio.to_thread(stdin.readline))
     while True:
@@ -2770,7 +2770,7 @@ async def serve_stdio() -> int:
             continue
         try:
             response = await _dispatch_line(line)
-        except Exception as e:  # absolute last resort — keep serving
+        except Exception as e:  # absolute last resort  -  keep serving
             _log(f"dispatch crashed:\n{traceback.format_exc()}")
             response = _error_response(None, -32603, f"internal error: {e}")
         if response is not None:
@@ -2810,7 +2810,7 @@ _shutdown_requested = threading.Event()
 
 
 def main() -> int:
-    """Entry point for `python mcp_server.py` — run the stdio MCP server."""
+    """Entry point for `python mcp_server.py`  -  run the stdio MCP server."""
     _reopen_frozen_streams()
     try:
         sys.stdout.reconfigure(encoding="utf-8", newline="\n")  # type: ignore[union-attr]

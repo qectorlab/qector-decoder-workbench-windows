@@ -1,4 +1,4 @@
-"""docs_exporter.py — Bulletproof in-app export of the official documentation set.
+"""docs_exporter.py  -  Robust in-app export of the official documentation set.
 
 One entry point for the "Export Official Docs" GUI button (and any other
 caller): ``export_public_docs(outdir, on_log=None)``.  It drives the same two

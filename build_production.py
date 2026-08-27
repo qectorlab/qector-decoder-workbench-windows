@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_production.py -- QECTOR Decoder Workbench Production Build
+build_production.py - QECTOR Decoder Workbench Production Build
 ================================================================
 Creates final release artefacts.  The Windows executables embed the decoder
 (qector-decoder-v3) as a .whl data file; decoder_provisioner extracts and
@@ -166,7 +166,7 @@ def rmtree_safe(path):
 # Windows .exe
 # ---------------------------------------------------------------------------
 def build_exe(dev: bool = False):
-    banner("Windows .exe Build (PyInstaller -- bundled offline decoder wheel)")
+    banner("Windows .exe Build (PyInstaller - bundled offline decoder wheel)")
     print("  The decoder (qector-decoder-v3) IS bundled as a .whl data file.")
     print("  decoder_provisioner extracts it offline on first launch.\n")
 
@@ -327,7 +327,7 @@ def build_deb():
              color_code.
         """))
 
-    # DEBIAN/postinst -- real pip install, multiple fallback methods
+    # DEBIAN/postinst - real pip install, multiple fallback methods
     postinst = textwrap.dedent(f"""\
         #!/bin/bash
         set -e
@@ -455,7 +455,7 @@ def build_deb():
     else:
         print(f"\n  [INFO] dpkg-deb not on this OS. Package tree at: {deb_root}")
         print(f"         On Linux run: dpkg-deb --build --root-owner-group {deb_name} {deb_name}.deb")
-        print("         From Windows run: wsl -d <distro> -- bash -lc \"cd '/mnt/d/QECTOR APP' && bash build_deb_wsl.sh\"")
+        print("         From Windows run: wsl -d <distro> - bash -lc \"cd '<repo-root>' && bash build_deb_wsl.sh\"")
         # A leftover .deb from an earlier run is the dangerous case: the tree is
         # fresh, the .deb is not, and nothing says so.  Call it out explicitly.
         if os.path.isfile(deb_file) and os.path.getmtime(deb_file) < os.path.getmtime(deb_root):
@@ -546,7 +546,7 @@ def sign_artifacts():
     """Sign release artefacts with GPG (detached signatures).
 
     Requires GPG installed and a signing key available.  When GPG is
-    unavailable the step is skipped with a clear warning -- checksum
+    unavailable the step is skipped with a clear warning - checksum
     manifest is still useful for integrity verification.
     """
     banner("Artifact Signing (GPG)")
@@ -557,14 +557,14 @@ def sign_artifacts():
 
     gpg = shutil.which("gpg") or shutil.which("gpg2")
     if gpg is None:
-        print("  [WARN] GPG not found on PATH -- signatures NOT generated")
+        print("  [WARN] GPG not found on PATH - signatures NOT generated")
         print("         Install GPG and set QECTOR_SIGNING_KEY env var to sign artefacts")
         print("         Integrity verified via SHA-256 checksums only")
         return
 
     signing_key = os.environ.get("QECTOR_SIGNING_KEY", "")
     if not signing_key:
-        print("  [WARN] QECTOR_SIGNING_KEY env var not set -- skipping GPG signing")
+        print("  [WARN] QECTOR_SIGNING_KEY env var not set - skipping GPG signing")
         print("         Set it to your GPG key ID or email to enable artifact signing")
         return
 
@@ -608,7 +608,7 @@ def main():
     args = parser.parse_args()
     do_all = args.all or (not args.exe and not args.deb)
 
-    banner(f"QECTOR Decoder Workbench v{APP_VERSION} -- Production Build (bundled decoder wheel)")
+    banner(f"QECTOR Decoder Workbench v{APP_VERSION} - Production Build (bundled decoder wheel)")
     print("  Strategy:  decoder wheel bundled; provisioned offline on first launch")
     print(f"  Platform:  {platform.system()} {platform.machine()}")
     print(f"  Python:    {sys.version.split()[0]}")

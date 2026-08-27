@@ -1,8 +1,8 @@
-"""hardware_tab.py — Hardware tab for QECTOR Workbench.
+"""hardware_tab.py  -  Hardware tab for QECTOR Workbench.
 
 Detects available decode backends (CUDA, OpenCL, CPU), system resources
 (psutil) and decoder recommendations.  All probes run on a background
-thread — the refresh button never blocks the UI.
+thread  -  the refresh button never blocks the UI.
 """
 
 from __future__ import annotations

@@ -1,9 +1,9 @@
-"""self_autodebug_backend.py — Robust self-healing boot backend.
+"""self_autodebug_backend.py  -  Robust self-healing boot backend.
 
 Guarantees:
-  • Multiple full fallback methods — never depends on a single path succeeding.
-  • Always succeeds (flawless): every public entry returns a dict, never raises.
-  • Fresh session SHA256 on every boot — atomic, reproducible, logged.
+  • Multiple full fallback methods  -  never depends on a single path succeeding.
+  • Always succeeds (reliable): every public entry returns a dict, never raises.
+  • Fresh session SHA256 on every boot  -  atomic, reproducible, logged.
 
 Fallback architecture (performed in order, first success wins; all failures logged):
 
@@ -11,7 +11,7 @@ Fallback architecture (performed in order, first success wins; all failures logg
   F2  Managed site activation (decoder_site/<abi>/versions/<ver>)
   F3  Bundled wheel direct extraction (wheels/*.whl → managed site)
   F4  Live PyPI install with checksum (only when not offline/frozen)
-  F5  In-memory synthetic health — app still opens in degraded mode
+  F5  In-memory synthetic health  -  app still opens in degraded mode
 
 Self-diagnostics itself has fallbacks:
   D1  autodebug.run_self_diagnostics()
@@ -188,14 +188,14 @@ def ensure_healthy_backend(on_log: Optional[Callable[[str], None]] = None) -> di
     def record(method: str, ok: bool, detail: str) -> None:
         attempts.append({"method": method, "ok": ok, "detail": detail, "ts": time.time()})
 
-    # F1 — ambient import
+    # F1  -  ambient import
     ok, detail, path = _try_import_decoder()
     record("F1_ambient_import", ok, f"{detail} @ {path}" if ok else detail)
     if ok:
         _log(f"[autodebug] F1 ambient import ok: {detail} @ {path}", on_log)
         return {"ok": True, "method": "F1_ambient_import", "version": detail, "path": str(path) if path else None, "attempts": attempts, "elapsed_s": round(time.time() - ts, 3)}
 
-    # F2 — managed site activation
+    # F2  -  managed site activation
     try:
         import decoder_provisioner as dp
 
@@ -208,7 +208,7 @@ def ensure_healthy_backend(on_log: Optional[Callable[[str], None]] = None) -> di
     except Exception as exc:
         record("F2_managed_site", False, f"{type(exc).__name__}: {exc}")
 
-    # F3 — bundled wheel direct extraction
+    # F3  -  bundled wheel direct extraction
     try:
         import decoder_provisioner as dp
 
@@ -227,7 +227,7 @@ def ensure_healthy_backend(on_log: Optional[Callable[[str], None]] = None) -> di
     except Exception as exc:
         record("F3_bundled_wheel", False, f"{type(exc).__name__}: {exc}")
 
-    # F4 — live PyPI (only when not offline/frozen and network plausible)
+    # F4  -  live PyPI (only when not offline/frozen and network plausible)
     try:
         import decoder_provisioner as dp
 
@@ -245,16 +245,16 @@ def ensure_healthy_backend(on_log: Optional[Callable[[str], None]] = None) -> di
     except Exception as exc:
         record("F4_live_pypi", False, f"{type(exc).__name__}: {exc}")
 
-    # F5 — synthetic degraded health (last resort — app still opens)
+    # F5  -  synthetic degraded health (last resort  -  app still opens)
     record("F5_synthetic_degraded", True, "no decoder importable; entering degraded mode (synthetic health)")
-    _log("[autodebug] F5 degraded mode — no decoder importable, app will open degraded", on_log, level="WARN")
+    _log("[autodebug] F5 degraded mode  -  no decoder importable, app will open degraded", on_log, level="WARN")
     return {"ok": False, "method": "F5_synthetic_degraded", "version": None, "path": None, "attempts": attempts, "elapsed_s": round(time.time() - ts, 3), "degraded": True}
 
 
 def _run_diagnostics_with_fallbacks(on_log: Optional[Callable[[str], None]] = None) -> dict[str, Any]:
     attempts: list[dict[str, Any]] = []
 
-    # D1 — full autodebug self-diagnostics
+    # D1  -  full autodebug self-diagnostics
     try:
         import autodebug
 
@@ -267,7 +267,7 @@ def _run_diagnostics_with_fallbacks(on_log: Optional[Callable[[str], None]] = No
         attempts.append({"method": "D1_autodebug", "ok": False, "error": f"{type(exc).__name__}: {exc}"})
         _log(f"[autodebug] D1 failed: {exc}", on_log, level="WARN")
 
-    # D2 — backend doctor checks
+    # D2  -  backend doctor checks
     try:
         import backend as be
 
@@ -278,14 +278,14 @@ def _run_diagnostics_with_fallbacks(on_log: Optional[Callable[[str], None]] = No
     except Exception as exc:
         attempts.append({"method": "D2_doctor", "ok": False, "error": f"{type(exc).__name__}: {exc}"})
 
-    # D3 — minimal synthetic diagnostics (never fails)
+    # D3  -  minimal synthetic diagnostics (never fails)
     syn = {
         "overall_status": "degraded",
         "synthetic": True,
         "timestamp": time.time(),
         "platform": platform.platform(),
         "python": sys.version.split()[0],
-        "message": "synthetic diagnostics — real diagnostics unavailable",
+        "message": "synthetic diagnostics  -  real diagnostics unavailable",
     }
     attempts.append({"method": "D3_synthetic", "ok": True, "overall": "degraded"})
     _log("[autodebug] D3 synthetic diagnostics (fallback)", on_log, level="WARN")
@@ -304,22 +304,22 @@ def run_autodebug_cycle(on_log: Optional[Callable[[str], None]] = None) -> dict[
 
     1) ensure_healthy_backend (F1..F5)
     2) diagnostics with fallbacks (D1..D3)
-    3) verbose boot tests + fresh docs (boot_test_runner) — only after EULA
+    3) verbose boot tests + fresh docs (boot_test_runner)  -  only after EULA
     4) fresh session SHA256 (covers all of the above)
     5) fresh certification on all systems (post-EULA, every boot)
     """
     if not _is_eula_accepted():
-        return {"schema": "qector.autodebug_cycle.v1", "ok": False, "skipped": True, "reason": "EULA not yet accepted — cycle deferred until customer accepts", "session": None}
+        return {"schema": "qector.autodebug_cycle.v1", "ok": False, "skipped": True, "reason": "EULA not yet accepted  -  cycle deferred until customer accepts", "session": None}
     started = time.time()
     started_iso = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started))
 
-    # Step 1 — backend health with full fallback chain
+    # Step 1  -  backend health with full fallback chain
     backend_health = ensure_healthy_backend(on_log=on_log)
 
-    # Step 2 — diagnostics with fallbacks
+    # Step 2  -  diagnostics with fallbacks
     diagnostics = _run_diagnostics_with_fallbacks(on_log=on_log)
 
-    # Step 3 — verbose boot tests + fresh docs
+    # Step 3  -  verbose boot tests + fresh docs
     boot_tests: dict[str, Any] = {"outcome": "skipped", "reason": "not attempted"}
     try:
         from boot_test_runner import run_boot_tests_and_refresh_docs
@@ -330,7 +330,7 @@ def run_autodebug_cycle(on_log: Optional[Callable[[str], None]] = None) -> dict[
         boot_tests = {"outcome": "error", "error": f"{type(exc).__name__}: {exc}", "traceback": traceback.format_exc()}
         _log(f"[autodebug] boot tests error: {exc}", on_log, level="WARN")
 
-    # Step 4 — fresh session SHA256 covering the whole cycle
+    # Step 4  -  fresh session SHA256 covering the whole cycle
     overall_ok = True
     extra = {
         "backend_health": {k: v for k, v in backend_health.items() if k != "attempts"},
@@ -355,7 +355,7 @@ def run_autodebug_cycle(on_log: Optional[Callable[[str], None]] = None) -> dict[
     except Exception:
         pass
 
-    # Step 5 — fresh certification on all systems every boot (post-EULA, air-gapped)
+    # Step 5  -  fresh certification on all systems every boot (post-EULA, air-gapped)
     try:
         from certification import generate_fresh_certification
         cert_path = generate_fresh_certification(session=rec.to_dict(), boot_tests=boot_tests, backend_health=backend_health, on_log=on_log)
@@ -375,7 +375,7 @@ def run_autodebug_cycle(on_log: Optional[Callable[[str], None]] = None) -> dict[
     }
 
     _log(
-        f"[autodebug] cycle done — backend={backend_health.get('method')} "
+        f"[autodebug] cycle done  -  backend={backend_health.get('method')} "
         f"diagnostics={diagnostics.get('method')} boot_tests={boot_tests.get('outcome')} "
         f"session={rec.session_id[:8]} sha256={rec.sha256[:16]}… cert={cert_path}",
         on_log,
@@ -436,7 +436,7 @@ def cli_entry(argv: Optional[list[str]] = None) -> int:
     """CLI helper: python -m self_autodebug_backend [--json] [--verbose]"""
     import argparse
 
-    ap = argparse.ArgumentParser(description="QECTOR self auto-debug backend — robust cycle")
+    ap = argparse.ArgumentParser(description="QECTOR self auto-debug backend  -  robust cycle")
     ap.add_argument("--json", action="store_true", help="print JSON result")
     ap.add_argument("--verbose", action="store_true", help="verbose console logging")
     args = ap.parse_args(argv)

@@ -1,14 +1,14 @@
-# AGENT.md — QECTOR Decoder Workbench MCP Operating Directive
+# AGENT.md  -  QECTOR Decoder Workbench MCP Operating Directive
 
 **Audience:** AI agents (Claude, or any MCP-capable client) that drive the QECTOR
 Decoder Workbench through its Model Context Protocol server.
 **Authority:** This file is a *directive*, not a suggestion. When it conflicts
 with a guess, the directive wins. When it conflicts with a tool's actual output,
-**the tool output wins** — never override a real result with a remembered one.
+**the tool output wins**  -  never override a real result with a remembered one.
 
 This document is generated from, and kept in sync with, `mcp_server.py`,
 `backend.py`, `autodebug.py`, and `version.py`. If any fact here disagrees with
-those modules, the code is the source of truth — re-derive, do not improvise.
+those modules, the code is the source of truth  -  re-derive, do not improvise.
 
 ---
 
@@ -19,7 +19,7 @@ those modules, the code is the source of truth — re-derive, do not improvise.
    tool call in this session, quoted with its inputs (family, distance, decoder,
    `seed`, `n_samples`, `error_rate`). No tool call → no number.
 2. **Discover, don't assume.** Get the valid decoders/families/hardware from
-   `list_decoders`, `list_code_families`, `get_hardware_info` — not from memory.
+   `list_decoders`, `list_code_families`, `get_hardware_info`  -  not from memory.
 3. **Verify every decode.** A correction is only "correct" if `syndrome_valid` is
    `true`. Report `logical_failure` honestly; `null` means the code exposes no
    logicals matrix, which is *unknown*, not *success*.
@@ -60,10 +60,10 @@ python main.py --mcp
 
 - Request: `{"jsonrpc":"2.0","id":<id>,"method":"tools/call","params":{"name":"<tool>","arguments":{...}}}`
 - **Tool success:** JSON-RPC `result` = `{"content":[{"type":"text","text":"<JSON string>"}],"isError":false}`.
-  The `text` field is a **JSON-encoded** payload — parse it, don't regex it.
+  The `text` field is a **JSON-encoded** payload  -  parse it, don't regex it.
 - **Tool-level failure:** same envelope with `"isError": true` and the error
   message in `text`. This is a *successful* JSON-RPC response reporting a failed
-  operation — treat it as the operation failing.
+  operation  -  treat it as the operation failing.
 - **Protocol errors** (JSON-RPC `error` object): `-32700` parse error,
   `-32601` method not found, `-32603` internal error.
 - `ping` returns `{}`. `notifications/initialized` returns no response.
@@ -76,71 +76,71 @@ Grouped by purpose. Parameter defaults are the server's; **always set `seed`
 explicitly** for anything stochastic. Tools marked ⚠ mutate server state.
 
 ### Discovery / introspection (read-only, safe)
-- `list_tools` — all MCP tools.
-- `list_decoders` — the 17 wired decoders (see §3).
-- `list_code_families` — the 10 code families (see §3).
-- `get_decoder_info` `{decoder_name}` — description of one decoder.
-- `get_code_properties` `{family_name, distance}` — n_qubits/n_checks/etc.
-- `analyze_code_family` `{family_name, distance}` — build + summarize an instance.
-- `get_hardware_info` — real CUDA/OpenCL availability (no fabricated GPUs).
-- `get_system_info`, `get_statistics`, `get_config`, `mcp_status` — server/runtime state.
+- `list_tools`  -  all MCP tools.
+- `list_decoders`  -  the 17 wired decoders (see §3).
+- `list_code_families`  -  the 10 code families (see §3).
+- `get_decoder_info` `{decoder_name}`  -  description of one decoder.
+- `get_code_properties` `{family_name, distance}`  -  n_qubits/n_checks/etc.
+- `analyze_code_family` `{family_name, distance}`  -  build + summarize an instance.
+- `get_hardware_info`  -  real CUDA/OpenCL availability (no fabricated GPUs).
+- `get_system_info`, `get_statistics`, `get_config`, `mcp_status`  -  server/runtime state.
 
 ### Decode / benchmark (compute; deterministic under `seed`)
-- `decode_single` `{family, distance, decoder_name, error_rate, seed}` — one
+- `decode_single` `{family, distance, decoder_name, error_rate, seed}`  -  one
   seeded decode → correction weight, `syndrome_valid`, `logical_failure`.
 - `benchmark_decoder` `{decoder_name, code_family, distance, error_rate, n_samples, seed}`
-  — latency percentiles (p50/p99), throughput, logical error rate. Does **not** store.
+   -  latency percentiles (p50/p99), throughput, logical error rate. Does **not** store.
 - `run_benchmark` `{code_family, distance, decoder_name, n_samples, seed, error_rate}` ⚠
-  — like `benchmark_decoder` but **stores** the result under a returned `result_id`.
-- `batch_decode` `{family, distance, backend, n_samples, error_rate, seed}` —
+   -  like `benchmark_decoder` but **stores** the result under a returned `result_id`.
+- `batch_decode` `{family, distance, backend, n_samples, error_rate, seed}`  - 
   batch decode on `backend` ∈ {`cpu`,`cuda`,`opencl`}. **No silent fallback:** an
   unavailable GPU backend fails loudly (use `resilient_decode` for fallback).
 - `stream_decode` `{family, distance, window_size, n_rounds, error_rate, seed, decoder_name}`
-  — sliding-window streaming session.
-- `recommend_decoder` `{family, distance, n_qubits, priority}` — heuristic
+   -  sliding-window streaming session.
+- `recommend_decoder` `{family, distance, n_qubits, priority}`  -  heuristic
   recommendation (`priority` ∈ {`balanced`,`speed`,`accuracy`}) from detected hardware.
 - `decode_with_options` `{family, distance, decoder_name, error_rate, seed, decoder_options}`
-  — seeded decode with validated per-decoder construction options (bp_osd
+   -  seeded decode with validated per-decoder construction options (bp_osd
   `bp_method`/`osd_order`, hybrid_cascade `escalation`, GNN architecture);
   `options_applied` reports honestly whether the backend accepted them.
-- `decode_syndrome` `{family, distance, decoder_name, syndrome, decoder_options}` —
+- `decode_syndrome` `{family, distance, decoder_name, syndrome, decoder_options}`  - 
   decode an explicit 0/1 syndrome (length `n_checks`). `syndrome_valid` is the
   GF(2) re-check; `logical_failure` is `null` (no reference error ⇒ unknowable).
 - `hybrid_cascade_stats` `{family, distance, n_samples, error_rate, seed, escalation}`
-  — seeded batch through `hybrid_cascade` exposing live cascade counters
+   -  seeded batch through `hybrid_cascade` exposing live cascade counters
   (prefilter_hits, escalations, hit rate, throughput, syndrome-match rate, LER).
 - `gnn_belief_match_decode` `{family, distance, error_rate, seed, gnn_hidden_size,
-  gnn_n_layers}` / `belief_match_decode` `{family, distance, error_rate, seed}` —
+  gnn_n_layers}` / `belief_match_decode` `{family, distance, error_rate, seed}`  - 
   convenience seeded decodes pinned to the GNN / belief-matching kinds.
 - `neural_predecoder_train` `{family, distance, n_samples, n_epochs, error_rate,
-  seed}` — research/lab: train the NeuralPredecoder MLP and evaluate on a
+  seed}`  -  research/lab: train the NeuralPredecoder MLP and evaluate on a
   disjoint held-out seed stream. Not a wired decoder; never quote its accuracy
   as a decode-quality claim.
-- `batch_decode_gpu` `{family, distance, backend, n_samples, error_rate, seed}` —
+- `batch_decode_gpu` `{family, distance, backend, n_samples, error_rate, seed}`  - 
   batch decode on an explicit backend with honest availability reporting:
   an unavailable GPU backend returns `status="unavailable"` + reason (no fakes).
-- `compatible_decoders` `{family, distance}` — live probe: which decoder kinds
+- `compatible_decoders` `{family, distance}`  -  live probe: which decoder kinds
   construct and produce a syndrome-verified correction on this code.
 
 ### Self-test / resilience (the anti-hallucination toolkit)
-- `self_diagnostics` — full environment/decoder/hardware self-test →
+- `self_diagnostics`  -  full environment/decoder/hardware self-test →
   `overall_status` ∈ {`pass`,`degraded`,`fail`}. **Run this first** each session.
-- `probe_decoders` `{family, distance, error_rate, seed}` — which decoders produce
+- `probe_decoders` `{family, distance, error_rate, seed}`  -  which decoders produce
   a **syndrome-verified** correction for this code. Use before trusting a decoder.
-- `resilient_decode` `{family, distance, decoder_name, error_rate, seed}` — one
+- `resilient_decode` `{family, distance, decoder_name, error_rate, seed}`  -  one
   decode with automatic multi-decoder fallback + a full attempt trace.
 
 ### Results / documentation / resources ⚠ (state-changing where noted)
 - `get_results` `{limit}`, `compare_benchmarks` `{benchmarks:[result_id...]}`.
-- `export_benchmark` `{benchmark_id, format}` ⚠ — writes to the export dir.
-- `clear_results` `{confirm}` ⚠ — requires `confirm:true`.
-- `generate_documentation` `{family_key, param, formats}` ⚠ — writes files.
+- `export_benchmark` `{benchmark_id, format}` ⚠  -  writes to the export dir.
+- `clear_results` `{confirm}` ⚠  -  requires `confirm:true`.
+- `generate_documentation` `{family_key, param, formats}` ⚠  -  writes files.
   Declared formats: **json, markdown, html, latex, pdf** (the doc generator also
   emits SVG; the GUI exposes it).
 - `get_resources`, `get_resource {resource_id}`, `delete_resource {resource_id, confirm}` ⚠.
 
 ### Client / config admin ⚠
-- `register_client` `{client_id, access_level}`, `list_clients` — an informational
+- `register_client` `{client_id, access_level}`, `list_clients`  -  an informational
   registry (`access_level` is metadata, **not** a hard security boundary; do not
   claim it enforces permissions).
 - `set_config {config}` ⚠, `reset_config {confirm}` ⚠.
@@ -149,11 +149,11 @@ The 1.0.0 backend adds tools covering the new decoders (`gnn_belief_match_decode
 `belief_match_decode`, `hybrid_cascade_stats`), explicit-syndrome and option-aware
 decoding (`decode_syndrome`, `decode_with_options`), neural pre-decoder training
 (`neural_predecoder_train`, research/lab), honest GPU batch (`batch_decode_gpu`),
-and the live compatibility probe (`compatible_decoders`) — **85 tools** total;
+and the live compatibility probe (`compatible_decoders`)  -  **85 tools** total;
 `list_tools` remains the live authority.
 
 > If you need a tool not in this list, it does not exist. Call `list_tools` to
-> confirm — never invent a tool name or an argument the schema doesn't declare.
+> confirm  -  never invent a tool name or an argument the schema doesn't declare.
 
 ---
 
@@ -168,11 +168,11 @@ and the live compatibility probe (`compatible_decoders`) — **85 tools** total;
 `unrotated_surface`, `toric`, `heavy_hex`, `bicycle`, `bivariate_bicycle`,
 `hypergraph_product`, `color_code`.
 
-**Accuracy vs. speed (from the package's own docstrings — do not over-state):**
+**Accuracy vs. speed (from the package's own docstrings  -  do not over-state):**
 - `blossom` = weight-optimal **exact** MWPM (reaches PyMatching's LER; not faster).
 - `sparse_blossom` = region-growing, **near-optimal, NOT exact**.
 - `union_find` / `fast_union_find` = fast, **approximate**, higher LER than exact
-  MWPM. Never quote a fixed speed/LER ratio — regenerate it on the target workload.
+  MWPM. Never quote a fixed speed/LER ratio  -  regenerate it on the target workload.
 - `bp_osd` = belief-propagation + OSD, the decoder for **LDPC / qLDPC** codes;
   accepts `bp_method` (exact|min_sum) and `osd_order` (0|1|2) options.
 - `hybrid_cascade` = Union-Find pre-filter with Blossom/BP-OSD escalation
@@ -184,15 +184,15 @@ and the live compatibility probe (`compatible_decoders`) — **85 tools** total;
 
 **qLDPC caveat (critical):** `bicycle` and `bivariate_bicycle` are non-graphlike.
 Matching/union-find decoders and the native `auto` decoder do **not** apply to
-their high-weight checks — recommend/`bp_osd` (or `blossom` on tiny instances).
+their high-weight checks  -  recommend/`bp_osd` (or `blossom` on tiny instances).
 `recommend_decoder` already returns `bp_osd` for these; trust it.
 
-**`lookup_table`** materializes a `2**n_checks` table — refused above **20 checks**.
+**`lookup_table`** materializes a `2**n_checks` table  -  refused above **20 checks**.
 Do not suggest it for large codes.
 
 **Batch backends:** `cpu` always works; `cuda`/`opencl` only if
 `get_hardware_info` reports them available. The standard wheel ships CUDA but no
-OpenCL kernels, so `opencl` is typically unavailable — say so, don't pretend.
+OpenCL kernels, so `opencl` is typically unavailable  -  say so, don't pretend.
 
 ---
 
@@ -211,12 +211,12 @@ These are non-negotiable. Violating them is a defect, not a style choice.
    seed=42, n=100)" from "the docs describe X as exact MWPM." Never present a
    docstring property as a measured result, or vice-versa.
 4. **`syndrome_valid` gates correctness.** Only call a decode "successful" when
-   `syndrome_valid == true`. If `false`, the decoder failed on this code — report
+   `syndrome_valid == true`. If `false`, the decoder failed on this code  -  report
    it and fall back (`probe_decoders` / `resilient_decode`).
 5. **`logical_failure == null` means unknown.** The code exposes no logicals
    matrix (e.g. some toric/unrotated-surface builds in 1.0.0). Never report `null`
-   as "no logical failure" — report it as *not determinable*.
-6. **Errors are results.** On `"isError": true`, quote the message and stop —
+   as "no logical failure"  -  report it as *not determinable*.
+6. **Errors are results.** On `"isError": true`, quote the message and stop  - 
    do not synthesize a plausible answer to fill the gap. On a JSON-RPC `-326xx`
    error, report the protocol failure; do not retry blindly in a loop.
 7. **No fabricated hardware.** GPU/CUDA/OpenCL claims come only from
@@ -231,29 +231,29 @@ These are non-negotiable. Violating them is a defect, not a style choice.
 
 ---
 
-## 5. AIO Skill — All-In-One standard operating procedure
+## 5. AIO Skill  -  All-In-One standard operating procedure
 
 A single, repeatable playbook for any QECTOR task via MCP. Follow it top to bottom;
 skip a step only when the prior output makes it unnecessary.
 
-### Phase A — Preflight (once per session)
+### Phase A  -  Preflight (once per session)
 1. `initialize` → confirm `serverInfo.name == "qector-workbench"` and protocol
    `2024-11-05`.
 2. `self_diagnostics` → require `overall_status` ∈ {`pass`,`degraded`}. On `fail`,
    stop and report the failing checks; do not proceed to compute.
 3. `get_hardware_info` → record CUDA/OpenCL availability for later routing.
 
-### Phase B — Discovery (before naming anything)
+### Phase B  -  Discovery (before naming anything)
 4. `list_code_families` and `list_decoders` → validate that the family/decoder the
    task needs actually exists. `get_code_properties {family, distance}` for sizes.
 
-### Phase C — Route (pick the right decoder honestly)
+### Phase C  -  Route (pick the right decoder honestly)
 5. If family ∈ {`bicycle`,`bivariate_bicycle`} → use `bp_osd`.
 6. Else call `recommend_decoder {family, distance, priority}` and use its answer,
    OR run `probe_decoders {family, distance, seed}` and pick a decoder whose
    result is `syndrome_valid`. Never route by assumption.
 
-### Phase D — Act (deterministically)
+### Phase D  -  Act (deterministically)
 7. Single check: `decode_single {..., seed}` → confirm `syndrome_valid`.
 8. Performance claim: `benchmark_decoder {..., seed, n_samples}` (or `run_benchmark`
    to persist a `result_id`). Report p50/p99/throughput/LER **with the inputs**.
@@ -262,7 +262,7 @@ skip a step only when the prior output makes it unnecessary.
 10. Robustness: if a chosen decoder fails, `resilient_decode {..., seed}` and
     report which fallback recovered it (from the attempt trace).
 
-### Phase E — Verify & report
+### Phase E  -  Verify & report
 11. Re-run the key result with the same `seed` if a claim is load-bearing; identical
     output confirms reproducibility.
 12. Report only tool-sourced facts, each with provenance:
@@ -287,7 +287,7 @@ skip a step only when the prior output makes it unnecessary.
 ## 6. What NOT to do (anti-patterns)
 
 - ❌ "union_find is ~3× faster with the same accuracy." (fabricated ratio, and
-  union_find is *not* exact — see §3)
+  union_find is *not* exact  -  see §3)
 - ❌ "The [[144,12,12]] code decoded with 0 logical failures." when
   `logical_failure` was `null`. (unknown ≠ zero)
 - ❌ Calling a decoder "successful" while `syndrome_valid` was `false`.

@@ -1,4 +1,4 @@
-"""batch_streaming_tab.py — Batch & Streaming tab for QECTOR Workbench.
+"""batch_streaming_tab.py  -  Batch & Streaming tab for QECTOR Workbench.
 
 Batch decode on cpu/cuda/opencl backends (backend errors surfaced verbatim,
 no silent fallback) and real sliding-window streaming sessions with decoder
@@ -33,7 +33,7 @@ _MAX_ROUNDS = 100_000
 _MAX_WINDOW = 10_000
 _BATCH_BACKENDS = ["cpu", "cuda", "cuda_bposd", "opencl", "cpu_parallel"]
 # Decoder types the cpu_parallel process pool (backend.run_parallel_batch_decode)
-# actually accepts — deliberately NOT derived from DECODER_KINDS: offering kinds
+# actually accepts  -  deliberately NOT derived from DECODER_KINDS: offering kinds
 # the pool would reject would be a UI lie.
 _POOL_DECODERS = ["union_find", "fast_union_find", "blossom", "sparse_blossom", "bp_osd"]
 
@@ -100,7 +100,7 @@ if _HAS_GUI:
                 command=self._on_backend_change,
             )
             self.backend_menu.pack(side="left", padx=(8, 16))
-            # Pool decoder selector — only meaningful for cpu_parallel, so it
+            # Pool decoder selector  -  only meaningful for cpu_parallel, so it
             # stays hidden unless that backend is chosen.
             self.pool_decoder_label = ctk.CTkLabel(brow, text="Pool decoder:", font=bold)
             self.pool_decoder_var = ctk.StringVar(value="union_find")
@@ -237,7 +237,7 @@ if _HAS_GUI:
             try:
                 self.backend_status_label.configure(
                     text=(
-                        f"Backend availability — cpu: available | cpu_parallel: process pool | "
+                        f"Backend availability  -  cpu: available | cpu_parallel: process pool | "
                         f"cuda: {_fmt(cuda)} | opencl: {_fmt(opencl)}.  "
                         "Unavailable backends report their error verbatim on run."
                     )
@@ -295,7 +295,7 @@ if _HAS_GUI:
                 self._set_result_text(f"Invalid {label}: {text!r}\nEnter a number between 0 and 1 (e.g. 0.05).")
                 return None
             if not (0.0 < rate < 1.0):
-                self._set_result_text(f"{label} {rate} out of range — it must be strictly between 0 and 1.")
+                self._set_result_text(f"{label} {rate} out of range  -  it must be strictly between 0 and 1.")
                 return None
             return rate
 
@@ -375,7 +375,7 @@ if _HAS_GUI:
                           weighted_gpu: bool = False, precision: str = "f32") -> None:
             try:
                 if backend == "cpu_parallel":
-                    # Multi-process DecoderPool: aggregate statistics only —
+                    # Multi-process DecoderPool: aggregate statistics only  - 
                     # no per-sample corrections are returned for a histogram.
                     out = be.run_parallel_batch_decode(
                         code, n_samples=n, error_rate=rate, seed=seed,
@@ -424,7 +424,7 @@ if _HAS_GUI:
                 self._ui.post(self._on_batch_done, seq, payload)
             except be.QectorError as e:
                 # Backend errors (e.g. "cuda backend unavailable ...") are
-                # surfaced verbatim — no silent fallback.
+                # surfaced verbatim  -  no silent fallback.
                 self._log(f"Batch decode failed: {e}", "ERROR")
                 self._ui.post(self._on_batch_failed, seq, str(e))
             except Exception as e:
@@ -686,7 +686,7 @@ if _HAS_GUI:
             ax = self._figure.add_subplot(111)
             theme.style_dark_axes(
                 ax,
-                title=f"Correction Hamming weights — batch ({p['backend_used']}, n={p['n_samples']})",
+                title=f"Correction Hamming weights  -  batch ({p['backend_used']}, n={p['n_samples']})",
                 xlabel="hamming weight", ylabel="count",
             )
             if weights.size:
@@ -723,7 +723,7 @@ if _HAS_GUI:
             ax = self._figure.add_subplot(111)
             theme.style_dark_axes(
                 ax,
-                title=f"Committed correction weight per round — {p['decoder']} (window={p['window_size']})",
+                title=f"Committed correction weight per round  -  {p['decoder']} (window={p['window_size']})",
                 xlabel="round", ylabel="hamming weight",
             )
             if weights:

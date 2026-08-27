@@ -1,4 +1,4 @@
-"""code_explorer_tab.py — Code Explorer tab for QECTOR Workbench.
+"""code_explorer_tab.py  -  Code Explorer tab for QECTOR Workbench.
 
 Code family browser with a debounced distance slider, background code
 building, rich property/analysis panels, and an embedded matplotlib view
@@ -254,7 +254,7 @@ if _HAS_GUI:
             try:
                 d = int(self.distance_var.get())
             except tkinter.TclError:
-                self._set_text(self.props_text, "Invalid distance value — use the slider to pick 3-63.")
+                self._set_text(self.props_text, "Invalid distance value  -  use the slider to pick 3-63.")
                 return
             if family not in be.CODE_FAMILIES:
                 self._set_text(self.props_text, f"Unknown code family: {family!r}")
@@ -625,7 +625,7 @@ if _HAS_GUI:
 
             self._figure.clear()
             self._ax = self._figure.add_subplot(111)
-            theme.style_dark_axes(self._ax, title=f"Tanner graph — {name}", grid=False)
+            theme.style_dark_axes(self._ax, title=f"Tanner graph  -  {name}", grid=False)
             self._ax.set_xticks([])
             self._ax.set_yticks([])
 
@@ -710,7 +710,7 @@ if _HAS_GUI:
             # edge construction and degrade gracefully to a node-only plot.
             self._figure.clear()
             ax = self._figure.add_subplot(111)
-            theme.style_dark_axes(ax, title=f"2D Lattice representation — {name}", grid=False)
+            theme.style_dark_axes(ax, title=f"2D Lattice representation  -  {name}", grid=False)
 
             if not q_coords:
                 self._draw_placeholder("Lattice representation is only available for codes with coordinates.")
@@ -829,7 +829,7 @@ if _HAS_GUI:
             ax.spines['polar'].set_color(theme.mc("grid"))
             ax.tick_params(colors=theme.mc("text_secondary"))
             
-            ax.set_title(f"Code Metrics Radar — {data['name']}", color=theme.mc("text_primary"), pad=15)
+            ax.set_title(f"Code Metrics Radar  -  {data['name']}", color=theme.mc("text_primary"), pad=15)
             self._mpl_canvas.draw_idle()
 
         def _draw_matrix(self, data: dict[str, Any]) -> None:
@@ -849,7 +849,7 @@ if _HAS_GUI:
                 )
             else:
                 theme.style_dark_axes(
-                    ax, title=f"Parity-check matrix — {data['name']}",
+                    ax, title=f"Parity-check matrix  -  {data['name']}",
                     xlabel="qubits", ylabel="checks", grid=False,
                 )
                 cmap = ListedColormap([theme.mc("axes_bg"), theme.mc("accent")])

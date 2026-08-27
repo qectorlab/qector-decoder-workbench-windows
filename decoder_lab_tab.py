@@ -1,4 +1,4 @@
-"""decoder_lab_tab.py — Decoder Lab tab for QECTOR Workbench.
+"""decoder_lab_tab.py  -  Decoder Lab tab for QECTOR Workbench.
 
 Interactive decoder testing: select decoder (info updates live), set error
 rate and seed, run a single decode in a background thread, and inspect the
@@ -87,7 +87,7 @@ if _HAS_GUI:
                 font=ctk.CTkFont(size=11), text_color=theme.c("text_secondary"),
             ).pack(anchor="w", padx=16, pady=(0, 12))
 
-            # Decoder selector — info text updates when the choice changes
+            # Decoder selector  -  info text updates when the choice changes
             row0 = ctk.CTkFrame(scroll, fg_color="transparent")
             row0.pack(fill="x", padx=16, pady=4)
             ctk.CTkLabel(row0, text="Decoder:", font=bold).pack(side="left")
@@ -108,10 +108,10 @@ if _HAS_GUI:
             )
             self.resilient_check.pack(side="left", padx=(16, 0))
 
-            # Contextual per-decoder options panel — the visible contents swap
+            # Contextual per-decoder options panel  -  the visible contents swap
             # with the selected decoder kind (BP-OSD tuning, hybrid-cascade
             # escalation + batch stats, neural-path info + predecoder
-            # training).  Empty — and effectively invisible — for decoders
+            # training).  Empty  -  and effectively invisible  -  for decoders
             # that expose no options.
             self.options_frame = ctk.CTkFrame(scroll, fg_color="transparent")
             self.options_frame.pack(fill="x", padx=16, pady=0)
@@ -132,7 +132,7 @@ if _HAS_GUI:
             self.rate_label = ctk.CTkLabel(row1, text="0.05", font=ctk.CTkFont(size=12))
             self.rate_label.pack(side="left")
 
-            # Seed (plain entry — validated as text, never crashes)
+            # Seed (plain entry  -  validated as text, never crashes)
             row2 = ctk.CTkFrame(scroll, fg_color="transparent")
             row2.pack(fill="x", padx=16, pady=4)
             ctk.CTkLabel(row2, text="Seed:", font=bold).pack(side="left")
@@ -261,7 +261,7 @@ if _HAS_GUI:
             lines = [header]
             for r in results:
                 if r.get("error"):
-                    lines.append(f"{r['kind']:<25} {'—':>5} {'—':>5} {'—':>10}  ✗ {r['error'][:40]}\n")
+                    lines.append(f"{r['kind']:<25} {' - ':>5} {' - ':>5} {' - ':>10}  ✗ {r['error'][:40]}\n")
                 else:
                     lf = r["logical_failure"]
                     lf_s = "N/A" if lf is None else ("FAIL" if lf else "ok")
@@ -332,7 +332,7 @@ if _HAS_GUI:
             self._imported_syndrome_path = path
             self.result_text.configure(state="normal")
             self.result_text.delete("1.0", "end")
-            self.result_text.insert("1.0", f"Imported syndrome from {path}\n\n{syn[:64]}{' ...' if len(syn) > 64 else ''}\n\nLength: {len(syn)} check(s). Ready to decode — press Run Decode (imported syndrome will be used).")
+            self.result_text.insert("1.0", f"Imported syndrome from {path}\n\n{syn[:64]}{' ...' if len(syn) > 64 else ''}\n\nLength: {len(syn)} check(s). Ready to decode  -  press Run Decode (imported syndrome will be used).")
             self.result_text.configure(state="disabled")
             self._log(f"Imported syndrome: {len(syn)} entries from {path}", "SUCCESS")
 
@@ -724,7 +724,7 @@ if _HAS_GUI:
             try:
                 rate = float(self.rate_var.get())
             except (tkinter.TclError, ValueError):
-                self._set_text(self.result_text, "Invalid error rate — use the slider to pick a value.")
+                self._set_text(self.result_text, "Invalid error rate  -  use the slider to pick a value.")
                 return
             seed_text = self.seed_entry.get().strip()
             valid, msg = utils.validate_int(seed_text, min_val=0, max_val=_MAX_SEED)
@@ -839,7 +839,7 @@ if _HAS_GUI:
                         opt_line = f"Options:         {opts}\n"
                     else:
                         opt_line = (
-                            "Options:         NOT APPLIED — this backend build does not\n"
+                            "Options:         NOT APPLIED  -  this backend build does not\n"
                             "                 accept decoder_options; decoder defaults used.\n"
                         )
                 text = (
@@ -982,7 +982,7 @@ if _HAS_GUI:
             try:
                 rate = float(self.rate_var.get())
             except (tkinter.TclError, ValueError):
-                self._set_text(self.result_text, "Invalid error rate — use the slider to pick a value.")
+                self._set_text(self.result_text, "Invalid error rate  -  use the slider to pick a value.")
                 return
             escalation = _ESCALATIONS.get(self.escalation_var.get(), "blossom")
 
@@ -1007,7 +1007,7 @@ if _HAS_GUI:
                 try:
                     stats = fn(code, n, rate, seed, escalation=escalation)
                 except TypeError:
-                    # Backend build without the escalation kwarg — run with its default.
+                    # Backend build without the escalation kwarg  -  run with its default.
                     stats = fn(code, n, rate, seed)
                 payload = dict(stats) if isinstance(stats, dict) else {"result": str(stats)}
                 self._ui.post(self._on_stats_done, seq, "hybrid_cascade batch statistics", payload)
@@ -1050,7 +1050,7 @@ if _HAS_GUI:
             try:
                 rate = float(self.rate_var.get())
             except (tkinter.TclError, ValueError):
-                self._set_text(self.result_text, "Invalid error rate — use the slider to pick a value.")
+                self._set_text(self.result_text, "Invalid error rate  -  use the slider to pick a value.")
                 return
 
             self._stats_seq += 1

@@ -65,12 +65,12 @@ def _deversion(value: Any) -> str:
 #: Unicode dashes and their plain-ASCII replacements.  Ordered longest first so
 #: the spaced forms win before the bare character is considered.
 _DASH_REPLACEMENTS = (
-    (" — ", ", "),      # spaced em dash  -> comma
-    (" – ", " to "),    # spaced en dash  -> range word
+    ("  -  ", ", "),      # spaced em dash  -> comma
+    ("  -  ", " to "),    # spaced en dash  -> range word
     (" ‒ ", " to "),    # figure dash
     (" ― ", ", "),      # horizontal bar
-    ("—", ", "),        # bare em dash
-    ("–", " to "),      # bare en dash
+    (" - ", ", "),        # bare em dash
+    (" - ", " to "),      # bare en dash
     ("‒", " to "),
     ("―", ", "),
     ("−", "-"),         # Unicode minus -> ASCII hyphen-minus
@@ -1895,7 +1895,7 @@ caption strong {{
         # Render deterministically regardless of the app's global matplotlib
         # rcParams.  The GUI enables constrained_layout, which conflicts with the
         # explicit tight_layout() below and has raised on large, equal-aspect
-        # figures in some matplotlib builds — the cause of SVG export failures on
+        # figures in some matplotlib builds  -  the cause of SVG export failures on
         # big codes.  Force the layout engine off here so doc export is stable.
         try:
             fig.set_layout_engine("none")
@@ -2253,7 +2253,7 @@ caption strong {{
             "Creator": "QECTOR Decoder Workbench",
             "Description": WATERMARK,
         }
-        # Bulletproof, progressive fallbacks: SVG export must never fail.  Any
+        # Robust, progressive fallbacks: SVG export must never fail.  Any
         # failure (metadata rejected, a matplotlib layout/backend quirk on large
         # codes, a rendering error) drops to the next, simpler strategy, and the
         # final strategy writes a valid minimal SVG with no matplotlib at all.

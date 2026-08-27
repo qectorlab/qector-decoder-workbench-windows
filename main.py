@@ -1,4 +1,4 @@
-"""main.py — QECTOR Decoder Workbench entry point for the PyInstaller build.
+"""main.py  -  QECTOR Decoder Workbench entry point for the PyInstaller build.
 
 PyInstaller executes this module as ``__main__`` inside the frozen app, so the
 ``__main__`` guard below still launches the GUI in the packaged EXE while
@@ -364,7 +364,7 @@ def _ensure_std_streams() -> None:
 
     A frozen windowed build (``console=False``) leaves both set to ``None``.  Any
     module that prints while being imported then dies with
-    ``AttributeError: 'NoneType' object has no attribute 'write'`` -- which is
+    ``AttributeError: 'NoneType' object has no attribute 'write'`` - which is
     exactly how the ``qector_decoder_v3`` licence banner broke the GUI boot while
     ``--cli`` / ``--mcp`` / ``--decoder-selftest`` (which attach a console first)
     kept working.  The failure surfaced as a bogus "ABI mismatch" dialog followed

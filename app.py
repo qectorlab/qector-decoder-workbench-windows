@@ -1,4 +1,4 @@
-"""app.py — Main application entry point for QECTOR Decoder Workbench.
+"""app.py  -  Main application entry point for QECTOR Decoder Workbench.
 
 Builds the full application window: a CTkTabview with the six feature tabs
 plus a live Console tab, a status bar showing the app version and the
@@ -172,7 +172,7 @@ class QectorApp:
 
         # Session persistence: restore the last workspace (code family,
         # distance, decoder, error rate, seed) and preferences, then arm
-        # saving on close.  All failure paths are silent — persistence is a
+        # saving on close.  All failure paths are silent  -  persistence is a
         # convenience, never a boot blocker.
         self._workspace_path: Optional[Any] = None
         self._prefs_path: Optional[Any] = None
@@ -250,7 +250,7 @@ class QectorApp:
         self._update_after_id = None
         self._toast_after_id = None
         self._mem_after_id = None
-        # Cancel every remaining Tk "after" timer — including CustomTkinter's
+        # Cancel every remaining Tk "after" timer  -  including CustomTkinter's
         # internal DPI/scaling-tracker loop, which reschedules itself and would
         # otherwise fire against the destroyed interpreter (an intermittent
         # _tkinter.TclError when roots are created and torn down repeatedly).
@@ -275,7 +275,7 @@ class QectorApp:
         # timer above deletes Tcl commands that CustomTkinter widgets still
         # hold, so tkinter.Tk.destroy() can abort mid-recursion with
         # "can't delete Tcl command" BEFORE the root window itself is
-        # destroyed — leaving mainloop() spinning forever and the app unable
+        # destroyed  -  leaving mainloop() spinning forever and the app unable
         # to close.  Fall back to the raw Tcl destroy so the window always
         # dies and mainloop() always returns.
         try:
@@ -291,7 +291,7 @@ class QectorApp:
             # CustomTkinter's mainloop wrapper re-applies the Windows
             # titlebar colour once the event loop unwinds; when the window
             # was already destroyed by _on_close this raises "application
-            # has been destroyed".  The app is closing anyway — swallow it so
+            # has been destroyed".  The app is closing anyway  -  swallow it so
             # teardown returns cleanly instead of surfacing as a fatal error.
             pass
 
@@ -591,7 +591,7 @@ class QectorApp:
         self._refresh_console()
 
     def _on_console_output(self, text: str) -> None:
-        """Console subscriber — may run on any thread; marshal to UI."""
+        """Console subscriber  -  may run on any thread; marshal to UI."""
         if self._destroyed:
             return
         self._ui.post(self._append_console, text)
@@ -654,7 +654,7 @@ class QectorApp:
         self.state.on_code_changed(self._on_state_code_changed)
 
     def _on_state_code_changed(self) -> None:
-        """State listener — may fire from any thread; marshal to UI."""
+        """State listener  -  may fire from any thread; marshal to UI."""
         if self._destroyed:
             return
         self._ui.post(self._refresh_status_code)
@@ -718,7 +718,7 @@ class QectorApp:
                 pass
 
     def _on_tk_exception(self, exc_type, exc_value, exc_tb) -> None:
-        """Global Tk callback exception hook — log, surface, never re-raise."""
+        """Global Tk callback exception hook  -  log, surface, never re-raise."""
         try:
             detail = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
         except Exception:
@@ -757,7 +757,7 @@ class QectorApp:
 
         Applies last-session values onto the freshly built tabs: code family +
         distance (Code Explorer), decoder + error rate + seed (Decoder Lab /
-        Benchmark).  Any mismatch with the current tab options is ignored —
+        Benchmark).  Any mismatch with the current tab options is ignored  - 
         persistence is a convenience, never a source of errors.
         """
         try:
@@ -1027,7 +1027,7 @@ class QectorApp:
             pass
 
     def _boot_version_string(self) -> str:
-        """The app's own version at construction — tracks the installed decoder
+        """The app's own version at construction  -  tracks the installed decoder
         backend (read live from the wheel), never a hardcoded workbench number.
         The moment a newer decoder (e.g. 0.6.7) is installed, the app identifies
         as that version."""
@@ -1091,7 +1091,7 @@ class QectorApp:
             except Exception:
                 pass
             self.console.log(
-                "qector-decoder-v3 is up to date — using bundled local wheel", "INFO")
+                "qector-decoder-v3 is up to date  -  using bundled local wheel", "INFO")
         except Exception:
             pass
 

@@ -1,4 +1,4 @@
-"""api_reference.py — Build the QECTOR Workbench Complete API Reference.
+"""api_reference.py  -  Build the QECTOR Workbench Complete API Reference.
 
 Portable, parameterized port of ``scripts/generate_api_manual.py`` so the same
 generator can be driven by the release tooling, the CLI, and the in-app
@@ -214,7 +214,7 @@ def env_and_examples():
 
         The Workbench bundles the decoder wheel inside the application. On first launch it
         activates `qector-decoder-v3` from the bundled wheel into a managed, ABI-scoped user
-        site — fully offline, on every platform. Any outdated managed decoder left by an
+        site  -  fully offline, on every platform. Any outdated managed decoder left by an
         older release is purged automatically before activation. No internet connection,
         Python, or pip is required.
 

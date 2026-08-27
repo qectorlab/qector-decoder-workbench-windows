@@ -1,4 +1,4 @@
-"""benchmark_tab.py — Benchmark tab for QECTOR Workbench.
+"""benchmark_tab.py  -  Benchmark tab for QECTOR Workbench.
 
 Configurable benchmarks (family, distance, decoder, error rate, samples,
 seed) run in a background thread; results render latency statistics and a
@@ -192,7 +192,7 @@ if _HAS_GUI:
             try:
                 d = int(self.distance_var.get())
             except tkinter.TclError:
-                self._set_result_text("Invalid distance — use the slider to pick 3-21.")
+                self._set_result_text("Invalid distance  -  use the slider to pick 3-21.")
                 return
 
             samples_text = self.samples_entry.get().strip()
@@ -216,7 +216,7 @@ if _HAS_GUI:
                 self._set_result_text(f"Invalid error rate: {rate_text!r}\nEnter a number between 0 and 1 (e.g. 0.05).")
                 return
             if not (0.0 < rate < 1.0):
-                self._set_result_text(f"Error rate {rate} out of range — it must be strictly between 0 and 1.")
+                self._set_result_text(f"Error rate {rate} out of range  -  it must be strictly between 0 and 1.")
                 return
 
             self._run_seq += 1
@@ -226,7 +226,7 @@ if _HAS_GUI:
             except tkinter.TclError:
                 return
             mode = self.mode_var.get()
-            self._set_result_text(f"Running {family} d={d} / {kind} — {n} samples ...")
+            self._set_result_text(f"Running {family} d={d} / {kind}  -  {n} samples ...")
             threading_utils.run_in_background(
                 self._run_worker, args=(seq, family, d, kind, n, rate, seed, mode)
             )
@@ -378,7 +378,7 @@ if _HAS_GUI:
             values = [s[1] for s in stats]
             theme.style_dark_axes(
                 ax1,
-                title=f"Latency — {latest['method']}",
+                title=f"Latency  -  {latest['method']}",
                 ylabel="microseconds",
             )
             xs1 = np.arange(len(labels))
@@ -443,7 +443,7 @@ if _HAS_GUI:
         def _on_export_figure(self) -> None:
             """Export the current chart at publication quality (300 DPI)."""
             if not self._results:
-                self._set_result_text("No results to export — run a benchmark first.")
+                self._set_result_text("No results to export  -  run a benchmark first.")
                 return
             try:
                 import tkinter.filedialog as fd
@@ -485,7 +485,7 @@ if _HAS_GUI:
 
         def _on_export(self) -> None:
             if not self._results:
-                self._set_result_text("No results to export — run a benchmark first.")
+                self._set_result_text("No results to export  -  run a benchmark first.")
                 return
             try:
                 import tkinter.filedialog as fd

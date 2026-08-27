@@ -1,4 +1,4 @@
-"""threading_utils.py — Threading utilities for QECTOR Workbench."""
+"""threading_utils.py  -  Threading utilities for QECTOR Workbench."""
 
 from __future__ import annotations
 
@@ -36,8 +36,8 @@ class UiPump:
     ``RuntimeError: main thread is not in main loop`` whenever the app is
     being driven by ``update()`` (tests, tooling) instead of ``mainloop()``.
     ``UiPump`` avoids that entirely: worker threads :meth:`post` callables
-    into a thread-safe queue, and a widget-bound ``after`` chain — created on
-    the UI thread in ``__init__`` — drains the queue every ``interval_ms``
+    into a thread-safe queue, and a widget-bound ``after`` chain  -  created on
+    the UI thread in ``__init__``  -  drains the queue every ``interval_ms``
     milliseconds.  The pump closes itself when the widget is destroyed.
     """
 
@@ -57,7 +57,7 @@ class UiPump:
             pass
         self._schedule()
 
-    # -- UI thread side ---------------------------------------------------
+    # - UI thread side ---------------------------------------------------
     def _schedule(self) -> None:
         if self._closed:
             return
@@ -105,7 +105,7 @@ class UiPump:
                     return
         self.close()
 
-    # -- any thread -------------------------------------------------------
+    # - any thread -------------------------------------------------------
     def post(self, fn: Callable, *args: Any, **kwargs: Any) -> bool:
         """Queue ``fn(*args, **kwargs)`` for execution on the UI thread.
 

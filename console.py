@@ -1,4 +1,4 @@
-"""console.py — Thread-safe console output buffer for QECTOR Workbench."""
+"""console.py  -  Thread-safe console output buffer for QECTOR Workbench."""
 
 from __future__ import annotations
 

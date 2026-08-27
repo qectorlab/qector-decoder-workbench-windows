@@ -54,7 +54,7 @@ Verify locally: `sha256sum QectorWorkbench-Portable` and `sha256sum QectorWorkbe
 
 ## Hardware Measurements
 
-Benchmark results are not included in the release. Run benchmarks locally on the target machine when hardware-specific measurements are required. Test evidence for this build: `627 passed, 18 skipped, 0 failed` on Ubuntu 24.04.4 LTS, Python 3.12.3 (11.96 s) — see `test_results_linux.txt`.
+Benchmark results are not included in the release. Run benchmarks locally on the target machine when hardware-specific measurements are required. Test evidence for this build: `627 passed, 18 skipped, 0 failed` on Ubuntu 24.04.4 LTS, Python 3.12.3 (11.96 s)  -  see `test_results_linux.txt`.
 
 ## Support Files
 

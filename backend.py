@@ -1,4 +1,4 @@
-"""backend.py — QECTOR Workbench backend wrapping qector_decoder_v3.
+"""backend.py  -  QECTOR Workbench backend wrapping qector_decoder_v3.
 
 Provides a stable, testable API for code construction, decoding,
 benchmarking, batch processing, and layout computation.
@@ -60,21 +60,21 @@ DECODER_KINDS = [
     # correction across every wired code family, including bivariate_bicycle.
     "auto_router",
     # v0.6.9 additions:
-    # hybrid_cascade — Union-Find pre-filter + Blossom/BP-OSD escalation
-    # gnn_belief_matching — GNN-guided weighted matching
-    # belief_matching — BP-posterior-reweighted exact Blossom matching
+    # hybrid_cascade  -  Union-Find pre-filter + Blossom/BP-OSD escalation
+    # gnn_belief_matching  -  GNN-guided weighted matching
+    # belief_matching  -  BP-posterior-reweighted exact Blossom matching
     "hybrid_cascade",
     "gnn_belief_matching",
     "belief_matching",
     # v0.7.0 additions:
-    # two_stage — decoupled X/Z CSS sub-graph decoding
-    # ambiguity_cluster — cluster-growth decoder for non-graphlike codes
-    # colour_code — BP-OSD hypergraph decoder for 3-body color code mechanisms
+    # two_stage  -  decoupled X/Z CSS sub-graph decoding
+    # ambiguity_cluster  -  cluster-growth decoder for non-graphlike codes
+    # colour_code  -  BP-OSD hypergraph decoder for 3-body color code mechanisms
     "two_stage",
     "ambiguity_cluster",
     "colour_code",
     # v1.0.0 additions:
-    # space_time — space-time decoder for multi-round decoding (experimental)
+    # space_time  -  space-time decoder for multi-round decoding (experimental)
     "space_time",
 ]
 
@@ -410,48 +410,48 @@ def _decoder_class(kind: str):
 def get_decoder_info(kind: str) -> dict[str, str]:
     """Return human-readable info about a decoder kind."""
     descriptions = {
-        "union_find": "Union-Find — fast approximate decode; higher LER than exact MWPM. "
+        "union_find": "Union-Find  -  fast approximate decode; higher LER than exact MWPM. "
                       "Best as a throughput/triage lever, not a universal decoder.",
-        "fast_union_find": "Fast Union-Find — optimized Union-Find hot path; approximate, "
+        "fast_union_find": "Fast Union-Find  -  optimized Union-Find hot path; approximate, "
                            "higher LER than exact MWPM. Regenerate LER on your target workload.",
-        "blossom": "Blossom — weight-optimal exact MWPM. Reaches PyMatching's logical error "
+        "blossom": "Blossom  -  weight-optimal exact MWPM. Reaches PyMatching's logical error "
                    "rate on tested surface-code workloads but is not faster than PyMatching.",
-        "sparse_blossom": "Sparse Blossom — region-growing, near-optimal matching (experimental); "
+        "sparse_blossom": "Sparse Blossom  -  region-growing, near-optimal matching (experimental); "
                           "NOT exact. Use Blossom for exact minimum-weight matching.",
-        "bp_osd": "BP-OSD — belief propagation + ordered-statistics decoding for LDPC / "
+        "bp_osd": "BP-OSD  -  belief propagation + ordered-statistics decoding for LDPC / "
                   "quantum-LDPC codes that graphlike matching cannot decode (experimental).",
-        "auto": "Auto — self-selecting decoder (AutoDecoder): picks the best available "
+        "auto": "Auto  -  self-selecting decoder (AutoDecoder): picks the best available "
                 "backend (cpu_single / cpu_rayon / GPU) per problem size and exposes live "
                 "diagnostics and available_backends. Robust general-purpose default.",
-        "hybrid": "Hybrid — combines a fast heuristic pass with exact matching (decode_hybrid); "
+        "hybrid": "Hybrid  -  combines a fast heuristic pass with exact matching (decode_hybrid); "
                   "supports trainable weights. Trades a little accuracy for throughput.",
-        "lookup_table": "Lookup Table — precomputed syndrome→correction table giving O(1) lookup "
+        "lookup_table": "Lookup Table  -  precomputed syndrome→correction table giving O(1) lookup "
                         "after a one-time build. Exact for small codes; the table grows as "
                         f"2**n_checks, so it is refused above {_LOOKUP_MAX_CHECKS} checks.",
-        "predecoded": "Predecoded — resolves easy/low-weight syndromes in a fast pre-decoding pass "
+        "predecoded": "Predecoded  -  resolves easy/low-weight syndromes in a fast pre-decoding pass "
                       "before matching. A throughput lever, not a standalone universal decoder.",
-        "auto_router": "Auto-Router — policy decoder: inspects the code and "
+        "auto_router": "Auto-Router  -  policy decoder: inspects the code and "
                        "dispatches the best concrete decoder (matching for graphlike codes, BP-OSD "
                        "for qLDPC). Universally applicable; call explain() for the routing rationale.",
-        "hybrid_cascade": "Hybrid Cascade — Union-Find pre-filter + Blossom/BP-OSD escalation "
+        "hybrid_cascade": "Hybrid Cascade  -  Union-Find pre-filter + Blossom/BP-OSD escalation "
                           ": trivial syndromes resolve at UF speed, hard ones escalate to "
                           "the accurate decoder. Exposes prefilter_hits / escalations / "
                           "prefilter_hit_rate stats. Graphlike codes only (UF pre-filter).",
-        "gnn_belief_matching": "GNN Belief Matching — GNN-predicted per-qubit weights guide a "
+        "gnn_belief_matching": "GNN Belief Matching  -  GNN-predicted per-qubit weights guide a "
                                "weighted matching decode (GNNBeliefMatcher); a built-in "
                                "faithfulness check falls back to plain MWPM so corrections stay "
                                "syndrome-valid. Graphlike codes.",
-        "belief_matching": "Belief Matching — sum-product BP posteriors reweight an exact Blossom "
+        "belief_matching": "Belief Matching  -  sum-product BP posteriors reweight an exact Blossom "
                            "matching step (Higgott et al. 2023), recovering error-correlation "
                            "information plain MWPM discards. Faithfulness-checked; falls back to "
                            "plain MWPM so corrections stay syndrome-valid.",
-        "two_stage": "Two-Stage — decoupled X and Z sector decoders for CSS / color codes; "
+        "two_stage": "Two-Stage  -  decoupled X and Z sector decoders for CSS / color codes; "
                      "decodes X and Z check sub-graphs separately with configurable base decoders.",
-        "ambiguity_cluster": "Ambiguity Cluster — cluster-growth decoder for high noise or non-graphlike "
+        "ambiguity_cluster": "Ambiguity Cluster  -  cluster-growth decoder for high noise or non-graphlike "
                              "syndromes; partitions ambiguous checks into local clusters before solving.",
-        "colour_code": "Colour Code — BP-OSD hypergraph decoder over undecomposed detector error models (v0.7.0); "
+        "colour_code": "Colour Code  -  BP-OSD hypergraph decoder over undecomposed detector error models (v0.7.0); "
                        "preserves multi-detector 3-body error mechanisms that standard MWPM discards.",
-        "space_time": "Space-Time — multi-round space-time decoder for phenomenological and circuit-level "
+        "space_time": "Space-Time  -  multi-round space-time decoder for phenomenological and circuit-level "
                       "decoding (v1.0.0, experimental). Handles measurement errors across syndrome rounds.",
     }
     return {"name": kind, "description": descriptions.get(kind, "Unknown decoder")}
@@ -522,7 +522,7 @@ def _checks_to_h_matrix(checks) -> np.ndarray:
 
 
 class _HybridCascadeAdapter:
-    """Bulletproof fallback adapter for hybrid_cascade decoder."""
+    """Robust fallback adapter for hybrid_cascade decoder."""
     def __init__(self, checks, options: Optional[dict] = None):
         self.checks = checks
         opts = options or {}
@@ -1129,7 +1129,7 @@ def compute_tanner_layout(n_qubits: int, n_checks: int, check_matrix) -> tuple[l
     row above them, then reorders both rows by iterated barycenter (the mean
     position of each node's neighbours) to pull connected nodes into vertical
     alignment and sharply reduce edge crossings.  This is the canonical,
-    readable Tanner-graph drawing — and it is fully deterministic, so a given
+    readable Tanner-graph drawing  -  and it is fully deterministic, so a given
     code renders identically on every platform (unlike the old random
     force-directed layout, which produced an unreadable tangle).
 
@@ -1406,7 +1406,7 @@ def _make_batch_decoder(backend: str, checks, n_qubits: int, **kwargs) -> Any:
 
     Routes "cuda"/"opencl" to CUDABatchDecoder/OpenCLBatchDecoder; when the
     corresponding availability probe reports False the request fails loudly
-    with QectorError — there is no silent CPU fallback.
+    with QectorError  -  there is no silent CPU fallback.
 
     ``n_qubits`` is passed explicitly to every backend: the CPU and OpenCL
     decoders default it from the checks, but the compiled CUDA decoder requires
@@ -1535,7 +1535,7 @@ def run_streaming_session(
     """Run a sliding-window streaming decode session.
 
     Semantics (single-shot code-capacity model): for each round r in
-    range(n_rounds), sample error e_r with rng — one numpy default_rng(seed)
+    range(n_rounds), sample error e_r with rng  -  one numpy default_rng(seed)
     created once for the whole session; compute syndrome s_r; decode s_r with
     the chosen decoder producing correction c_r; push (e_r, c_r) into a FIFO
     window of size ``window_size``.  When a round leaves the window it is
@@ -1648,7 +1648,7 @@ def run_streaming_session_yield(
 # ---------------------------------------------------------------------------
 # Backend feature wiring: rich diagnostics, native streaming, policy routing,
 # parallel pools, and ecosystem-compat reporting.  Each function is a
-# bulletproof wrapper: it validates inputs and converts every native backend
+# robust wrapper: it validates inputs and converts every native backend
 # object into a plain, JSON-serialisable dict; it never leaks a raw native
 # object and only raises the documented QectorError.
 # ---------------------------------------------------------------------------
@@ -1944,7 +1944,7 @@ def run_neural_predecoder_training(code, n_samples: int = 200, n_epochs: int = 5
     This research/lab entry point builds ``qd.NeuralPredecoder(n_checks,
     n_qubits)``, trains it on ``n_samples`` seeded (syndrome, error) pairs drawn
     via :func:`sample_error_and_syndrome`, then evaluates the raw decode on a
-    held-out set drawn from a disjoint seed stream — reporting exact-match and
+    held-out set drawn from a disjoint seed stream  -  reporting exact-match and
     per-bit accuracy against the sampled errors, the syndrome-validity rate of
     the predicted corrections, and the logical error rate when the code exposes
     a usable logicals matrix.  Returns a JSON-safe dict.
@@ -1967,7 +1967,7 @@ def run_neural_predecoder_training(code, n_samples: int = 200, n_epochs: int = 5
         # The 0.6.9 Rust train binding rejects 2-D ndarrays (TypeError:
         # 'ndarray' object is not an instance of 'ndarray'); it only accepts
         # flat 1-D uint8 buffers and derives n_samples from len/n_input
-        # (resp. len/n_output) — so hand over row-major flattened batches.
+        # (resp. len/n_output)  -  so hand over row-major flattened batches.
         predecoder.train(
             np.asarray(train_syndromes, dtype=np.uint8).reshape(-1),
             np.asarray(train_corrections, dtype=np.uint8).reshape(-1),
