@@ -985,10 +985,12 @@ def find_local_wheels() -> list[Path]:
         exe_dir = Path(sys.executable).parent
         search_dirs.append(exe_dir)
         search_dirs.append(exe_dir / "wheels")
+        search_dirs.append(exe_dir / "wheels-linux")
     else:
         root = Path(__file__).parent
         search_dirs.append(root)
         search_dirs.append(root / "wheels")
+        search_dirs.append(root / "wheels-linux")
 
     candidates: list[Path] = []
     seen: set[Path] = set()
