@@ -201,6 +201,12 @@ class QectorApp:
         except Exception:
             self._update_after_id = None
 
+        self._boot_tests_scheduled = False
+        try:
+            self._app.after(900, self._start_boot_tests)
+        except Exception:
+            pass
+
     # ── public surface used by tests ──────────────────────────────────
     def title(self) -> str:
         return self._app.title()
@@ -1089,6 +1095,30 @@ class QectorApp:
         except Exception:
             pass
 
+    def _start_boot_tests(self) -> None:
+        """Kick off verbose boot tests + fresh docs (once, background, opt-out aware)."""
+        if getattr(self, "_boot_tests_scheduled", False):
+            try:
+                from boot_test_runner import schedule_boot_tests
+
+                schedule_boot_tests(self)
+            except Exception as exc:
+                try:
+                    self.console.log(f"Boot tests scheduling failed: {exc}", "WARN")
+                except Exception:
+                    pass
+            return
+        self._boot_tests_scheduled = True
+        try:
+            from boot_test_runner import schedule_boot_tests
+
+            schedule_boot_tests(self)
+        except Exception as exc:
+            try:
+                self.console.log(f"Boot tests failed to schedule: {exc}", "WARN")
+            except Exception:
+                pass
+
 
 # ---------------------------------------------------------------------------
 # EULA Acceptance Dialog
@@ -1100,12 +1130,11 @@ def show_eula_dialog() -> bool:
     import sys
     from pathlib import Path
 
-    # Read EULA text
     base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
     eula_path = base_path / "EULA.txt"
     if not eula_path.is_file():
         eula_path = Path("EULA.txt")
-        
+
     eula_text = "No EULA.txt found. Please contact the administrator."
     if eula_path.is_file():
         try:
@@ -1113,41 +1142,101 @@ def show_eula_dialog() -> bool:
         except Exception:
             pass
 
-    # Create root for EULA dialog
+    def _find_logo_path() -> Path | None:
+        exe_dir = None
+        try:
+            exe_dir = Path(sys.executable).parent
+        except Exception:
+            exe_dir = None
+        file_dir = Path(__file__).resolve().parent
+        candidates: list[Path] = []
+        for base in (base_path, exe_dir, file_dir, Path.cwd(), file_dir / "assets", base_path / "assets"):
+            if base is None:
+                continue
+            for name in ("logo_banner.png", "icon.png", "assets/logo_banner.png", "assets/icon.png"):
+                candidates.append(Path(base) / name)
+        candidates += [Path("logo_banner.png"), Path("icon.png"), Path("assets/logo_banner.png")]
+        for c in candidates:
+            try:
+                if c and c.is_file() and c.stat().st_size > 0:
+                    return c
+            except Exception:
+                continue
+        return None
+
     root = ctk.CTk()
     root.title("QECTOR Decoder Workbench - Licence Agreement")
-    
-    # Configure colors and styles
     root.configure(fg_color="#12141a")
-    
-    # Size and positioning
-    w, h = 640, 520
-    sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
+    w, h = 760, 640
+    try:
+        sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
+    except Exception:
+        sw, sh = 1280, 800
     root.geometry(f"{w}x{h}+{max(0, (sw - w) // 2)}+{max(0, (sh - h) // 2)}")
     root.resizable(False, False)
-    
-    # Force focus
     root.attributes("-topmost", True)
+    try:
+        import os
+
+        search_dirs: list[str] = []
+        meipass = getattr(sys, "_MEIPASS", None)
+        if meipass:
+            search_dirs.append(meipass)
+        try:
+            search_dirs.append(str(Path(sys.executable).parent))
+        except Exception:
+            pass
+        search_dirs.append(str(Path(__file__).resolve().parent))
+        if os.name == "nt":
+            for d in search_dirs:
+                ico = os.path.join(d, "icon.ico")
+                if os.path.isfile(ico):
+                    try:
+                        root.iconbitmap(ico)
+                    except Exception:
+                        pass
+                    break
+    except Exception:
+        pass
 
     accepted = {"value": False}
 
-    # Title label
+    logo_path = _find_logo_path()
+    if logo_path is not None:
+        try:
+            from PIL import Image
+
+            img = Image.open(logo_path)
+            banner_w = 520
+            iw, ih = img.size
+            scale = min(banner_w / max(1, iw), 1.0)
+            nw, nh = max(1, int(iw * scale)), max(1, int(ih * scale))
+            if nh > 120:
+                scale2 = 120 / nh
+                nw, nh = int(nw * scale2), 120
+            img = img.resize((nw, nh), Image.LANCZOS)
+            ctk_img = ctk.CTkImage(light_image=img, dark_image=img, size=(nw, nh))
+            lbl_logo = ctk.CTkLabel(root, image=ctk_img, text="")
+            lbl_logo.pack(pady=(14, 6))
+            root._eula_logo_ref = ctk_img  # keep alive
+        except Exception:
+            pass
+
     lbl_title = ctk.CTkLabel(
-        root, 
-        text="End User License Agreement (EULA)", 
+        root,
+        text="End User License Agreement (EULA)",
         font=ctk.CTkFont(family="Segoe UI", size=18, weight="bold"),
         text_color="#e8ecf4"
     )
-    lbl_title.pack(pady=(20, 10))
+    lbl_title.pack(pady=(6, 8))
 
-    # Info label
     lbl_info = ctk.CTkLabel(
-        root, 
-        text="Please read and accept the agreement below before starting the application.", 
+        root,
+        text="Please read and accept the agreement below before starting the application.",
         font=ctk.CTkFont(family="Segoe UI", size=11),
         text_color="#8294ad"
     )
-    lbl_info.pack(pady=(0, 15))
+    lbl_info.pack(pady=(0, 12))
 
     # Scrollable textbox for EULA text
     txt_eula = ctk.CTkTextbox(

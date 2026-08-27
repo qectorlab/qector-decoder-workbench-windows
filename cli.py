@@ -979,6 +979,53 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         return 1
 
 
+def _require_eula_or_exit() -> bool:
+    try:
+        from utils import get_data_dir, load_json
+        if not bool(load_json(get_data_dir() / "preferences.json", {}).get("eula_accepted")):
+            print("EULA not yet accepted — please launch the GUI and accept the Licence Agreement first. Test deferred until customer accepts.", file=sys.stderr)
+            return False
+    except Exception:
+        pass
+    return True
+
+def cmd_test(args: argparse.Namespace) -> int:
+    """Run full verbose Windows test suite (bundled 1.0.0 wheel, air-gapped, no network).
+
+    Gated: requires EULA acceptance. Verbose (-v) streams every test node
+    (pytest -v or internal fallback) + fresh docs + wheel SHA256 proof + session
+    SHA256 + fresh certification, exactly the boot path but synchronously in the
+    CLI so `QectorWorkbench.exe --cli test --verbose` works after customer accepts.
+    """
+    if not _require_eula_or_exit():
+        return 2
+    verbose = bool(getattr(args, "verbose", False) or getattr(args, "quiet", False) is False)
+    def _print(msg: str) -> None:
+        print(msg, flush=True)
+    _print("QECTOR CLI test — verbose Windows suite (bundled 1.0.0, air-gapped)")
+    _print(f"  verbose={'on' if verbose else 'off'}  backend 1.0.0  wheels/SHA256SUMS.txt  session SHA256")
+    try:
+        import self_autodebug_backend as sab
+        res = sab.run_autodebug_cycle(on_log=_print if verbose else None)
+        ok = bool(res.get("ok"))
+        sess = (res.get("session") or {}).get("sha256", "")[:16]
+        bt = (res.get("boot_tests") or {}).get("outcome", "?")
+        bh = (res.get("backend_health") or {}).get("method", "?")
+        if getattr(args, "json", False):
+            import json
+            print(json.dumps(res, indent=2, default=str))
+        else:
+            _print(f"Result: backend={bh} boot_tests={bt} session={sess}… ok={ok}")
+            cnt = (res.get("boot_tests") or {}).get("counts", {})
+            if cnt:
+                _print(f"Counts: {cnt}")
+        return 0 if ok else 1
+    except Exception as exc:
+        import traceback
+        print(f"CLI test failed: {type(exc).__name__}: {exc}\n{traceback.format_exc()}", file=sys.stderr)
+        return 1
+
+
 def cmd_completions(args: argparse.Namespace) -> int:
     shell = args.shell
     if shell == "bash":
@@ -1241,6 +1288,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_mmap.add_argument("--batch-size", type=int, default=65536, help="Batch size")
     p_mmap.add_argument("--shots", type=int, default=None, help="Total shots (optional)")
     p_mmap.set_defaults(func=cmd_decode_mmap)
+
+    # test (verbose Windows)
+    p_test = subparsers.add_parser("test", help="Run full verbose test suite (bundled 1.0.0, air-gapped, Windows)")
+    p_test.add_argument("--verbose", "-v", action="store_true", default=False, help="Stream verbose per-test output")
+    p_test.set_defaults(func=cmd_test)
 
     # completions
     p_comp_shell = subparsers.add_parser("completions", help="Generate shell completions")

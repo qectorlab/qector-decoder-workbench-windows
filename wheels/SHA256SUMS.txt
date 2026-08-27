@@ -1,0 +1,5 @@
+3d045a87954aea8f7ef83407bb90ddc32d6b42b44ed2d712420b6b18bdbec870  qector_decoder_v3-1.0.0-cp310-cp310-win_amd64.whl
+7f198c7d9ca8f28c461f907d2ec4f41464198446abc2239c894b550bce7d4f98  qector_decoder_v3-1.0.0-cp311-cp311-win_amd64.whl
+62c6569b656c584344168a4478e91912866a015542d06d6fb8d327deb6e377cd  qector_decoder_v3-1.0.0-cp312-cp312-win_amd64.whl
+a8f09b6849a006f8c1c540be4a44d5aab12f9ae579f74aabb98c1f4336bb6d88  qector_decoder_v3-1.0.0-cp313-cp313-win_amd64.whl
+20efe31fa8629098f24f5a6306412b2c1f19ed00cb53c194440aa0162d33403e  qector_decoder_v3-1.0.0-cp39-cp39-win_amd64.whl
