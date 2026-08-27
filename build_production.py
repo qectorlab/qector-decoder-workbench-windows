@@ -61,7 +61,7 @@ APP_MODULES = [
     "documentation_tab.py", "lab_info_tab.py", "history_tab.py", "generate_manuals.py",
     "api_reference.py", "docs_exporter.py",
     # v1.0.1: zero-egress enforcement + optional Entra ID SSO (enterprise)
-    "compliance.py", "entra_auth.py",
+    "compliance.py", "entra_auth.py", "boot_test_runner.py", "test_qector_decoder_v3_proofs.py", "errors.py",
 ]
 DATA_FILES = ["icon.jpg", "icon.ico", "icon.png", "EULA.txt", "README.md", "requirements.txt"]
 
