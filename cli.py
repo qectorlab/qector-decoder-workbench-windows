@@ -979,14 +979,39 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         return 1
 
 
-def _require_eula_or_exit() -> bool:
+def _require_eula_or_exit(args: Optional[argparse.Namespace] = None) -> bool:
     try:
-        from utils import get_data_dir, load_json
-        if not bool(load_json(get_data_dir() / "preferences.json", {}).get("eula_accepted")):
-            print("EULA not yet accepted  -  please launch the GUI and accept the Licence Agreement first. Test deferred until customer accepts.", file=sys.stderr)
+        from utils import get_data_dir, load_json, save_json
+        data_dir = get_data_dir()
+        ppath = data_dir / "preferences.json"
+        prefs = load_json(ppath, {}) if ppath else {}
+        if getattr(args, "accept_eula", False) or getattr(args, "yes", False):
+            prefs["eula_accepted"] = True
+            save_json(ppath, prefs)
+            print("EULA accepted via command line flag.\n", file=sys.stderr)
+            return True
+        if not prefs.get("eula_accepted"):
+            if sys.stdin.isatty():
+                print("\n=======================================================", file=sys.stderr)
+                print(" QECTOR Decoder Workbench - End User Licence Agreement ", file=sys.stderr)
+                print("=======================================================", file=sys.stderr)
+                print("Source-available. Free for academic, personal and non-commercial research.", file=sys.stderr)
+                print("Commercial use requires a paid licence.", file=sys.stderr)
+                print("=======================================================\n", file=sys.stderr)
+                try:
+                    ans = input("Do you accept the Licence Agreement? [y/N]: ").strip().lower()
+                    if ans in ("y", "yes"):
+                        prefs["eula_accepted"] = True
+                        save_json(ppath, prefs)
+                        print("EULA accepted.\n", file=sys.stderr)
+                        return True
+                except (EOFError, KeyboardInterrupt):
+                    print("\nEULA acceptance cancelled.", file=sys.stderr)
+                    return False
+            print("EULA not yet accepted - please launch the GUI or run with --accept-eula / -y.", file=sys.stderr)
             return False
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Error checking EULA status: {e}", file=sys.stderr)
     return True
 
 def cmd_test(args: argparse.Namespace) -> int:
@@ -997,7 +1022,7 @@ def cmd_test(args: argparse.Namespace) -> int:
     SHA256 + fresh certification, exactly the boot path but synchronously in the
     CLI so `QectorWorkbench.exe --cli test --verbose` works after customer accepts.
     """
-    if not _require_eula_or_exit():
+    if not _require_eula_or_exit(args):
         return 2
     verbose = bool(getattr(args, "verbose", False) or getattr(args, "quiet", False) is False)
     def _print(msg: str) -> None:
@@ -1005,20 +1030,20 @@ def cmd_test(args: argparse.Namespace) -> int:
     _print("QECTOR CLI test  -  verbose Windows suite (bundled 1.0.0, air-gapped)")
     _print(f"  verbose={'on' if verbose else 'off'}  backend 1.0.0  wheels/SHA256SUMS.txt  session SHA256")
     try:
-        import self_autodebug_backend as sab
-        res = sab.run_autodebug_cycle(on_log=_print if verbose else None)
-        ok = bool(res.get("ok"))
-        sess = (res.get("session") or {}).get("sha256", "")[:16]
-        bt = (res.get("boot_tests") or {}).get("outcome", "?")
-        bh = (res.get("backend_health") or {}).get("method", "?")
+        import boot_test_runner
+        res = boot_test_runner.run_boot_tests_and_refresh_docs(on_log=_print)
+        outcome = res.get("outcome", "failed")
+        ok = outcome in ("passed", "skipped")
+        cnt = res.get("counts", {})
         if getattr(args, "json", False):
             import json
             print(json.dumps(res, indent=2, default=str))
         else:
-            _print(f"Result: backend={bh} boot_tests={bt} session={sess}… ok={ok}")
-            cnt = (res.get("boot_tests") or {}).get("counts", {})
+            _print(f"\nBoot Test Result: outcome={outcome} elapsed={res.get('elapsed_s')}s ok={ok}")
             if cnt:
                 _print(f"Counts: {cnt}")
+            if res.get("verbose_log"):
+                _print(f"Verbose Log: {res.get('verbose_log')}")
         return 0 if ok else 1
     except Exception as exc:
         import traceback
@@ -1292,6 +1317,7 @@ def build_parser() -> argparse.ArgumentParser:
     # test (verbose Windows)
     p_test = subparsers.add_parser("test", help="Run full verbose test suite (bundled 1.0.0, air-gapped, Windows)")
     p_test.add_argument("--verbose", "-v", action="store_true", default=False, help="Stream verbose per-test output")
+    p_test.add_argument("--accept-eula", "-y", "--yes", action="store_true", default=False, help="Automatically accept EULA for automated test execution")
     p_test.set_defaults(func=cmd_test)
 
     # completions

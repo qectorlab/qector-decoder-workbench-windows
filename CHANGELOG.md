@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4
+
+- **EULA Display**: Fixed EULA display and acceptance dialog flow to ensure license agreement prompts show properly and preferences persist cleanly.
+- **Export Security & Path Sanitization**: Fixed `utils.sanitize_export_path` to permit valid user-selected export paths (e.g. saving to Desktop or custom directories via file dialogs) while maintaining strict directory traversal (`..`) protection and system directory guards.
+- **CLI Boot Test & Terminal Window**: Registered `test` in CLI commands, automatically attaching/allocating a terminal console window on Windows when launched, and streaming full verbose test output after EULA verification.
+- **Boot Test Scheduling**: Fixed boot test runner scheduling logic to ensure background boot tests run reliably on workbench startup.
+- **Documentation & Versioning**: Updated all version references to v1.0.4 across core files, manuals, and platform packages.
+
 ## 1.0.3
 
 - **Security hardening**: MCP `get_server_env` redacts secrets; MCP token auth

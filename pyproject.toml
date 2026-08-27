@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qector-workbench"
-version = "1.0.3"
+version = "1.0.4"
 description = "Professional QEC analysis suite built on qector-decoder-v3"
 readme = "README.md"
 license = {text = "Proprietary"}

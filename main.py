@@ -16,7 +16,7 @@ _CLI_COMMANDS = [
     "list-codes", "list-decoders", "docgen", "version",
     # New CLI subcommands from finaldev.md tasks 5.1-5.7
     "compare", "batch", "stream", "train", "export", "import", "matrix",
-    "serve", "doctor", "completions",
+    "serve", "doctor", "completions", "test",
     # v1.0.1: zero-egress attestation + optional Entra ID SSO
     "compliance", "entra",
 ]
@@ -295,12 +295,15 @@ def _report_bootstrap_failure(status: dict) -> None:
 
 
 def _attach_console_if_needed() -> None:
-    """Attach to parent console on Windows when running CLI/MCP/selftest in a GUI build."""
-    if sys.platform == "win32" and getattr(sys, "frozen", False):
-        if any(arg in sys.argv for arg in ("--cli", "--mcp", "--decoder-selftest")):
+    """Attach to parent console or allocate a new console window on Windows when running CLI/MCP/selftest in a GUI build."""
+    if sys.platform == "win32":
+        is_cli_run = any(arg in sys.argv for arg in ("--cli", "--mcp", "--decoder-selftest", "test")) or (len(sys.argv) > 1 and sys.argv[1] in _CLI_COMMANDS)
+        if is_cli_run and getattr(sys, "frozen", False):
             try:
                 import ctypes
-                ctypes.windll.kernel32.AttachConsole(-1)
+                attached = ctypes.windll.kernel32.AttachConsole(-1)
+                if not attached:
+                    ctypes.windll.kernel32.AllocConsole()
             except Exception:
                 pass
             if sys.stdout is None or getattr(sys.stdout, "name", "") in ("", "<none>", "<null>"):

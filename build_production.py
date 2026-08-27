@@ -198,16 +198,9 @@ def build_exe(dev: bool = False):
     exe = os.path.join(DIST, f"{APP_NAME}-Portable.exe")
     assert_fresh(exe, t0, "Portable .exe")
 
-    # Onedir (for Inno Setup installer)
-    banner("Building QectorWorkbench/ directory (bundled wheel)")
-    spec = os.path.join(ROOT, "QectorWorkbench.spec")
-    r = run(pyi_command(spec))
-    if r.returncode != 0:
-        print(f"\n  [FAIL] PyInstaller onedir build exited {r.returncode}")
-        sys.exit(1)
-
-    d = os.path.join(DIST, APP_NAME, f"{APP_NAME}.exe")
-    assert_fresh(d, t0, "Onedir launcher")
+    # Clean up any leftover onedir folder if present
+    onedir_path = os.path.join(DIST, APP_NAME)
+    rmtree_safe(onedir_path)
 
     print(f"\n  Build time: {time.time() - t0:.0f}s")
 

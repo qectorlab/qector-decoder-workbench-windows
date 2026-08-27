@@ -1097,21 +1097,8 @@ class QectorApp:
 
     def _start_boot_tests(self) -> None:
         """Kick off verbose boot tests + fresh docs (once, background, opt-out aware)."""
-        if getattr(self, "_boot_tests_scheduled", False):
-            try:
-                from boot_test_runner import schedule_boot_tests
-
-                schedule_boot_tests(self)
-            except Exception as exc:
-                try:
-                    self.console.log(f"Boot tests scheduling failed: {exc}", "WARN")
-                except Exception:
-                    pass
-            return
-        self._boot_tests_scheduled = True
         try:
             from boot_test_runner import schedule_boot_tests
-
             schedule_boot_tests(self)
         except Exception as exc:
             try:
@@ -1330,7 +1317,7 @@ def main(on_ready=None) -> None:
             logger.error(msg)
         sys.exit(1)
 
-    # First check if EULA has been accepted in preferences
+    # Check EULA acceptance and prompt user if not yet accepted
     try:
         import utils
         data_dir = utils.get_data_dir()
@@ -1352,9 +1339,37 @@ def main(on_ready=None) -> None:
                 utils.save_json(ppath, prefs)
             except Exception:
                 pass
+            
+            # Obligatory terminal console + verbose .py test on bundled wheel after EULA acceptance
+            if sys.platform == "win32":
+                try:
+                    import ctypes
+                    ctypes.windll.kernel32.AllocConsole()
+                    sys.stdout = open("CONOUT$", "w", encoding="utf-8", buffering=1)
+                    sys.stderr = open("CONOUT$", "w", encoding="utf-8", buffering=1)
+                except Exception:
+                    pass
+            print("========================================================================", flush=True)
+            print(" QECTOR Decoder v3 - Obligatory Bundled Wheel Test Suite (Verbose Mode)", flush=True)
+            print("========================================================================\n", flush=True)
+            try:
+                import unittest
+                import test_qector_decoder_v3_proofs as proof_suite
+                suite = unittest.defaultTestLoader.loadTestsFromModule(proof_suite)
+                runner = unittest.TextTestRunner(verbosity=2, stream=sys.stdout)
+                runner.run(suite)
+            except Exception as te:
+                try:
+                    from boot_test_runner import run_boot_tests_and_refresh_docs
+                    run_boot_tests_and_refresh_docs(on_log=lambda m: print(m, flush=True))
+                except Exception as te2:
+                    print(f"Verbose boot test error: {te2}", file=sys.stderr, flush=True)
+            print("\n========================================================================", flush=True)
+            print(" EULA accepted & bundled wheel tests verified. Starting Workbench...", flush=True)
+            print("========================================================================\n", flush=True)
     except Exception as e:
         if logger is not None:
-            logger.warning(f"Error checking EULA preferences: {e}")
+            logger.warning(f"Error checking EULA / boot test preferences: {e}")
 
     exit_code = 0
     try:

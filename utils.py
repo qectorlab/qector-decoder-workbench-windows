@@ -114,8 +114,10 @@ def get_export_dir() -> Path:
 def sanitize_export_path(path: Any, base_dir: Any = None) -> tuple[bool, Path]:
     """Validate an export path against directory-traversal attacks.
 
-    Rejects empty names, ``..`` components, and any paths resolving outside
-    the allowed base directory (default: the per-user export directory).
+    Rejects empty names, ``..`` components, NUL bytes, and sensitive system
+    locations. If *base_dir* is provided, forces the resolved path to be inside
+    that directory. If *base_dir* is None, permits user-chosen absolute paths
+    outside system roots, or resolves relative paths inside the per-user export directory.
     Returns ``(ok, resolved)``, never raises.
     """
     try:
@@ -144,20 +146,36 @@ def sanitize_export_path(path: Any, base_dir: Any = None) -> tuple[bool, Path]:
     except Exception:
         return False, p
     try:
-        if base_dir is None:
-            allowed_root = get_export_dir().resolve()
-        else:
+        if base_dir is not None:
             allowed_root = Path(base_dir).resolve()
-
-        if p.is_absolute():
-            resolved = p.resolve()
+            if p.is_absolute():
+                resolved = p.resolve()
+            else:
+                resolved = (allowed_root / p).resolve()
+            try:
+                resolved.relative_to(allowed_root)
+            except ValueError:
+                return False, p
         else:
-            resolved = (allowed_root / p).resolve()
-
-        try:
-            resolved.relative_to(allowed_root)
-        except ValueError:
-            return False, p
+            if p.is_absolute():
+                resolved = p.resolve()
+                # Protect OS system locations against overwrite
+                raw_res = str(resolved).lower()
+                if os.name == "nt":
+                    sys_root = os.environ.get("SystemRoot", "C:\\Windows").lower()
+                    sys32 = os.path.join(sys_root, "system32").lower()
+                    if raw_res.startswith(sys32) or raw_res == sys_root:
+                        return False, p
+                else:
+                    if any(raw_res.startswith(prefix) for prefix in ("/etc", "/sys", "/proc", "/boot", "/dev")):
+                        return False, p
+            else:
+                allowed_root = get_export_dir().resolve()
+                resolved = (allowed_root / p).resolve()
+                try:
+                    resolved.relative_to(allowed_root)
+                except ValueError:
+                    return False, p
 
         try:
             resolved.parent.mkdir(parents=True, exist_ok=True)

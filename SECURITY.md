@@ -57,9 +57,9 @@ The QECTOR Decoder Workbench implements:
 
 - **Path traversal protection**: All export paths are sanitized via `utils.sanitize_export_path()`, rejecting `..` components and absolute paths outside the export directory.
 - **License key encryption**: License keys stored at `~/.qector/license.key` are encrypted using Fernet with a machine-derived key, preventing plaintext exposure.
-- **Zero-egress attestation (v1.0.3)**: An AST scan of the shipped Python surface (`compliance.scan_python_surface`) attests that no unguarded network or telemetry imports ship in the app; `compliance.compliance_report()` produces a machine-readable attestation for infosec review.
-- **EgressGuard (v1.0.3)**: In air-gap mode (`QECTOR_AIRGAP` / `QECTOR_OFFLINE`, or any frozen bundle) a runtime guard blocks DNS resolution and connections to non-loopback hosts, raises `EgressBlockedError`, and logs every attempt with a stack trace to `logs/egress.log`. Loopback stays allowed for local services such as `qector serve`.
-- **Optional Entra ID sign-in (v1.0.3)**: Off by default; zero-egress by default (`msal` is imported lazily, only inside `login()`). Hard-disabled whenever air-gap mode is active. Token cache and configuration are encrypted at rest with the machine-derived Fernet key.
+- **Zero-egress attestation (v1.0.4)**: An AST scan of the shipped Python surface (`compliance.scan_python_surface`) attests that no unguarded network or telemetry imports ship in the app; `compliance.compliance_report()` produces a machine-readable attestation for infosec review.
+- **EgressGuard (v1.0.4)**: In air-gap mode (`QECTOR_AIRGAP` / `QECTOR_OFFLINE`, or any frozen bundle) a runtime guard blocks DNS resolution and connections to non-loopback hosts, raises `EgressBlockedError`, and logs every attempt with a stack trace to `logs/egress.log`. Loopback stays allowed for local services such as `qector serve`.
+- **Optional Entra ID sign-in (v1.0.4)**: Off by default; zero-egress by default (`msal` is imported lazily, only inside `login()`). Hard-disabled whenever air-gap mode is active. Token cache and configuration are encrypted at rest with the machine-derived Fernet key.
 - **Input length limits**: Profile fields, file paths, and decoder parameters are bounded to prevent resource exhaustion.
 - **No eval/exec**: The codebase contains no `eval()` or `exec()` calls on user input.
 - **HTML escaping**: All user-provided content is escaped before interpolation into HTML reports.

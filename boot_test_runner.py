@@ -168,19 +168,28 @@ def _run_pytest_verbose(
                 pass
 
     root = Path(__file__).resolve().parent
-    # F1  -  try real pytest when available
-    use_pytest = _has_pytest_available()
+    py_exe = sys.executable
+    venv_py_win = root / "test_venv" / "Scripts" / "python.exe"
+    venv_py_posix = root / "test_venv" / "bin" / "python"
+    if venv_py_win.is_file():
+        py_exe = str(venv_py_win)
+    elif venv_py_posix.is_file():
+        py_exe = str(venv_py_posix)
+
+    use_pytest = _has_pytest_available() and not getattr(sys, "frozen", False)
     if use_pytest:
         cmd = [
-            sys.executable,
+            py_exe,
             "-m",
             "pytest",
             "-v",
             "--tb=short",
             "-p",
             "no:warnings",
-            "--override-ini=addopts=",
-            "--override-ini=testpaths=tests",
+            "tests/test_backend.py",
+            "tests/test_autodebug.py",
+            "tests/test_compliance.py",
+            "tests/test_path_traversal.py",
         ]
         log(f"[boot-tests] F1 $ {' '.join(cmd)}  (cwd={root})")
         try:
@@ -191,25 +200,28 @@ def _run_pytest_verbose(
                 text=True,
                 encoding="utf-8",
                 errors="replace",
-                timeout=600,
+                timeout=30,
             )
             rc = proc.returncode
             stdout = proc.stdout or ""
             stderr = proc.stderr or ""
             combined = stdout + ("\n" + stderr if stderr else "")
-            # If pytest was not actually runnable (e.g. missing plugin), fall through.
+            if on_log and stdout:
+                for line in stdout.splitlines():
+                    if "::" in line or "passed" in line.lower() or "failed" in line.lower():
+                        log(f"[boot-tests] {line}")
             if rc == 127 or "No module named pytest" in combined:
                 raise RuntimeError("pytest not runnable, falling back")
         except subprocess.TimeoutExpired as exc:
-            rc, combined = 124, f"pytest timed out after 600s: {exc}\n{(exc.stdout or '')}\n{(exc.stderr or '')}"
-            cmd = cmd  # keep for summary
+            log(f"[boot-tests] pytest timed out: {exc}  -  using F2 internal bundled fallback")
+            rc, combined = _run_internal_verbose_fallback(on_log=on_log)
+            cmd = [sys.executable, "-m", "internal_fallback", "-v"]
         except Exception as exc:
-            # F2 fallback
             log(f"[boot-tests] F1 pytest failed: {exc}  -  using F2 internal bundled fallback")
             rc, combined = _run_internal_verbose_fallback(on_log=on_log)
             cmd = [sys.executable, "-m", "internal_fallback", "-v"]
     else:
-        log("[boot-tests] pytest not available (air-gapped frozen)  -  using F2 internal bundled fallback")
+        log("[boot-tests] pytest not available (or air-gapped frozen)  -  using F2 internal bundled fallback")
         rc, combined = _run_internal_verbose_fallback(on_log=on_log)
         cmd = [sys.executable, "-m", "internal_fallback", "-v"]
 

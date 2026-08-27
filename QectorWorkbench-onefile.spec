@@ -32,7 +32,7 @@ hiddenimports = [
     'batch_streaming_tab', 'hardware_tab', 'diagnostics_tab', 'documentation_tab',
     'lab_info_tab', 'history_tab', 'compliance', 'entra_auth',
     'generate_manuals', 'api_reference', 'docs_exporter',
-    'boot_test_runner', 'self_autodebug_backend', 'certification',
+    'boot_test_runner', 'self_autodebug_backend', 'certification', 'test_qector_decoder_v3_proofs',
     # ---------- Runtime deps of the decoder ----------
     'cffi', '_cffi_backend',
     # ---------- In-app official docs export ----------

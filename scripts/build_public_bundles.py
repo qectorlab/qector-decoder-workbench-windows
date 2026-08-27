@@ -45,35 +45,17 @@ RELEASE_DIR = REPO / "release_assets"
 MANUALS = REPO / "manuals"
 
 #: Files copied into every bundle, whatever the platform.
-COMMON_FILES = ("EULA.txt",)
+COMMON_FILES = ("EULA.txt", "EULA.rtf", "LICENSE", "SECURITY.md", "CHANGELOG.md")
 
 PLATFORMS = {
     "windows": {
         "staging": REPO / "winzip",
-        # Platform-specific: README.md at the repo root is the GitHub landing
-        # page and is full of Windows .exe instructions. Pointing the Linux
-        # bundle at it shipped a Linux zip whose README named
-        # QectorWorkbench-Portable.exe thirteen times and never mentioned dpkg.
         "readme": "README.md",
-        # Manuals that make no sense on this platform are left out, matching the
-        # published bundles: a Linux download should not carry the Windows and
-        # macOS user manuals.
         "manual_exclude": ("QECTOR_User_Manual_Linux.pdf", "QECTOR_User_Manual_macOS.pdf"),
         "label": "Windows",
-        # (source path, name inside the bundle)
-        #
-        # The decoder wheel ships alongside the portable exe on purpose. The exe
-        # already embeds a copy and provisions itself offline, but a lab that
-        # wants the decoder in its own Python should not have to extract it from
-        # a frozen binary. Both are required: a bundle without the wheel is not
-        # the "run fully local" artifact we advertise.
         "payload": [
             (REPO / "dist" / "QectorWorkbench-Portable.exe", "QectorWorkbench-Portable.exe"),
         ],
-        # Vendored inputs: shipped as-is and exempt from the staleness check,
-        # because they are not built from this tree. The decoder wheel's mtime
-        # is whenever it was downloaded and will always predate our edits, so
-        # checking it against the sources only produces false alarms.
         "vendored": [
             (REPO / "wheels" / f"qector_decoder_v3-{_version.BACKEND_VERSION}"
                                 "-cp311-cp311-win_amd64.whl",
@@ -197,14 +179,20 @@ def refresh_staging(name: str, spec: dict, allow_stale: bool) -> tuple[Path, lis
     else:
         warnings.append(f"manuals/ not found at {MANUALS}; bundle has no documentation")
 
-    # Drop payloads from an older version so they cannot ride along.
-    for stale in staging.iterdir():
-        if stale.is_file() and stale.suffix in {".deb", ".exe", ".whl", ".AppImage"}:
-            expected = {n for _s, n in spec["payload"] + spec["optional"]
-                        + spec.get("vendored", [])}
+    # Drop stale payloads and loose Python source files from staging so no loose .py files remain.
+    for stale in list(staging.iterdir()):
+        if stale.is_file() and (stale.suffix in {".deb", ".exe", ".whl", ".AppImage", ".py", ".pyc", ".toml", ".txt", ".json", ".rtf"} or stale.is_dir()):
+            expected = {n for _s, n in spec["payload"] + spec["optional"] + spec.get("vendored", [])}
+            expected.update(COMMON_FILES)
+            expected.add("README.md")
+            expected.add("RELEASE_MANIFEST.txt")
+            expected.add("manuals")
             if stale.name not in expected:
-                stale.unlink()
-                warnings.append(f"removed stale payload from staging: {stale.name}")
+                if stale.is_dir():
+                    shutil.rmtree(stale, ignore_errors=True)
+                else:
+                    stale.unlink()
+                warnings.append(f"removed unneeded file from staging: {stale.name}")
 
     source_mtime = newest_source_mtime()
 
@@ -241,7 +229,13 @@ def refresh_staging(name: str, spec: dict, allow_stale: bool) -> tuple[Path, lis
                     except Exception as exc:
                         warnings.append(f"  could not remove stale {leftover}: {exc}")
                 return
-        shutil.copy2(src, staging / arcname)
+        if src.is_dir():
+            dst = staging / arcname
+            if dst.exists():
+                shutil.rmtree(dst, ignore_errors=True)
+            shutil.copytree(src, dst)
+        else:
+            shutil.copy2(src, staging / arcname)
 
     for src, arcname in spec["payload"]:
         stage(src, arcname, required=True)
@@ -249,7 +243,13 @@ def refresh_staging(name: str, spec: dict, allow_stale: bool) -> tuple[Path, lis
         stage(src, arcname, required=False)
     for src, arcname in spec.get("vendored", []):
         if src.exists():
-            shutil.copy2(src, staging / arcname)
+            if src.is_dir():
+                dst = staging / arcname
+                if dst.exists():
+                    shutil.rmtree(dst, ignore_errors=True)
+                shutil.copytree(src, dst)
+            else:
+                shutil.copy2(src, staging / arcname)
         else:
             warnings.append(f"MISSING vendored input: {src}")
 

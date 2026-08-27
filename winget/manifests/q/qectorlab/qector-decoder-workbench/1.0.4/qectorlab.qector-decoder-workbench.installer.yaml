@@ -1,0 +1,15 @@
+PackageIdentifier: qectorlab.qector-decoder-workbench
+PackageVersion: 1.0.4
+MinimumOSVersion: 10.0.0.0
+InstallModes:
+  - interactive
+  - silent
+Installers:
+  - Architecture: x64
+    InstallerType: portable
+    InstallerUrl: https://qectordist23386.blob.core.windows.net/releases/windows/v1.0.4/QectorWorkbench-v1.0.4-Windows-x64-Public.zip
+    InstallerSha256: 0cbe09788be103168c61052f6c68384de859fc1b9a93b08de4005e609c96a1f0
+    Commands:
+      - QectorWorkbench-Portable
+ManifestType: installer
+ManifestVersion: 1.6.0

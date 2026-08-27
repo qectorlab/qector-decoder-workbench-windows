@@ -27,9 +27,11 @@ hiddenimports = [
     'app', 'backend', 'state', 'theme', 'utils', 'logger', 'console', 'version',
     'version_service', 'decoder_provisioner', 'doc_generator',
     'threading_utils', 'results_tracker', 'hardware_routing',
-    'mcp_server', 'mcp_resources', 'dialogs', 'autodebug', 'cli',
+    'mcp_server', 'mcp_resources',    'code_explorer_tab', 'decoder_lab_tab', 'benchmark_tab',
+    'batch_streaming_tab', 'hardware_tab', 'diagnostics_tab', 'documentation_tab',
+    'lab_info_tab', 'history_tab', 'compliance', 'entra_auth',
     'generate_manuals', 'api_reference', 'docs_exporter',
-    'boot_test_runner', 'self_autodebug_backend', 'certification',
+    'boot_test_runner', 'self_autodebug_backend', 'certification', 'test_qector_decoder_v3_proofs',
     # ---------- Runtime deps of the decoder ----------
     'cffi', '_cffi_backend',
     # ---------- In-app official docs export ----------
