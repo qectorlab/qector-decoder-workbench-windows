@@ -1,11 +1,10 @@
 """Generate Winget manifests for QECTOR Decoder Workbench v1.0.4 using Azure storage URLs."""
-import os
 import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "1.0.4"
-AZURE_URL = f"https://qectordist23386.blob.core.windows.net/releases/windows/v1.0.4/QectorWorkbench-v1.0.4-Windows-x64-Public.zip"
+AZURE_URL = "https://qectordist23386.blob.core.windows.net/releases/windows/v1.0.4/QectorWorkbench-v1.0.4-Windows-x64-Public.zip"
 ZIP_PATH = ROOT / "release_assets" / f"QectorWorkbench-v{VERSION}-Windows-x64-Public.zip"
 
 if ZIP_PATH.exists():
@@ -34,11 +33,9 @@ InstallModes:
   - silent
 Installers:
   - Architecture: x64
-    InstallerType: portable
+    InstallerType: zip
     InstallerUrl: {AZURE_URL}
     InstallerSha256: {sha256}
-    Commands:
-      - QectorWorkbench-Portable
 ManifestType: installer
 ManifestVersion: 1.6.0
 """
