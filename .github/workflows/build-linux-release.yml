@@ -1,0 +1,80 @@
+name: Linux Release & Security Build
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  security-and-proofs:
+    name: Zero-Egress Security Attestation & Proofs (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup CPython 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Project & Build Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --find-links wheels --find-links wheels-linux -e .[dev]
+
+      - name: Execute Zero-Egress Security Compliance Scan
+        run: python cli.py compliance
+
+      - name: Execute Executable Proof Verification Suite
+        run: python -m unittest test_qector_decoder_v3_proofs -v
+
+      - name: Run Full Pytest Suite
+        run: python -m pytest -q
+
+  build-linux-packages:
+    name: Build Linux Distribution Packages (.deb & .tar.gz)
+    needs: [security-and-proofs]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup CPython 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build Debian Package & Bundle Tree
+        run: |
+          python -m pip install --upgrade pip
+          pip install --find-links wheels --find-links wheels-linux -r requirements.txt PyInstaller
+          python build_production.py --deb
+
+      - name: Package Linux Standalone Distribution Tarball
+        run: |
+          mkdir -p dist/release_assets
+          tar -czvf dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz \
+            --exclude='.venv' --exclude='__pycache__' --exclude='.git' \
+            README.md README_LINUX.md EULA.txt EULA.rtf SECURITY.md CHANGELOG.md \
+            CLOUDSMITH_PGP_KEY.asc PUBLIC_KEY_ED25519.pem PUBLIC_KEY_RSA.pem \
+            app.py backend.py cli.py main.py utils.py version.py compliance.py \
+            assets manuals wheels-linux tests
+
+      - name: Generate SHA-256 Cryptographic Checksums
+        run: |
+          cd dist/release_assets
+          sha256sum QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Upload Linux Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: QectorWorkbench-v1.0.4-Linux-x64
+          path: dist/release_assets/
+          retention-days: 30

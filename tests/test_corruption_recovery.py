@@ -116,12 +116,10 @@ def test_corrupted_init_triggers_reinstall():
             # change to _verify_import that flips the truth value will
             # show up here before it can ship.
             assert isinstance(ok, bool)
-            if ok:
-                # Some test environments with a usable .pyd-shaped loader
-                # may still pass; that's fine, what matters is the next
-                # step.
-                pytest.skip("fake site happened to import cleanly; "
-                            "corruption path not exercisable in this env")
+            # Corrupt __init__.py explicitly to exercise rejection path
+            init_path.write_text("raise ImportError('CORRUPTED BY TEST')\n", encoding="utf-8")
+            ok_after, _ = dp._verify_import(tmp)
+            assert ok_after is False, "selftest must reject a corrupted decoder __init__.py"
 
             # 3b. Corrupt the __init__.py and re-verify: must still reject.
             init_path.write_text("raise ImportError('CORRUPTED BY TEST')\n",

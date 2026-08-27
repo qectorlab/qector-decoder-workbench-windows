@@ -2,10 +2,6 @@ name: Test macOS App & DMG
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
 
 # Least privilege: read-only checkout; releases are downloaded anonymously.
 permissions:

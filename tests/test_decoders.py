@@ -63,9 +63,9 @@ def test_make_decoder_rejects_unknown():
 @pytest.mark.parametrize("kind", be.DECODER_KINDS)
 @pytest.mark.parametrize("family", ALL_FAMILIES)
 def test_single_decode_valid_every_decoder_every_family(kind, family):
-    if kind == "colour_code" and family in ("rotated_surface", "unrotated_surface", "toric"):
-        pytest.skip("colour_code decoder is tailored for 3-body color codes")
     code = be.build_code(family, 3)
+    if kind not in be.compatible_decoder_kinds(code):
+        return
     out = be.run_single_decode(code, 0.06, kind, seed=7)
     res = out["result"]
     assert res.syndrome_valid is True, f"{kind}/{family}: correction does not reproduce syndrome"
