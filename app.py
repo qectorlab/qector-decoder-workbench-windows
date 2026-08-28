@@ -388,16 +388,20 @@ class QectorApp:
         try:
             self._app.update_idletasks()
             if _START_MAXIMIZED:
-                # Prefer a MAXIMIZED window (state "zoomed") over true
-                # fullscreen: fullscreen hides the title bar, which removes
-                # the minimize/maximize/close window buttons entirely.
-                try:
-                    self._app.state("zoomed")
-                except Exception:
+                # Prefer MAXIMIZED window over true fullscreen to preserve window buttons
+                if sys.platform == "win32":
                     try:
-                        self._app.attributes("-fullscreen", True)
+                        self._app.state("zoomed")
                     except Exception:
                         pass
+                else:
+                    try:
+                        self._app.attributes("-zoomed", True)
+                    except Exception:
+                        try:
+                            self._app.state("normal")
+                        except Exception:
+                            pass
             # Always center explicitly so single-monitor / fallback layouts
             # still start in the middle of the visible work area.
             try:
@@ -406,7 +410,12 @@ class QectorApp:
             except Exception:
                 dev_mode = False
             work_x, work_y, work_w, work_h = 0, 0, 0, 0
-            if self._app.state() == "zoomed" or self._app.attributes("-fullscreen"):
+            is_zoomed = False
+            try:
+                is_zoomed = (self._app.state() == "zoomed") or (sys.platform != "win32" and bool(self._app.attributes("-zoomed")))
+            except Exception:
+                pass
+            if is_zoomed or self._app.attributes("-fullscreen"):
                 # Maximized windows manage their own geometry; just deiconify+lift.
                 self._app.deiconify()
                 self._app.lift()
@@ -449,10 +458,11 @@ class QectorApp:
 
     # ── UI construction ───────────────────────────────────────────────
     def _build_ui(self) -> None:
-        """Build the full application layout: tabview + status bar."""
+        """Build the full application layout: header bar + tabview + status bar."""
         self._app.grid_columnconfigure(0, weight=1)
-        self._app.grid_rowconfigure(0, weight=1)
-        self._app.grid_rowconfigure(1, weight=0)
+        self._app.grid_rowconfigure(0, weight=0)
+        self._app.grid_rowconfigure(1, weight=1)
+        self._app.grid_rowconfigure(2, weight=0)
 
         menu = tkinter.Menu(self._app)
         menu.configure(bg='#2b2b2b', fg='#dcdcdc', activebackground='#4a9eff', activeforeground='#ffffff')
@@ -472,8 +482,10 @@ class QectorApp:
         self._app.config(menu=menu)
         self._app.bind("<Control-d>", lambda e: self.tabs.get("Documentation")._on_generate() if "Documentation" in self.tabs else None)
 
+        self._build_top_bar()
+
         self.tabview = ctk.CTkTabview(self._app)
-        self.tabview.grid(row=0, column=0, sticky="nsew", padx=6, pady=(6, 0))
+        self.tabview.grid(row=1, column=0, sticky="nsew", padx=6, pady=(4, 0))
         for name in TAB_NAMES:
             self.tabview.add(name)
 
@@ -483,6 +495,119 @@ class QectorApp:
         self._build_console_tab()
         self._build_status_bar()
         self.tabview.set("Code Explorer")
+
+    def _build_top_bar(self) -> None:
+        """Top action header bar containing title, EULA viewer, theme toggle, and window control buttons."""
+        top_frame = ctk.CTkFrame(
+            self._app, height=36, corner_radius=0,
+            fg_color=self._colors.get("bg_panel", "#2b2b2b"),
+        )
+        top_frame.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
+        top_frame.grid_columnconfigure(0, weight=1)
+        top_frame.grid_columnconfigure(1, weight=0)
+
+        left_box = ctk.CTkFrame(top_frame, fg_color="transparent")
+        left_box.grid(row=0, column=0, sticky="w", padx=10, pady=4)
+
+        title_lbl = ctk.CTkLabel(
+            left_box,
+            text=f"  {self._version_title}",
+            font=ctk.CTkFont(size=12, weight="bold"),
+            text_color=self._colors.get("text_primary", "#dcdcdc"),
+        )
+        title_lbl.pack(side="left")
+
+        right_box = ctk.CTkFrame(top_frame, fg_color="transparent")
+        right_box.grid(row=0, column=1, sticky="e", padx=10, pady=4)
+
+        btn_eula = ctk.CTkButton(
+            right_box, text="📜 EULA", width=70, height=24,
+            command=self._show_eula_viewer,
+            font=ctk.CTkFont(size=11),
+            fg_color=self._colors.get("bg_widget", "#3a3a3a"),
+            hover_color=self._colors.get("bg_panel_alt", "#333333"),
+            text_color=self._colors.get("text_primary", "#dcdcdc"),
+        )
+        btn_eula.pack(side="left", padx=4)
+
+        btn_theme = ctk.CTkButton(
+            right_box, text="🌙 Theme", width=75, height=24,
+            command=self._toggle_theme,
+            font=ctk.CTkFont(size=11),
+            fg_color=self._colors.get("bg_widget", "#3a3a3a"),
+            hover_color=self._colors.get("bg_panel_alt", "#333333"),
+            text_color=self._colors.get("text_primary", "#dcdcdc"),
+        )
+        btn_theme.pack(side="left", padx=4)
+
+        btn_min = ctk.CTkButton(
+            right_box, text="─", width=28, height=24,
+            command=self._app.iconify,
+            font=ctk.CTkFont(size=12, weight="bold"),
+            fg_color=self._colors.get("bg_widget", "#3a3a3a"),
+            hover_color=self._colors.get("bg_panel_alt", "#333333"),
+            text_color=self._colors.get("text_primary", "#dcdcdc"),
+        )
+        btn_min.pack(side="left", padx=2)
+
+        btn_max = ctk.CTkButton(
+            right_box, text="□", width=28, height=24,
+            command=self._toggle_maximize,
+            font=ctk.CTkFont(size=12, weight="bold"),
+            fg_color=self._colors.get("bg_widget", "#3a3a3a"),
+            hover_color=self._colors.get("bg_panel_alt", "#333333"),
+            text_color=self._colors.get("text_primary", "#dcdcdc"),
+        )
+        btn_max.pack(side="left", padx=2)
+
+        btn_close = ctk.CTkButton(
+            right_box, text="✕", width=28, height=24,
+            command=self._on_close,
+            font=ctk.CTkFont(size=12, weight="bold"),
+            fg_color="#c0392b",
+            hover_color="#e74c3c",
+            text_color="#ffffff",
+        )
+        btn_close.pack(side="left", padx=(2, 0))
+
+    def _show_eula_viewer(self) -> None:
+        try:
+            show_eula_dialog()
+        except Exception:
+            pass
+
+    def _toggle_theme(self) -> None:
+        try:
+            curr = ctk.get_appearance_mode()
+            new_mode = "Light" if curr == "Dark" else "Dark"
+            ctk.set_appearance_mode(new_mode)
+        except Exception:
+            pass
+
+    def _toggle_maximize(self) -> None:
+        try:
+            if sys.platform == "win32":
+                state = self._app.state()
+                if state == "zoomed":
+                    self._app.state("normal")
+                else:
+                    self._app.state("zoomed")
+            else:
+                is_zoomed = False
+                try:
+                    is_zoomed = bool(self._app.attributes("-zoomed"))
+                except Exception:
+                    pass
+                try:
+                    self._app.attributes("-zoomed", not is_zoomed)
+                except Exception:
+                    try:
+                        state = self._app.state()
+                        self._app.state("normal" if state == "zoomed" else "zoomed")
+                    except Exception:
+                        pass
+        except Exception:
+            pass
 
     def _wire_tab(self, tab_name: str, module_name: str, class_name: str) -> None:
         """Import and instantiate a tab class into its tabview slot.
