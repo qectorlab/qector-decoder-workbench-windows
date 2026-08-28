@@ -28,8 +28,8 @@ jobs:
       - name: Install Build & Cryptographic Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-tk xvfb libgl1-mesa-glx libegl1-mesa appimagetool rpm
-          pip install --upgrade pip setuptools wheel cosign-installer
+          sudo apt-get install -y python3-tk xvfb libgl1-mesa-glx libegl1-mesa rpm
+          pip install --upgrade pip setuptools wheel
 
       - name: Run Zero-Egress Security Compliance Check
         run: python3.11 cli.py compliance
