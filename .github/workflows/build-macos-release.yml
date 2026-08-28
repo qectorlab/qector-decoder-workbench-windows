@@ -1,0 +1,60 @@
+name: QECTOR macOS Application Build & Cloudsmith Push
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build-macos:
+    name: Build macOS Universal .app & .dmg
+    runs-on: macos-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies & PyInstaller
+        run: |
+          python -m pip install --upgrade pip setuptools wheel pyinstaller customtkinter Pillow numpy scipy matplotlib reportlab cffi cryptography cloudsmith-cli
+
+      - name: Run Zero-Egress Security Compliance Check
+        run: python cli.py compliance
+
+      - name: Run Executive Proof Suite
+        run: python -m unittest test_qector_decoder_v3_proofs -v
+
+      - name: Build macOS Application Bundle & DMG
+        run: python scripts/build_macos_app.py
+
+      - name: Create & Push to Cloudsmith macOS Repository
+        env:
+          CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+        run: |
+          if [ -n "$CLOUDSMITH_API_KEY" ]; then
+            cat << 'EOF' > .cloudsmith_macos.json
+            {
+              "name": "qector-decoder-workbench-macos",
+              "description": "QECTOR Decoder Workbench - macOS Distributions (.dmg, .app, .tar.gz)",
+              "repository_type_str": "Public",
+              "slug": "qector-decoder-workbench-macos"
+            }
+            EOF
+            cloudsmith repos create qector .cloudsmith_macos.json || true
+            cloudsmith push raw qector/qector-decoder-workbench-macos dist/release_assets/QectorWorkbench-v1.0.4-macOS-Universal.tar.gz --name QectorWorkbench-v1.0.4-macOS-Universal.tar.gz --summary "QECTOR Decoder Workbench v1.0.4 (macOS Universal) - Standalone Distribution" --tags "qec,quantum,mcp,zero-egress,macos,tarball" --republish
+          fi
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: QectorWorkbench-v1.0.4-macOS
+          path: dist/release_assets/
