@@ -1,4 +1,5 @@
-"""version.py  -  Central version information for QECTOR Decoder Workbench."""
+import os
+os.environ["QECTOR_SILENT"] = "1"
 
 # Product version of the Workbench application itself. This is the public
 # release line (0.5.x) and is deliberately INDEPENDENT of BACKEND_VERSION

@@ -544,27 +544,27 @@ class QectorApp:
         btn_theme.pack(side="left", padx=4)
 
         btn_min = ctk.CTkButton(
-            right_box, text="─", width=28, height=24,
+            right_box, text=" ─ ", width=32, height=24,
             command=self._app.iconify,
             font=ctk.CTkFont(size=12, weight="bold"),
             fg_color=self._colors.get("bg_widget", "#3a3a3a"),
-            hover_color=self._colors.get("bg_panel_alt", "#333333"),
+            hover_color="#4a4a4a",
             text_color=self._colors.get("text_primary", "#dcdcdc"),
         )
         btn_min.pack(side="left", padx=2)
 
         btn_max = ctk.CTkButton(
-            right_box, text="□", width=28, height=24,
+            right_box, text=" 🗖 ", width=32, height=24,
             command=self._toggle_maximize,
             font=ctk.CTkFont(size=12, weight="bold"),
             fg_color=self._colors.get("bg_widget", "#3a3a3a"),
-            hover_color=self._colors.get("bg_panel_alt", "#333333"),
+            hover_color="#4a4a4a",
             text_color=self._colors.get("text_primary", "#dcdcdc"),
         )
         btn_max.pack(side="left", padx=2)
 
         btn_close = ctk.CTkButton(
-            right_box, text="✕", width=28, height=24,
+            right_box, text=" ✕ ", width=32, height=24,
             command=self._on_close,
             font=ctk.CTkFont(size=12, weight="bold"),
             fg_color="#c0392b",

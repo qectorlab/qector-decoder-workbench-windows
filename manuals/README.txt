@@ -39,10 +39,7 @@ That is a property of the build, not a driver fault, and no environment variable
 it. CUDA and CPU are unaffected.
 
 Licensing:
- Source-available. Free for academic, personal and non-commercial research. Commercial use requires a paid licence.
- 60-day commercial evaluation available, creditable against a licence.
- Buy a licence : https://qector.store/pricing
- Sales contact : admin@qector.store
+ Source-available. Free for academic, personal and non-commercial research.
  In the app : Documentation tab > Developer and Licensing > offline local licensing
 
 Project: https://www.qector.store

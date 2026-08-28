@@ -621,7 +621,6 @@ class ProfessionalDocGenerator:
             f"**Licence**: {meta['licence_name']} ({meta['licence']})  ",
             f"**Keywords**: {keywords_csv}  ",
             f"**Provenance**: {meta['watermark']}  ",
-            "**Get QECTOR Master AI Suite**: [id01t.itch.io/qector-master-ai-suite-v2](https://id01t.itch.io/qector-master-ai-suite-v2)  ",
             "",
             "---",
             "",
@@ -1285,7 +1284,6 @@ caption strong {{
     <p class="affiliation">{affiliation}{f'<br><em>{email}</em>' if email else ''}</p>
     <p class="watermark">{watermark_str}</p>
     <p class="date">Generated {timestamp_utc}</p>
-    <p class="watermark"><strong>Get QECTOR Master AI Suite:</strong> <a href="https://id01t.itch.io/qector-master-ai-suite-v2" style="color:#14406b;">id01t.itch.io/qector-master-ai-suite-v2</a></p>
   </header>
 
   <nav class="toc" aria-label="Table of contents">
