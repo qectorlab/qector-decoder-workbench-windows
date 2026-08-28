@@ -481,6 +481,9 @@ class QectorApp:
         menu.add_cascade(label="Documentation", menu=doc_menu)
         self._app.config(menu=menu)
         self._app.bind("<Control-d>", lambda e: self.tabs.get("Documentation")._on_generate() if "Documentation" in self.tabs else None)
+        if sys.platform == "darwin":
+            self._app.bind("<Command-d>", lambda e: self.tabs.get("Documentation")._on_generate() if "Documentation" in self.tabs else None)
+            self._app.bind("<Command-q>", lambda e: self._on_close())
 
         self._build_top_bar()
 
@@ -592,6 +595,16 @@ class QectorApp:
                     self._app.state("normal")
                 else:
                     self._app.state("zoomed")
+            elif sys.platform == "darwin":
+                try:
+                    is_fs = bool(self._app.attributes("-fullscreen"))
+                    self._app.attributes("-fullscreen", not is_fs)
+                except Exception:
+                    try:
+                        state = self._app.state()
+                        self._app.state("normal" if state == "zoomed" else "zoomed")
+                    except Exception:
+                        pass
             else:
                 is_zoomed = False
                 try:
