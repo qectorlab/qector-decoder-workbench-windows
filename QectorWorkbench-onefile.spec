@@ -143,5 +143,6 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon=P('icon.ico'),
+    version=P('version_info.txt'),
 )
 
