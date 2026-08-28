@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-attest:
-    name: Build All Linux Formats & Attest Security
+    name: Zero-Egress Security Attestation & Proofs (Linux)
     runs-on: ubuntu-latest
     permissions:
       contents: write

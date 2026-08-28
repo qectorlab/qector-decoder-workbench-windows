@@ -1,4 +1,4 @@
-name: QECTOR macOS Application Build & Cloudsmith Push
+name: QECTOR macOS Application Build & Security Attestation
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-macos:
-    name: Build macOS Universal .app & .dmg
+    name: Zero-Egress Security Attestation & Proofs (macOS)
     runs-on: macos-latest
     permissions:
       contents: write
@@ -25,16 +25,16 @@ jobs:
 
       - name: Install Dependencies & PyInstaller
         run: |
-          python -m pip install --upgrade pip setuptools wheel pyinstaller customtkinter Pillow numpy scipy matplotlib reportlab cffi cryptography cloudsmith-cli
+          python3 -m pip install --upgrade pip setuptools wheel pyinstaller customtkinter Pillow numpy scipy matplotlib reportlab cffi cryptography cloudsmith-cli
 
       - name: Run Zero-Egress Security Compliance Check
-        run: python cli.py compliance
+        run: python3 cli.py compliance
 
       - name: Run Executive Proof Suite
-        run: python -m unittest test_qector_decoder_v3_proofs -v
+        run: python3 -m unittest test_qector_decoder_v3_proofs -v
 
       - name: Build macOS Application Bundle & DMG
-        run: python scripts/build_macos_app.py
+        run: python3 scripts/build_macos_app.py
 
       - name: Create & Push to Cloudsmith macOS Repository
         env:
