@@ -1,0 +1,42 @@
+app-id: org.qector.Workbench
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: qector-workbench
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --nosocket=fallback-x11
+  - --filesystem=host:ro
+  - --filesystem=xdg-documents:rw
+  - --filesystem=xdg-download:rw
+  - --env=PYTHONUNBUFFERED=1
+  - --env=QECTOR_ZERO_EGRESS=1
+
+modules:
+  - name: python3-customtkinter
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links=file://$(pwd)/wheels customtkinter Pillow numpy scipy matplotlib reportlab cffi cryptography
+
+  - name: qector-workbench
+    buildsystem: simple
+    build-commands:
+      - install -d /app/share/qector-workbench
+      - install -d /app/bin
+      - cp -r * /app/share/qector-workbench/
+      - install -D -m 0755 assets/icon_256.png /app/share/icons/hicolor/256x256/apps/org.qector.Workbench.png
+      - install -D -m 0644 flatpak/org.qector.Workbench.metainfo.xml /app/share/metainfo/org.qector.Workbench.metainfo.xml
+      - install -D -m 0644 flatpak/org.qector.Workbench.desktop /app/share/applications/org.qector.Workbench.desktop
+      - |
+        cat << 'EOF' > /app/bin/qector-workbench
+        #!/bin/sh
+        export PYTHONPATH="/app/share/qector-workbench:$PYTHONPATH"
+        exec python3 /app/share/qector-workbench/main.py "$@"
+        EOF
+        chmod +x /app/bin/qector-workbench
+    sources:
+      - type: dir
+        path: ..

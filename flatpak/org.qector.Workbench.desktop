@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=QECTOR Decoder Workbench
+Comment=Quantum Error Correction Decoder Suite with 85-tool MCP Server
+Exec=qector-workbench
+Icon=org.qector.Workbench
+Terminal=false
+Type=Application
+Categories=Development;Science;Quantum;
+Keywords=Quantum;QEC;Decoder;Syndrome;SurfaceCode;BivariateBicycle;
+StartupWMClass=qector-workbench

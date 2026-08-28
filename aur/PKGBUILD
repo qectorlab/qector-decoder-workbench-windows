@@ -1,0 +1,46 @@
+# Maintainer: Guillaume Lessard <admin@qector.store>
+pkgname=qector-workbench-bin
+pkgver=1.0.4
+pkgrel=1
+pkgdesc="QECTOR Decoder Workbench - Enterprise Quantum Error Correction Suite"
+arch=('x86_64')
+url="https://www.qector.store"
+license=('custom:EULA')
+depends=('python' 'tk' 'python-customtkinter' 'python-pillow' 'python-numpy' 'python-scipy' 'python-matplotlib' 'python-reportlab' 'python-cffi' 'python-cryptography')
+provides=('qector-workbench')
+conflicts=('qector-workbench')
+source=("https://github.com/qectorlab/qector-decoder-workbench-linux/releases/download/v${pkgver}/QectorWorkbench-v${pkgver}-Linux-x64-Public.tar.gz")
+sha256sums=('6548be66ed20e7a27528b29a2c27d620d4ebbe9ba33ea870e889c22eb955fcee')
+validpgpkeys=('171EE53F50693DE4')
+
+package() {
+    cd "${srcdir}"
+    mkdir -p "${pkgdir}/opt/qector-workbench"
+    cp -a * "${pkgdir}/opt/qector-workbench/"
+
+    mkdir -p "${pkgdir}/usr/bin"
+    cat << 'EOF' > "${pkgdir}/usr/bin/qector-workbench"
+#!/bin/sh
+export PYTHONPATH="/opt/qector-workbench:$PYTHONPATH"
+exec python3 /opt/qector-workbench/main.py "$@"
+EOF
+    chmod 0755 "${pkgdir}/usr/bin/qector-workbench"
+
+    mkdir -p "${pkgdir}/usr/share/applications"
+    cat << 'EOF' > "${pkgdir}/usr/share/applications/qector-workbench.desktop"
+[Desktop Entry]
+Name=QECTOR Decoder Workbench
+Comment=Quantum Error Correction Decoder Suite with 85-tool MCP Server
+Exec=qector-workbench
+Icon=qector-workbench
+Terminal=false
+Type=Application
+Categories=Development;Science;Quantum;
+EOF
+
+    mkdir -p "${pkgdir}/usr/share/icons/hicolor/256x256/apps"
+    cp assets/icon_256.png "${pkgdir}/usr/share/icons/hicolor/256x256/apps/qector-workbench.png"
+    
+    mkdir -p "${pkgdir}/usr/share/licenses/${pkgname}"
+    cp EULA.txt "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

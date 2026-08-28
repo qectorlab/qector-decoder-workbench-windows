@@ -7,8 +7,17 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.0.4"
-MAKEAPPX = r"C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\makeappx.exe"
+def _find_makeappx() -> str:
+    if shutil.which("makeappx"):
+        return shutil.which("makeappx")
+    pf = os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")
+    kits = Path(pf) / "Windows Kits" / "10" / "bin"
+    if kits.exists():
+        for p in sorted(kits.glob("*/x64/makeappx.exe"), reverse=True):
+            return str(p)
+    return "makeappx.exe"
+
+MAKEAPPX = _find_makeappx()
 
 def generate_msix_assets(assets_dir: Path):
     assets_dir.mkdir(parents=True, exist_ok=True)

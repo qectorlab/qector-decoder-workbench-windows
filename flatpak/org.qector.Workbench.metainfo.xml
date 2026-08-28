@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.qector.Workbench</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <name>QECTOR Decoder Workbench</name>
+  <summary>Enterprise Quantum Error Correction (QEC) Decoder Suite with 85-tool MCP Server</summary>
+  <description>
+    <p>
+      QECTOR Decoder Workbench is a production-grade Quantum Error Correction research environment featuring:
+    </p>
+    <ul>
+      <li>High-throughput Rust/PyO3 C++ Extension Core (qector_decoder_v3) for syndrome decoding.</li>
+      <li>85-Tool Model Context Protocol (MCP) Server operating under strict air-gapped isolation.</li>
+      <li>Zero-Egress AST Attestation &amp; Runtime EgressGuard socket blocking.</li>
+      <li>633 unit/integration tests and executive proof verification.</li>
+      <li>CustomTkinter Multi-tab GUI: Code Explorer, Decoder Lab, Benchmarking, and Diagnostics.</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">org.qector.Workbench.desktop</launchable>
+  <url type="homepage">https://www.qector.store</url>
+  <url type="bugtracker">https://github.com/qectorlab/qector-decoder-workbench/issues</url>
+  <developer_name>iD01t Productions / Guillaume Lessard</developer_name>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.0.4" date="2026-08-27">
+      <description>
+        <p>QECTOR Decoder Workbench v1.0.4 release with complete multi-platform Linux distribution support and zero-egress security attestation.</p>
+      </description>
+    </release>
+  </releases>
+</component>

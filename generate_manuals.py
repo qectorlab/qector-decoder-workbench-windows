@@ -810,7 +810,7 @@ def build_mcp_guide(facts: dict, out_path: Path) -> None:
            b.code('{\n'
                   '  "mcpServers": {\n'
                   '    "qector": {\n'
-                  '      "command": "C:\\\\Apps\\\\QectorWorkbench-Portable.exe",\n'
+                  '      "command": "C:\\\\Path\\\\To\\\\QectorWorkbench-Portable.exe",\n'
                   '      "args": ["--mcp"]\n'
                   '    }\n'
                   '  }\n'

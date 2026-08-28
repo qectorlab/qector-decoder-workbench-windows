@@ -1,0 +1,50 @@
+name: qector-workbench
+base: core22
+version: '1.0.4'
+summary: QECTOR Decoder Workbench - Enterprise QEC Suite (Linux)
+description: |
+  QECTOR Decoder Workbench v1.0.4 is a production-grade Quantum Error Correction (QEC) research environment featuring:
+  - Rust/PyO3 C++ Extension Core (qector_decoder_v3 1.0.0 manylinux2014) for high-throughput syndrome decoding.
+  - 85-Tool Model Context Protocol (MCP) Server operating under strict air-gapped isolation on Linux.
+  - Zero-Egress AST Attestation & Runtime EgressGuard socket blocking non-loopback connections.
+  - 633 unit/integration tests (100% pass) & 10/10 math proof tests.
+
+grade: stable
+confinement: strict
+
+apps:
+  qector-workbench:
+    command: bin/qector-workbench
+    desktop: share/applications/qector-workbench.desktop
+    plugs:
+      - desktop
+      - desktop-legacy
+      - x11
+      - wayland
+      - opengl
+      - home
+
+parts:
+  qector-workbench:
+    plugin: python
+    source: .
+    python-packages:
+      - customtkinter
+      - Pillow
+      - numpy
+      - scipy
+      - matplotlib
+      - reportlab
+      - cffi
+      - cryptography
+    override-build: |
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/opt/qector-workbench
+      cp -r * $CRAFT_PART_INSTALL/opt/qector-workbench/
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      cat << 'EOF' > $CRAFT_PART_INSTALL/bin/qector-workbench
+      #!/bin/sh
+      export PYTHONPATH="$SNAP/opt/qector-workbench:$PYTHONPATH"
+      exec python3 $SNAP/opt/qector-workbench/main.py "$@"
+      EOF
+      chmod +x $CRAFT_PART_INSTALL/bin/qector-workbench

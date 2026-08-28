@@ -1,0 +1,64 @@
+name: QECTOR Linux Multi-Platform Distribution & Security Attestation
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build-and-attest:
+    name: Build All Linux Formats & Attest Security
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      packages: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Build & Cryptographic Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-tk xvfb libgl1-mesa-glx libegl1-mesa appimagetool rpm
+          pip install --upgrade pip setuptools wheel cosign-installer
+
+      - name: Run Zero-Egress Security Compliance Check
+        run: python3.11 cli.py compliance
+
+      - name: Run Executive Proof Suite
+        run: python3.11 -m unittest test_qector_decoder_v3_proofs -v
+
+      - name: Execute Master Linux Build Script
+        run: python3.11 scripts/build_all_linux_distributions.py
+
+      - name: Install Cosign for Keyless Attestation
+        uses: sigstore/cosign-installer@v3.5.0
+
+      - name: Sign Release Artifacts with Cosign
+        run: |
+          cosign sign-blob --yes --output-signature dist/release_assets/qector-workbench_1.0.4_amd64.deb.sig dist/release_assets/qector-workbench_1.0.4_amd64.deb
+          cosign sign-blob --yes --output-signature dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz.sig dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz
+
+      - name: Push Packages to Cloudsmith
+        env:
+          CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+        run: |
+          if [ -n "$CLOUDSMITH_API_KEY" ]; then
+            pip install cloudsmith-cli
+            bash scripts/push_cloudsmith.sh
+          fi
+
+      - name: Upload Build & Security Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: QectorWorkbench-v1.0.4-Linux-Ecosystem
+          path: dist/release_assets/
