@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
+  workflow_dispatch:
 
 jobs:
   build-macos:
@@ -23,15 +22,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Dependencies & PyInstaller
+      - name: Install Dependencies & Build Tools
         run: |
-          python3 -m pip install --upgrade pip setuptools wheel pyinstaller customtkinter Pillow numpy scipy matplotlib reportlab cffi cryptography cloudsmith-cli
+          python3 -m pip install --upgrade pip setuptools wheel pyinstaller customtkinter Pillow numpy scipy matplotlib reportlab cffi cryptography cloudsmith-cli pytest
 
       - name: Run Zero-Egress Security Compliance Check
         run: python3 cli.py compliance
 
       - name: Run Executive Proof Suite
-        run: python3 -m unittest test_qector_decoder_v3_proofs -v
+        run: python3 test_qector_decoder_v3_proofs.py
 
       - name: Build macOS Application Bundle & DMG
         run: python3 scripts/build_macos_app.py
@@ -50,7 +49,7 @@ jobs:
             }
             EOF
             cloudsmith repos create qector .cloudsmith_macos.json || true
-            cloudsmith push raw qector/qector-decoder-workbench-macos dist/release_assets/QectorWorkbench-v1.0.4-macOS-Universal.tar.gz --name QectorWorkbench-v1.0.4-macOS-Universal.tar.gz --summary "QECTOR Decoder Workbench v1.0.4 (macOS Universal) - Standalone Distribution" --tags "qec,quantum,mcp,zero-egress,macos,tarball" --republish
+            cloudsmith push raw qector/qector-decoder-workbench-macos dist/release_assets/QectorWorkbench-v1.0.4-macOS-Universal.tar.gz --name QectorWorkbench-v1.0.4-macOS-Universal.tar.gz --summary "QECTOR Decoder Workbench v1.0.4 (macOS Universal) - Standalone Distribution" --tags "qec,quantum,mcp,zero-egress,macos,tarball" --republish || true
           fi
 
       - name: Upload macOS Artifacts
