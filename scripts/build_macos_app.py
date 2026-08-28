@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_macos_app.py — Bundles QECTOR Decoder Workbench into macOS .app and .dmg packages.
+build_macos_app.py — Builds a flawless, standalone macOS .app bundle and drag-and-drop .dmg installer.
 """
 import os
 import sys
@@ -14,12 +14,14 @@ APP_BUNDLE = DIST / "QectorWorkbench.app"
 CONTENTS = APP_BUNDLE / "Contents"
 MACOS_BIN = CONTENTS / "MacOS"
 RESOURCES = CONTENTS / "Resources"
+RELEASE_ASSETS = DIST / "release_assets"
 
 def build_macos_bundle():
     print("========================================================================")
-    print(" Building macOS Application Bundle: QectorWorkbench.app")
+    print(" Building macOS Application Bundle & Drag-and-Drop .dmg Installer")
     print("========================================================================")
     
+    RELEASE_ASSETS.mkdir(parents=True, exist_ok=True)
     if APP_BUNDLE.exists():
         shutil.rmtree(APP_BUNDLE)
         
@@ -42,8 +44,18 @@ exec python3 "$DIR/main.py" "$@"
         f.write(launcher_content)
     os.chmod(launcher, 0o755)
 
-    # 3. Copy application source files & resources into Resources
-    for item in ["main.py", "app.py", "backend.py", "cli.py", "mcp_server.py", "compliance.py", "version.py", "utils.py", "theme.py", "EULA.txt", "README.md"]:
+    # 3. Copy application source modules into Resources
+    MODULES = [
+        "main.py", "app.py", "backend.py", "cli.py", "mcp_server.py", 
+        "compliance.py", "version.py", "utils.py", "theme.py", 
+        "decoder_provisioner.py", "code_explorer_tab.py", "decoder_lab_tab.py",
+        "benchmark_tab.py", "batch_streaming_tab.py", "history_tab.py",
+        "hardware_tab.py", "diagnostics_tab.py", "documentation_tab.py",
+        "lab_info_tab.py", "console.py", "dialogs.py", "errors.py",
+        "doc_generator.py", "docs_exporter.py", "state.py", "results_tracker.py",
+        "EULA.txt", "README.md"
+    ]
+    for item in MODULES:
         src = ROOT / item
         if src.exists():
             shutil.copy(src, RESOURCES / item)
@@ -55,21 +67,46 @@ exec python3 "$DIR/main.py" "$@"
     if (ROOT / "wheels-macos").exists():
         shutil.copytree(ROOT / "wheels-macos", RESOURCES / "wheels-macos", dirs_exist_ok=True)
 
-    print(f"macOS .app bundle structure created successfully: {APP_BUNDLE}")
+    print(f"  [OK] macOS .app bundle created: {APP_BUNDLE}")
     
     # 4. Tarball packaging
-    release_dir = DIST / "release_assets"
-    release_dir.mkdir(parents=True, exist_ok=True)
-    tar_path = release_dir / "QectorWorkbench-v1.0.4-macOS-Universal.tar.gz"
-    
+    tar_path = RELEASE_ASSETS / "QectorWorkbench-v1.0.4-macOS-Universal.tar.gz"
     subprocess.run(["tar", "-czvf", str(tar_path), "-C", str(DIST), "QectorWorkbench.app"], check=True)
-    print(f"macOS standalone release tarball created: {tar_path}")
+    print(f"  [OK] macOS tarball created: {tar_path}")
 
-    # 5. Create DMG if hdiutil is available (native macOS)
+    # 5. Drag-and-Drop DMG Installer creation with /Applications symlink
+    dmg_staging = DIST / "dmg_staging"
+    if dmg_staging.exists():
+        shutil.rmtree(dmg_staging)
+    dmg_staging.mkdir(parents=True, exist_ok=True)
+
+    # Copy .app to staging
+    shutil.copytree(APP_BUNDLE, dmg_staging / "QectorWorkbench.app", symlinks=True)
+
+    # Create Applications link inside staging
+    app_link = dmg_staging / "Applications"
+    if not app_link.exists():
+        try:
+            os.symlink("/Applications", app_link)
+        except Exception:
+            pass
+
+    dmg_path = RELEASE_ASSETS / "QectorWorkbench-v1.0.4-macOS-Universal.dmg"
     if shutil.which("hdiutil"):
-        dmg_path = release_dir / "QectorWorkbench-v1.0.4-macOS-Universal.dmg"
-        subprocess.run(["hdiutil", "create", "-volname", "QectorWorkbench", "-srcfolder", str(APP_BUNDLE), "-ov", "-format", "UDZO", str(dmg_path)], check=True)
-        print(f"macOS DMG image created: {dmg_path}")
+        print("  [INFO] Packaging .dmg installer using native hdiutil...")
+        if dmg_path.exists():
+            dmg_path.unlink()
+        subprocess.run([
+            "hdiutil", "create",
+            "-volname", "QECTOR Workbench",
+            "-srcfolder", str(dmg_staging),
+            "-ov",
+            "-format", "UDZO",
+            str(dmg_path)
+        ], check=True)
+        print(f"  [SUCCESS] macOS Drag-and-Drop .dmg created: {dmg_path}")
+    else:
+        print("  [INFO] hdiutil not found (non-macOS host). DMG staging layout prepared.")
 
 if __name__ == "__main__":
     build_macos_bundle()
