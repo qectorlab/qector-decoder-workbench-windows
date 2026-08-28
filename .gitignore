@@ -48,6 +48,8 @@ code_doc_*.svg
 release_ready/
 mcp_*.json
 release_build/
+.cloudsmith_*.json
+release_assets/
 Release_v*/
 winzip/
 linuxzip/
