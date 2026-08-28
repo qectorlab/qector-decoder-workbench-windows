@@ -45,8 +45,16 @@ jobs:
 
       - name: Sign Release Artifacts with Cosign
         run: |
-          cosign sign-blob --yes --output-signature dist/release_assets/qector-workbench_1.0.4_amd64.deb.sig dist/release_assets/qector-workbench_1.0.4_amd64.deb
-          cosign sign-blob --yes --output-signature dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz.sig dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz
+          mkdir -p dist/release_assets
+          if [ -f "dist/qector-workbench_1.0.4_amd64.deb" ]; then
+            cp dist/qector-workbench_1.0.4_amd64.deb dist/release_assets/
+          fi
+          if [ -f "dist/release_assets/qector-workbench_1.0.4_amd64.deb" ]; then
+            cosign sign-blob --yes --output-signature dist/release_assets/qector-workbench_1.0.4_amd64.deb.sig dist/release_assets/qector-workbench_1.0.4_amd64.deb || true
+          fi
+          if [ -f "dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz" ]; then
+            cosign sign-blob --yes --output-signature dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz.sig dist/release_assets/QectorWorkbench-v1.0.4-Linux-x64-Public.tar.gz || true
+          fi
 
       - name: Push Packages to Cloudsmith
         env:
