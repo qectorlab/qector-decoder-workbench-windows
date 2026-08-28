@@ -262,3 +262,24 @@ def test_app_exposes_console():
             app.destroy()
         except Exception:
             pass
+
+
+def test_app_window_control_buttons():
+    """Verify window size control handlers and toggle actions exist and execute cleanly."""
+    if not _HAS_TK:
+        pytest.skip("Tk/Tcl is not usable on this host")
+    app = _make_hidden_qector_app()
+    try:
+        assert hasattr(app, "_toggle_maximize"), "QectorApp must have _toggle_maximize"
+        assert hasattr(app, "_toggle_theme"), "QectorApp must have _toggle_theme"
+        assert hasattr(app, "_show_eula_viewer"), "QectorApp must have _show_eula_viewer"
+        
+        # Invoke maximize toggle
+        app._toggle_maximize()
+        app._toggle_theme()
+    finally:
+        try:
+            app.destroy()
+        except Exception:
+            pass
+
