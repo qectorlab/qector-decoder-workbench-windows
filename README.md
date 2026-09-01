@@ -136,9 +136,9 @@ air-gapped source policy and include SHA-256 manifests.
 
 ---
 
-## ? Features
+##  Features
 
-### ??? Nine Interactive Tabs + Live Console
+###  Nine Interactive Tabs + Live Console
 
 <table>
 <tr>
