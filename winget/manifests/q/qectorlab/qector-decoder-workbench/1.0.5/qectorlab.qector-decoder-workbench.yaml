@@ -1,0 +1,23 @@
+PackageIdentifier: qectorlab.qector-decoder-workbench
+PackageVersion: 1.0.5
+DefaultLocale: en-US
+ManifestType: version
+ManifestVersion: 1.6.0
+PackageName: QECTOR Decoder Workbench
+Publisher: iD01t Productions
+PackageUrl: https://www.qector.store
+License: Source-available
+LicenseUrl: https://github.com/qectorlab/qector-decoder-workbench-windows/blob/main/EULA.txt
+ShortDescription: QECTOR Decoder Workbench - Quantum error-correction analysis suite
+Description: High-performance quantum error-correction (QEC) decoding workbench powered by qector-decoder-v3 v1.0.0.
+Tags:
+  - quantum
+  - qec
+  - decoder
+  - error-correction
+  - surface-code
+  - quantum-computing
+Installers:
+  - InstallerType: zip
+    InstallerUrl: https://qectordist23386.blob.core.windows.net/releases/windows/v1.0.5/QectorWorkbench-v1.0.5-Windows-x64-Public.zip
+    InstallerSha256: 3c8623b296c0de80e8550e2fd82ac29be43c756a56d542fceba7d68ea977ee6b

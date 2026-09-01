@@ -1,0 +1,22 @@
+PackageIdentifier: qectorlab.qector-decoder-workbench
+PackageVersion: 1.0.5
+PackageLocale: en-US
+Publisher: iD01t Productions / Guillaume Lessard
+PublisherUrl: https://www.qector.store
+PublisherSupportUrl: https://www.qector.store
+Author: Guillaume Lessard
+PackageName: QECTOR Decoder Workbench
+PackageUrl: https://www.qector.store
+License: Source-available
+LicenseUrl: https://github.com/qectorlab/qector-decoder-workbench-windows/blob/main/EULA.txt
+ShortDescription: QECTOR Decoder Workbench - Quantum error-correction analysis suite
+Description: High-performance quantum error-correction (QEC) decoding workbench powered by qector-decoder-v3 v1.0.0.
+Tags:
+  - quantum
+  - qec
+  - decoder
+  - error-correction
+  - surface-code
+  - quantum-computing
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

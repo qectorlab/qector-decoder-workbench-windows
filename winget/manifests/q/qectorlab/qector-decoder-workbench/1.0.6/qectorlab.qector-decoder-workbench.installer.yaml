@@ -1,0 +1,44 @@
+﻿PackageIdentifier: qectorlab.qector-decoder-workbench
+PackageVersion: 1.0.6
+MinimumOSVersion: 10.0.17763.0
+Platform:
+  - Windows.Desktop
+InstallModes:
+  - interactive
+  - silent
+  - silentWithProgress
+Scope: machine
+UpgradeBehavior: install
+FileExtensions:
+  - qector
+  - json
+Protocols:
+  - qector
+Installers:
+  - Architecture: x64
+    InstallerType: zip
+    NestedInstallerType: portable
+    NestedInstallerFiles:
+      - RelativeFilePath: QectorWorkbench-Portable.exe
+    Scope: machine
+    InstallerUrl: https://qectordist23386.blob.core.windows.net/releases/windows/v1.0.6/QectorWorkbench-v1.0.6-Windows-x64-Public.zip
+    InstallerSha256: PLACEHOLDER_REGENERATE_AFTER_REAL_1.0.6_ZIP_IS_BUILT
+    InstallerSwitches:
+      Silent: --silent
+      SilentWithProgress: --silent
+    UpgradeBehavior: install
+    ProductCode: QECTOR Decoder Workbench v1.0.6
+    AppsAndFeaturesEntries:
+      - DisplayName: QECTOR Decoder Workbench
+        Publisher: iD01t Productions
+        DisplayVersion: 1.0.6
+        ProductCode: QECTOR Decoder Workbench v1.0.6
+        InstallerType: zip
+    ReleaseDate: 2026-08-29
+    ExpectedReturnCodes:
+      - InstallerReturnCode: 0
+        ReturnResponse: success
+      - InstallerReturnCode: 3010
+        ReturnResponse: softReboot
+ManifestType: installer
+ManifestVersion: 1.12.0
