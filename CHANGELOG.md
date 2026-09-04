@@ -1,6 +1,11 @@
+﻿## 1.0.7 - 2026-09-04
+
+- **Aggressive MCP Capability Control**: Never expose 80+ tools in the global system prompt. Clustered into `qec.decode`/`qec.benchmark`/`qec.verify`/`qec.export` (3-6 tools per phase) with `always` control tools (`list_tools`, `mcp_status`). Per-call `task_scope` override and `initialize(task_scope=...)` scoping with `tools/list(task_scope=...)` filtering. Enforcement in `_ToolRegistry.execute` and `_handle_tools_call`.
+- **Explicit Schema Versioning**: Strict `x-schema-version`/`x-manifest-version` `1.0.0` on every `inputSchema`/`outputSchema` with self-contained schemas (no `$schema` network fetch). Each tool exposes `capabilities`/`schema_version`/`manifest_version`.
+- **Immutable Experiment Manifests**: Every `tools/call` now bound to `manifest_version`/`schema_version`/`engine`/`engine_git_hash` (baked `__version_hash__` with `FileNotFoundError`/`CalledProcessError` fallback for air-gapped wheels/bundles where `.git` is absent)/`engine_semver`/`workbench_version`/`backend_version`/`decoder_route`/`parity_check_matrix_digest` (SHA-256 of `parity_check_matrix` or `check_to_qubits`)/`seed`/`execution_seeds`/`hardware_target`+`hardware_path`/`fingerprint` (SHA-256 of canonical `tool+params` excluding volatile `request_id`/`task_scope`).
 # Changelog
 
-## 1.0.6 - 2026-08-29
+## 1.0.7 - 2026-08-29
 
 - **Ed25519-Signed Certification Artifacts**: Per-boot certification JSON is now cryptographically signed (Ed25519), not merely self-hashed; `.sig` sidecars and public-key embedding added for auditor verification.
 - **Real Hardware-Fingerprint Authorization**: `hpc_slurm_generator.py`'s `authorized` field is now a real computed boolean backed by an offline per-machine allowlist (`qector lab status|authorize|revoke|list` CLI added), replacing a hardcoded `True`.
@@ -12,7 +17,7 @@
 - **Hardened Path Denylist**: `sanitize_export_path` extended to block additional sensitive system directories (Program Files, System32\config, /root, ~/.ssh, ~/.gnupg, /var, etc).
 - **Entra Secret Scrubbing Extended**: `_scrubbed_env()` now covers all four `QECTOR_ENTRA_*` environment variables, with a test that introspects `entra_auth.py`'s real constants to prevent future drift.
 - **Removed Hardcoded Cloudsmith API Key**: `delete_105.py` now reads `CLOUDSMITH_API_KEY` from the environment instead of a hardcoded plaintext key; `scripts/check_secrets.py`'s secret-scanning patterns fixed to be case-insensitive (previously missed all-caps `API_KEY`-style assignments).
-- **Documentation Accuracy**: `AGENT.md` decoder count corrected (17→19 wired decoders, matching `backend.DECODER_KINDS` live).
+- **Documentation Accuracy**: `AGENT.md` decoder count corrected (17â†’19 wired decoders, matching `backend.DECODER_KINDS` live).
 
 ## 1.0.5 - 2026-08-28
 
@@ -71,3 +76,4 @@
 - Benchmark measurements are no longer stored or shipped; benchmark runs are
   local to the target hardware.
 - Release inputs use canonical `README.md`, `EULA.txt`, and platform assets.
+

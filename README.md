@@ -6,11 +6,11 @@
 
 <p align="center">
   <strong>Professional Quantum Error Correction Analysis Suite</strong><br/>
-  <em>19 Decoders · 10 Code Families · 85-tool MCP Server · GPU Acceleration</em>
+  <em>19 Decoders · 10 Code Families · 86-tool MCP Server · GPU Acceleration</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0.6-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-1.0.7-0078D4?style=for-the-badge&logo=windows&logoColor=white" alt="Version"/>
   <img src="https://img.shields.io/badge/backend-v1.0.0_(Rust%2FPyO3)-E44D26?style=for-the-badge&logo=rust&logoColor=white" alt="Backend"/>
   <img src="https://img.shields.io/badge/python-=3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/MCP_Tools-85-8A2BE2?style=for-the-badge" alt="MCP Tools"/>
@@ -36,7 +36,7 @@
 > **Zero Install · Zero Config · Zero Dependencies**
 > Download. Double-click. Decode.
 
-> This repository is a **release-only distribution mirror** of the v1.0.6
+> This repository is a **release-only distribution mirror** of the v1.0.7
 > Windows build. It contains no source files · only the release artifacts listed
 > below. Binary packages are published on the
 > [Releases](https://github.com/qectorlab/qector-decoder-workbench-windows/releases)
@@ -49,7 +49,7 @@
 ### Portable `.exe` (Recommended)
 
 ```
-1.  Download  QectorWorkbench-v1.0.6-Windows-x64-Public.zip  from Releases
+1.  Download  QectorWorkbench-v1.0.7-Windows-x64-Public.zip  from Releases
 2.  Extract the archive to a folder of your choice
 3.  Double-click  QectorWorkbench-Portable.exe  · no installation required
 4.  The bundled decoder activates automatically on first run
@@ -85,13 +85,13 @@ connection. No window is required to run the headless MCP mode.
 
 ## 📥 Downloads
 
-**v1.0.6 release assets** (all available on the
-[Releases](https://github.com/qectorlab/qector-decoder-workbench-windows/releases/tag/v1.0.6)
+**v1.0.7 release assets** (all available on the
+[Releases](https://github.com/qectorlab/qector-decoder-workbench-windows/releases/tag/v1.0.7)
 page, each with SHA-256 digests in `SHA256SUMS.txt`):
 
 | Artifact | Contents |
 |:---------|:---------|
-| **`QectorWorkbench-v1.0.6-Windows-x64-Public.zip`** | `QectorWorkbench-Portable.exe` + `qector_decoder_v3` 1.0.0 wheel (5 wheels) + `manuals/` (Windows) + `EULA.txt`/`EULA.rtf` + `LICENSE` + `CITATION.cff` + `RELEASE_MANIFEST.txt` + `SHA256SUMS.txt` + `SBOM.json` |
+| **`QectorWorkbench-v1.0.7-Windows-x64-Public.zip`** | `QectorWorkbench-Portable.exe` + `qector_decoder_v3` 1.0.0 wheel (5 wheels) + `manuals/` (Windows) + `EULA.txt`/`EULA.rtf` + `LICENSE` + `CITATION.cff` + `RELEASE_MANIFEST.txt` + `SHA256SUMS.txt` + `SBOM.json` |
 | **`QectorWorkbench-Portable.exe`** | The Windows executable on its own, if you do not want the bundle |
 
 > **Fully local, no network required.** The portable executable embeds the decoder
@@ -108,15 +108,15 @@ macOS requires a build on Apple hardware and is not included until that build
 is produced and signed. Windows and Linux artifacts are built from the same
 air-gapped source policy and include SHA-256 manifests.
 
-### Verified v1.0.6 Build Facts
+### Verified v1.0.7 Build Facts
 
 | Item | Value |
 |:-----|:------|
-| Workbench app | `1.0.6` |
+| Workbench app | `1.0.7` |
 | Decoder backend | `qector-decoder-v3 1.0.0` bundled wheel |
 | MCP server | `85` tools over stdio JSON-RPC 2.0 |
 | MCP protocol | `2024-11-05` |
-| Decoders | `19` |
+| Decoders | `17` |
 | Code families | `10` |
 | Bundled Python runtime | Python `3.12.0` |
 
@@ -136,9 +136,9 @@ air-gapped source policy and include SHA-256 manifests.
 
 ---
 
-##  Features
+## ? Features
 
-###  Nine Interactive Tabs + Live Console
+### ??? Nine Interactive Tabs + Live Console
 
 <table>
 <tr>
@@ -199,7 +199,7 @@ for lab evaluation; live identity sign-in is disabled in the air-gapped build.
 
 ---
 
-### 🧠 Decoder Algorithms (19)
+### 🧠 Decoder Algorithms (17)
 
 | Decoder | Strategy | Notes |
 |:--------|:---------|:------|
@@ -208,8 +208,6 @@ for lab evaluation; live identity sign-in is disabled in the air-gapped build.
 | `blossom` | Exact MWPM | Weight-optimal, matches PyMatching LER |
 | `sparse_blossom` | Near-optimal | Sparse graph MWPM approximation |
 | `bp_osd` | Iterative | Belief propagation + OSD for qLDPC codes |
-| `spacetime_mwpm` | Multi-round | Space-time lattice MWPM for phenomenological & circuit-level decoding |
-| `soft_llr` | Soft-decision | Log-likelihood-ratio-weighted decoding |
 | `auto` | Auto-select | Self-selects best backend |
 | `hybrid` | Combined | Multi-strategy hybrid decoder |
 | `lookup_table` | Exact | Table-based for small codes (= 20 checks) |
@@ -390,7 +388,7 @@ The workbench uses a **zero-config runtime provisioner** for the `qector-decoder
 
 ## 🛡️ Air-Gapped Hardening Status
 
-The v1.0.6 public package is designed for offline lab use after download and
+The v1.0.7 public package is designed for offline lab use after download and
 extraction. Implemented in this release:
 
 - Bundled decoder wheel activation works without internet access
@@ -406,7 +404,7 @@ Status tracking ships in the release package as `AIR_GAPPED_HARDENING_STATUS.md`
 
 ## 🤖 Claude Plugin Compatibility
 
-Both the **Windows** and **Linux** v1.0.6 releases of QECTOR Decoder Workbench are
+Both the **Windows** and **Linux** v1.0.7 releases of QECTOR Decoder Workbench are
 **fully compatible** with the official
 [QECTOR Claude Plugin](https://github.com/GuillaumeLessard/qector-claude-plugin)
 (`qector-claude-plugin`) for **Claude Code** and **Claude Desktop**:
@@ -498,7 +496,7 @@ Separately licensed, source-available Rust/Python platform by the same author:
 ---
 
 <p align="center">
-  <strong>QECTOR Decoder Workbench v1.0.6</strong><br/>
+  <strong>QECTOR Decoder Workbench v1.0.7</strong><br/>
   Built on <code>qector-decoder-v3</code> v1.0.0 (Rust/PyO3 core)<br/><br/>
   · 2026 Guillaume Lessard / iD01t Productions<br/>
   ORCID <a href="https://orcid.org/0009-0000-3465-3753">0009-0000-3465-3753</a><br/><br/>

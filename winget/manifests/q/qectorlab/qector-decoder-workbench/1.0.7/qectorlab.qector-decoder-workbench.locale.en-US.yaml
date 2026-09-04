@@ -1,0 +1,42 @@
+﻿PackageIdentifier: qectorlab.qector-decoder-workbench
+PackageVersion: 1.0.7
+PackageLocale: en-US
+Publisher: iD01t Productions
+PublisherUrl: https://www.qector.store
+PublisherSupportUrl: https://www.qector.store/support
+PrivacyUrl: https://www.qector.store/privacy
+Author: Guillaume Lessard / iD01t Productions
+PackageName: QECTOR Decoder Workbench
+PackageUrl: https://www.qector.store
+License: Source-available
+LicenseUrl: https://github.com/qectorlab/qector-decoder-workbench-windows/blob/main/EULA.txt
+Copyright: Copyright 2026 Guillaume Lessard / iD01t Productions
+CopyrightUrl: https://www.qector.store
+ShortDescription: QECTOR Decoder Workbench - Quantum error-correction analysis suite (86-tool MCP, 19 decoders, 10 families)
+Description: High-performance quantum error-correction (QEC) decoding workbench powered by qector-decoder-v3 v1.0.0 (Rust/PyO3). 86-tool MCP server over stdio JSON-RPC 2024-11-05, air-gapped zero-egress, EULA banner → terminal verbose test → History cleared. 19 decoders (blossom, union_find, bp_osd, etc.), 10 code families (rotated_surface, toric, heavy_hex, bicycle, etc.). Bundled offline wheel, no network required post-install. Source-available for academic/research, commercial licence via qector.store/pricing.
+Moniker: qector
+Tags:
+  - quantum
+  - qec
+  - decoder
+  - error-correction
+  - surface-code
+  - quantum-computing
+  - qldpc
+  - mcp
+  - rust
+Agreements:
+  - AgreementLabel: End User License Agreement
+    Agreement: EULA.txt must be accepted on first launch (banner shown). Source-available, free for academic/personal/non-commercial research; commercial requires paid licence.
+    AgreementUrl: https://github.com/qectorlab/qector-decoder-workbench-windows/blob/main/EULA.txt
+ReleaseNotes: QECTOR Decoder Workbench v1.0.7 — Ed25519-signed certification, real hardware-fingerprint authorization, GPG release signing (RSA-4096 Key Vault), MCP cancellation, EgressGuard fix, hardened path denylist, removed Cloudsmith key, 86-tool MCP, 19 decoders, boot EULA → terminal → History cleared.
+ReleaseNotesUrl: https://github.com/qectorlab/qector-decoder-workbench/blob/main/CHANGELOG.md#106---2026-08-29
+Documentations:
+  - DocumentLabel: User Manual (Windows)
+    DocumentUrl: https://www.qector.store/manuals/QECTOR_User_Manual_Windows.pdf
+  - DocumentLabel: MCP Integration Guide
+    DocumentUrl: https://www.qector.store/manuals/QECTOR_MCP_Integration_Guide.pdf
+  - DocumentLabel: API Reference
+    DocumentUrl: https://www.qector.store/manuals/QECTOR_API_Reference.md
+ManifestType: defaultLocale
+ManifestVersion: 1.12.0
