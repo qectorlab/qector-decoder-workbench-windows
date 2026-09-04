@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Professional Quantum Error Correction Analysis Suite</strong><br/>
-  <em>19 Decoders · 10 Code Families · 86-tool MCP Server · GPU Acceleration</em>
+  <em>19 Decoders · 10 Code Families · 85-tool MCP Server · GPU Acceleration</em>
 </p>
 
 <p align="center">
@@ -70,7 +70,7 @@ QectorWorkbench-Portable.exe diagnostics
 QectorWorkbench-Portable.exe --mcp
 ```
 
-Launches a stdio JSON-RPC 2.0 MCP server with all **86 tools**. The server is
+Launches a stdio JSON-RPC 2.0 MCP server with all **85 tools**. The server is
 local-only and communicates through stdio; it does not open an external network
 connection. No window is required to run the headless MCP mode.
 
@@ -116,7 +116,7 @@ air-gapped source policy and include SHA-256 manifests.
 | Decoder backend | `qector-decoder-v3 1.0.0` bundled wheel |
 | MCP server | `85` tools over stdio JSON-RPC 2.0 |
 | MCP protocol | `2024-11-05` |
-| Decoders | `17` |
+| Decoders | `19` |
 | Code families | `10` |
 | Bundled Python runtime | Python `3.12.0` |
 
@@ -136,9 +136,9 @@ air-gapped source policy and include SHA-256 manifests.
 
 ---
 
-## ? Features
+## ✨ Features
 
-### ??? Nine Interactive Tabs + Live Console
+### ✨ Nine Interactive Tabs + Live Console
 
 <table>
 <tr>
@@ -153,7 +153,7 @@ Interactive single-syndrome decoding with **19 decoder algorithms**. Tunable BP-
 #### 📈 Benchmark Suite
 Configurable decode benchmarks with throughput, latency (mean / p50 / p99 / min / max), and multi-panel Matplotlib charts. Export results to JSON.
 
-#### ? Batch & Streaming
+#### 📦 Batch & Streaming
 Batch decoding with explicit CPU / CUDA / OpenCL routing. Streaming decode with sliding-window commit semantics and live logical error rate tracking.
 
 </td>
@@ -225,13 +225,13 @@ for lab evaluation; live identity sign-in is disabled in the air-gapped build.
 
 ---
 
-### 🛠️ 86-tool MCP Server
+### 🛠️ 85-tool MCP Server
 
 Full Model Context Protocol integration for headless AI/LLM workflows:
 
 - **Transport:** stdio JSON-RPC 2.0 (protocol version `2024-11-05`)
 - **No HTTP bridge, no port binding** · pure stdin/stdout newline-delimited JSON-RPC
-- **All 86 tools** wired to the live backend API
+- **All 85 tools** wired to the live backend API
 - **Per-tool 60-second timeouts**, busy guards, and 10 MB frame limits protect long-running agents
 
 <details>
