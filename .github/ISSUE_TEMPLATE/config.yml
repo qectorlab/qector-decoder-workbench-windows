@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security problem
+    url: https://github.com/qectorlab/qector-decoder-workbench-windows/blob/main/SECURITY.md
+    about: Report vulnerabilities privately, not in a public issue.
+  - name: Workbench documentation
+    url: https://qector.store/workbench
+    about: Features, downloads and getting started.
