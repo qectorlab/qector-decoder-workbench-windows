@@ -1,0 +1,50 @@
+name: Bug report
+description: The Workbench crashed, froze or gave a wrong result.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. For a security problem, do not open an issue: follow [SECURITY.md](https://github.com/qectorlab/qector-decoder-workbench-windows/blob/main/SECURITY.md).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The code family, decoder and settings you used, step by step.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Workbench version
+      placeholder: "1.0.7"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 23H2"
+    validations:
+      required: true
+  - type: input
+    id: install
+    attributes:
+      label: How you installed it
+      description: The file you ran and where it came from.
+      placeholder: "QectorWorkbench-Portable.exe from GitHub Releases"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error message or log
+      description: Paste any error text. Screenshots help too.
+      render: text
